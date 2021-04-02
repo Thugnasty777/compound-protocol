@@ -82,7 +82,7 @@ async function makeComptroller(opts = {}) {
     const priceOracle = opts.priceOracle || await makePriceOracle(opts.priceOracleOpts);
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
-    const comp = opts.comp || await deploy('Comp', [opts.compOwner || root]);
+    const comp = opts.comp || await deploy('Vtx', [opts.compOwner || root]);
     const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
@@ -103,7 +103,7 @@ async function makeComptroller(opts = {}) {
     const priceOracle = opts.priceOracle || await makePriceOracle(opts.priceOracleOpts);
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
-    const comp = opts.comp || await deploy('Comp', [opts.compOwner || root]);
+    const comp = opts.comp || await deploy('Vtx', [opts.compOwner || root]);
     const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
@@ -172,7 +172,7 @@ async function makeCToken(opts = {}) {
       break;
 
     case 'ccomp':
-      underlying = await deploy('Comp', [opts.compHolder || root]);
+      underlying = await deploy('Vtx', [opts.compHolder || root]);
       cDelegatee = await deploy('CCompLikeDelegate');
       cDelegator = await deploy('CErc20Delegator',
         [

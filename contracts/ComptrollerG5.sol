@@ -7,7 +7,7 @@ import "./PriceOracle.sol";
 import "./ComptrollerInterface.sol";
 import "./ComptrollerStorage.sol";
 import "./Unitroller.sol";
-import "./Governance/Comp.sol";
+import "./Governance/Vtx.sol";
 
 /**
  * @title Compound's Comptroller Contract
@@ -1287,10 +1287,10 @@ contract ComptrollerG5 is ComptrollerV4Storage, ComptrollerInterface, Comptrolle
      */
     function transferComp(address user, uint userAccrued, uint threshold) internal returns (uint) {
         if (userAccrued >= threshold && userAccrued > 0) {
-            Comp comp = Comp(getCompAddress());
-            uint compRemaining = comp.balanceOf(address(this));
+            Vtx vtx = Vtx(getCompAddress());
+            uint compRemaining = vtx.balanceOf(address(this));
             if (userAccrued <= compRemaining) {
-                comp.transfer(user, userAccrued);
+                vtx.transfer(user, userAccrued);
                 return 0;
             }
         }
