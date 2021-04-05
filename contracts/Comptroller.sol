@@ -47,7 +47,7 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     event CompSpeedUpdated(CToken indexed cToken, uint newSpeed);
 
     /// @notice Emitted when a new COMP speed is set for a contributor
-    event ContributorCompSpeedUpdated(address indexed contributor, uint newSpeed);
+    event ContributorVtxSpeedUpdated(address indexed contributor, uint newSpeed);
 
     /// @notice Emitted when COMP is distributed to a supplier
     event DistributedSupplierComp(CToken indexed cToken, address indexed supplier, uint compDelta, uint compSupplyIndex);
@@ -61,8 +61,8 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     /// @notice Emitted when borrow cap guardian is changed
     event NewBorrowCapGuardian(address oldBorrowCapGuardian, address newBorrowCapGuardian);
 
-    /// @notice Emitted when COMP is granted by admin
-    event CompGranted(address recipient, uint amount);
+    /// @notice Emitted when VTX is granted by admin
+    event VtxGranted(address recipient, uint amount);
 
     /// @notice The initial COMP index for a market
     uint224 public constant compInitialIndex = 1e36;
@@ -1051,14 +1051,14 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         return msg.sender == admin || msg.sender == comptrollerImplementation;
     }
 
-    /*** Comp Distribution ***/
+    /*** Vtx Distribution ***/
 
     /**
-     * @notice Set COMP speed for a single market
-     * @param cToken The market whose COMP speed to update
-     * @param compSpeed New COMP speed for market
+     * @notice Set VTX speed for a single market
+     * @param cToken The market whose VTX speed to update
+     * @param compSpeed New VTX speed for market
      */
-    function setCompSpeedInternal(CToken cToken, uint compSpeed) internal {
+    function setVtxSpeedInternal(CToken cToken, uint compSpeed) internal {
         uint currentCompSpeed = compSpeeds[address(cToken)];
         if (currentCompSpeed != 0) {
             // note that COMP speed could be set to 0 to halt liquidity rewards for a market
@@ -1200,32 +1200,32 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     }
 
     /**
-     * @notice Claim all the comp accrued by holder in all markets
-     * @param holder The address to claim COMP for
+     * @notice Claim all the vtx accrued by holder in all markets
+     * @param holder The address to claim VTX for
      */
-    function claimComp(address holder) public {
-        return claimComp(holder, allMarkets);
+    function claimVtx(address holder) public {
+        return claimVtx(holder, allMarkets);
     }
 
     /**
-     * @notice Claim all the comp accrued by holder in the specified markets
-     * @param holder The address to claim COMP for
-     * @param cTokens The list of markets to claim COMP in
+     * @notice Claim all the vtx accrued by holder in the specified markets
+     * @param holder The address to claim VTX for
+     * @param cTokens The list of markets to claim VTX in
      */
-    function claimComp(address holder, CToken[] memory cTokens) public {
+    function claimVtx(address holder, CToken[] memory cTokens) public {
         address[] memory holders = new address[](1);
         holders[0] = holder;
-        claimComp(holders, cTokens, true, true);
+        claimVtx(holders, cTokens, true, true);
     }
 
     /**
-     * @notice Claim all comp accrued by the holders
-     * @param holders The addresses to claim COMP for
-     * @param cTokens The list of markets to claim COMP in
-     * @param borrowers Whether or not to claim COMP earned by borrowing
-     * @param suppliers Whether or not to claim COMP earned by supplying
+     * @notice Claim all vtx accrued by the holders
+     * @param holders The addresses to claim VTX for
+     * @param cTokens The list of markets to claim VTX in
+     * @param borrowers Whether or not to claim VTX earned by borrowing
+     * @param suppliers Whether or not to claim VTX earned by supplying
      */
-    function claimComp(address[] memory holders, CToken[] memory cTokens, bool borrowers, bool suppliers) public {
+    function claimVtx(address[] memory holders, CToken[] memory cTokens, bool borrowers, bool suppliers) public {
         for (uint i = 0; i < cTokens.length; i++) {
             CToken cToken = cTokens[i];
             require(markets[address(cToken)].isListed, "market must be listed");
@@ -1234,27 +1234,27 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
                 updateCompBorrowIndex(address(cToken), borrowIndex);
                 for (uint j = 0; j < holders.length; j++) {
                     distributeBorrowerComp(address(cToken), holders[j], borrowIndex);
-                    compAccrued[holders[j]] = grantCompInternal(holders[j], compAccrued[holders[j]]);
+                    compAccrued[holders[j]] = grantVtxInternal(holders[j], compAccrued[holders[j]]);
                 }
             }
             if (suppliers == true) {
                 updateCompSupplyIndex(address(cToken));
                 for (uint j = 0; j < holders.length; j++) {
                     distributeSupplierComp(address(cToken), holders[j]);
-                    compAccrued[holders[j]] = grantCompInternal(holders[j], compAccrued[holders[j]]);
+                    compAccrued[holders[j]] = grantVtxInternal(holders[j], compAccrued[holders[j]]);
                 }
             }
         }
     }
 
     /**
-     * @notice Transfer COMP to the user
-     * @dev Note: If there is not enough COMP, we do not perform the transfer all.
-     * @param user The address of the user to transfer COMP to
-     * @param amount The amount of COMP to (possibly) transfer
-     * @return The amount of COMP which was NOT transferred to the user
+     * @notice Transfer VTX to the user
+     * @dev Note: If there is not enough VTX, we do not perform the transfer all.
+     * @param user The address of the user to transfer VTX to
+     * @param amount The amount of VTX to (possibly) transfer
+     * @return The amount of VTX which was NOT transferred to the user
      */
-    function grantCompInternal(address user, uint amount) internal returns (uint) {
+    function grantVtxInternal(address user, uint amount) internal returns (uint) {
         Vtx vtx = Vtx(getCompAddress());
         uint compRemaining = vtx.balanceOf(address(this));
         if (amount > 0 && amount <= compRemaining) {
@@ -1264,50 +1264,50 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         return amount;
     }
 
-    /*** Comp Distribution Admin ***/
+    /*** VTX Distribution Admin ***/
 
     /**
-     * @notice Transfer COMP to the recipient
-     * @dev Note: If there is not enough COMP, we do not perform the transfer all.
-     * @param recipient The address of the recipient to transfer COMP to
-     * @param amount The amount of COMP to (possibly) transfer
+     * @notice Transfer VTX to the recipient
+     * @dev Note: If there is not enough VTX, we do not perform the transfer all.
+     * @param recipient The address of the recipient to transfer VTX to
+     * @param amount The amount of VTX to (possibly) transfer
      */
-    function _grantComp(address recipient, uint amount) public {
-        require(adminOrInitializing(), "only admin can grant comp");
-        uint amountLeft = grantCompInternal(recipient, amount);
-        require(amountLeft == 0, "insufficient comp for grant");
-        emit CompGranted(recipient, amount);
+    function _grantVtx(address recipient, uint amount) public {
+        require(adminOrInitializing(), "only admin can grant vtx");
+        uint amountLeft = grantVtxInternal(recipient, amount);
+        require(amountLeft == 0, "insufficient vtx for grant");
+        emit VtxGranted(recipient, amount);
     }
 
     /**
-     * @notice Set COMP speed for a single market
-     * @param cToken The market whose COMP speed to update
-     * @param compSpeed New COMP speed for market
+     * @notice Set VTX speed for a single market
+     * @param cToken The market whose VTX speed to update
+     * @param vtxSpeed New VTX speed for market
      */
-    function _setCompSpeed(CToken cToken, uint compSpeed) public {
-        require(adminOrInitializing(), "only admin can set comp speed");
-        setCompSpeedInternal(cToken, compSpeed);
+    function _setVtxSpeed(CToken cToken, uint vtxSpeed) public {
+        require(adminOrInitializing(), "only admin can set vtx speed");
+        setVtxSpeedInternal(cToken, vtxSpeed);
     }
 
     /**
-     * @notice Set COMP speed for a single contributor
-     * @param contributor The contributor whose COMP speed to update
-     * @param compSpeed New COMP speed for contributor
+     * @notice Set VTX speed for a single contributor
+     * @param contributor The contributor whose VTX speed to update
+     * @param vtxSpeed New VTX speed for contributor
      */
-    function _setContributorCompSpeed(address contributor, uint compSpeed) public {
-        require(adminOrInitializing(), "only admin can set comp speed");
+    function _setContributorVtxSpeed(address contributor, uint vtxSpeed) public {
+        require(adminOrInitializing(), "only admin can set vtx speed");
 
-        // note that COMP speed could be set to 0 to halt liquidity rewards for a contributor
+        // note that VTX speed could be set to 0 to halt liquidity rewards for a contributor
         updateContributorRewards(contributor);
-        if (compSpeed == 0) {
+        if (vtxSpeed == 0) {
             // release storage
             delete lastContributorBlock[contributor];
         } else {
             lastContributorBlock[contributor] = getBlockNumber();
         }
-        compContributorSpeeds[contributor] = compSpeed;
+        compContributorSpeeds[contributor] = vtxSpeed;
 
-        emit ContributorCompSpeedUpdated(contributor, compSpeed);
+        emit ContributorVtxSpeedUpdated(contributor, vtxSpeed);
     }
 
     /**

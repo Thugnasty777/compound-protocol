@@ -13,7 +13,7 @@ interface ComptrollerLensInterface {
     function oracle() external view returns (PriceOracle);
     function getAccountLiquidity(address) external view returns (uint, uint, uint);
     function getAssetsIn(address) external view returns (CToken[] memory);
-    function claimComp(address) external;
+    function claimVtx(address) external;
     function compAccrued(address) external view returns (uint);
 }
 
@@ -277,7 +277,7 @@ contract CompoundLens {
 
     function getCompBalanceMetadataExt(Vtx vtx, ComptrollerLensInterface comptroller, address account) external returns (CompBalanceMetadataExt memory) {
         uint balance = vtx.balanceOf(account);
-        comptroller.claimComp(account);
+        comptroller.claimVtx(account);
         uint newBalance = vtx.balanceOf(account);
         uint accrued = comptroller.compAccrued(account);
         uint total = add(accrued, newBalance, "sum comp total");

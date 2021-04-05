@@ -24,7 +24,7 @@ describe.skip('Flywheel trace ops', () => {
   it('update supply index SSTOREs', async () => {
     await send(comptroller, 'setBlockNumber', [100]);
     await send(market, 'harnessSetTotalBorrows', [etherUnsigned(11e18)]);
-    await send(comptroller, 'setCompSpeed', [market._address, etherExp(0.5)]);
+    await send(comptroller, 'setVtxSpeed', [market._address, etherExp(0.5)]);
 
     const tx = await send(comptroller, 'harnessUpdateCompSupplyIndex', [market._address]);
 
@@ -42,7 +42,7 @@ describe.skip('Flywheel trace ops', () => {
   it('update borrow index SSTOREs', async () => {
     await send(comptroller, 'setBlockNumber', [100]);
     await send(market, 'harnessSetTotalBorrows', [etherUnsigned(11e18)]);
-    await send(comptroller, 'setCompSpeed', [market._address, etherExp(0.5)]);
+    await send(comptroller, 'setVtxSpeed', [market._address, etherExp(0.5)]);
 
     const tx = await send(comptroller, 'harnessUpdateCompBorrowIndex', [market._address, etherExp(1.1)]);
 

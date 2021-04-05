@@ -37,7 +37,7 @@ contract ComptrollerScenarioG6 is ComptrollerG6 {
         markets[address(cToken)].isListed = false;
     }
 
-    function setCompSpeed(address cToken, uint compSpeed) public {
+    function setVtxSpeed(address cToken, uint compSpeed) public {
         compSpeeds[cToken] = compSpeed;
     }
 }

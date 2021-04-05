@@ -46,8 +46,8 @@ Macro InitSpeeds
     Mint Coburn 6e18 cBAT--tokenbalance = 6e18 / 2e9 = 3e9
     EnterMarkets Coburn cBAT
     Borrow Coburn 1e18 cZRX
-    Comptroller SetCompSpeed cZRX 1
-    Comptroller SetCompSpeed cBAT 1
+    Comptroller SetVtxSpeed cZRX 1
+    Comptroller SetVtxSpeed cBAT 1
     Comptroller RefreshCompSpeeds
     Comptroller Send "setCompAddress(address)" (Address COMP)
 
@@ -58,21 +58,21 @@ Test "COMP speed can be set per market"
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 0
     -- Comp speed can be set
-    Comptroller SetCompSpeed cZRX 2
+    Comptroller SetVtxSpeed cZRX 2
     FastForward 1000 Blocks
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 2000
     -- Comp speed can be changed
-    Comptroller SetCompSpeed cZRX 4
+    Comptroller SetVtxSpeed cZRX 4
     FastForward 1000 Blocks
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 6000
     -- Comp speed can be removed
-    Comptroller SetCompSpeed cZRX 0
+    Comptroller SetVtxSpeed cZRX 0
     FastForward 1000 Blocks
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 6000
 
@@ -85,11 +85,11 @@ Test "Set comp rate is removed"
 Test "Comp is not claimed automatically"
     GrantsComptroller
     InitSpeeds
-    Comptroller SetCompSpeed cZRX 2
+    Comptroller SetVtxSpeed cZRX 2
     FastForward 100000 Blocks
     -- Check comp is not claimed automatically
     Mint Geoff 50e18 cZRX
     Assert Equal (Erc20 COMP TokenBalance Geoff) 0
     -- Confirm there was comp to claim
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Erc20 COMP TokenBalance Geoff) 200000

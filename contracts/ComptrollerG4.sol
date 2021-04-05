@@ -50,8 +50,8 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
     /// @notice Emitted when market comped status is changed
     event MarketComped(CToken cToken, bool isComped);
 
-    /// @notice Emitted when COMP rate is changed
-    event NewCompRate(uint oldCompRate, uint newCompRate);
+    /// @notice Emitted when VTX rate is changed
+    event NewVtxRate(uint oldVtxRate, uint newVtxRate);
 
     /// @notice Emitted when a new COMP speed is calculated for a market
     event CompSpeedUpdated(CToken indexed cToken, uint newSpeed);
@@ -1244,32 +1244,32 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
     }
 
     /**
-     * @notice Claim all the comp accrued by holder in all markets
-     * @param holder The address to claim COMP for
+     * @notice Claim all the vtx accrued by holder in all markets
+     * @param holder The address to claim VTX for
      */
-    function claimComp(address holder) public {
-        return claimComp(holder, allMarkets);
+    function claimVtx(address holder) public {
+        return claimVtx(holder, allMarkets);
     }
 
     /**
-     * @notice Claim all the comp accrued by holder in the specified markets
-     * @param holder The address to claim COMP for
-     * @param cTokens The list of markets to claim COMP in
+     * @notice Claim all the vtx accrued by holder in the specified markets
+     * @param holder The address to claim VTX for
+     * @param cTokens The list of markets to claim VTX in
      */
-    function claimComp(address holder, CToken[] memory cTokens) public {
+    function claimVtx(address holder, CToken[] memory cTokens) public {
         address[] memory holders = new address[](1);
         holders[0] = holder;
-        claimComp(holders, cTokens, true, true);
+        claimVtx(holders, cTokens, true, true);
     }
 
     /**
-     * @notice Claim all comp accrued by the holders
-     * @param holders The addresses to claim COMP for
-     * @param cTokens The list of markets to claim COMP in
-     * @param borrowers Whether or not to claim COMP earned by borrowing
-     * @param suppliers Whether or not to claim COMP earned by supplying
+     * @notice Claim all vtx accrued by the holders
+     * @param holders The addresses to claim VTX for
+     * @param cTokens The list of markets to claim VTX in
+     * @param borrowers Whether or not to claim VTX earned by borrowing
+     * @param suppliers Whether or not to claim VTX earned by supplying
      */
-    function claimComp(address[] memory holders, CToken[] memory cTokens, bool borrowers, bool suppliers) public {
+    function claimVtx(address[] memory holders, CToken[] memory cTokens, bool borrowers, bool suppliers) public {
         for (uint i = 0; i < cTokens.length; i++) {
             CToken cToken = cTokens[i];
             require(markets[address(cToken)].isListed, "market must be listed");
@@ -1300,7 +1300,7 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
 
         uint oldRate = vtxRate;
         vtxRate = vtxRate_;
-        emit NewCompRate(oldRate, vtxRate_);
+        emit NewVtxRate(oldRate, vtxRate_);
 
         refreshCompSpeedsInternal();
     }

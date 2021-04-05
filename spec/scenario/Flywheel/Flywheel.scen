@@ -178,20 +178,20 @@ Test "Accrues correctly when market is added, deactivated, and activated again"
     --
     FastForward 100 Blocks
     Comptroller DropCompMarket cDAI
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Erc20 COMP TokenBalance Geoff) 75e18--half of cdai, all of zrx(.25e18 + .5e18) * 100
     Assert Equal (Comptroller GetCompMarkets) [(Address cZRX) (Address cBAT)]
     Assert Equal (Comptroller CompSpeed cZRX) 1e18
     Assert Equal (Comptroller CompSpeed cDAI) 0
     --
     FastForward 100 Blocks
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Erc20 COMP TokenBalance Geoff) 175e18-- += 1e18 * 100
     Assert Equal (Comptroller CompAccrued Geoff) 0
     --
     Comptroller AddCompMarkets cDAI
     FastForward 100 Blocks
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Erc20 COMP TokenBalance Geoff) 250e18--half of cdai, all of zrx. += (.25 + .5) * 100
     Assert Equal (Comptroller CompAccrued Geoff) 0
 
@@ -199,11 +199,11 @@ Test "TransferComp handles running out of COMP in Comptroller correctly"
     FlywheelComptroller price:1.0 borrowRate:0.000005 compInitAmount:1e18
     InitSpeeds
     FastForward 2 Blocks
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 2e18
     Assert Equal (Erc20 COMP TokenBalance Geoff) 0
     Give (Address Comptroller) 1e18 COMP
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 2e18
 
@@ -216,6 +216,6 @@ Test "Changing COMP rate continues to distribute at the correct speed"
     Comptroller SetVtxRate 2e18
     Assert Equal (Comptroller CompSpeed cZRX) 2e18
     FastForward 10 Blocks
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 30e18

@@ -25,15 +25,15 @@ From USDCWhale (Trx GasPrice 0 (CToken cUSDC Mint 10000e6))
 -- Baseline COMP claim speed
 Assert Equal (Comptroller CheckIsComped cDAI) True
 
-Comptroller ClaimComp BigBorrower
+Comptroller ClaimVtx BigBorrower
 AdvanceBlocks 1000
 Expect Changes (Erc20 Comp TokenBalance BigBorrower) 2.893496802261224189e18
-Comptroller ClaimComp BigBorrower
+Comptroller ClaimVtx BigBorrower
 
 -- Propose to apply the patch
 
 From CompHolder (Comp Delegate CompHolder)
-From CompHolder (Governor GovernorAlpha Propose "Disable automatic comp speed refresh and automatic claims and change comp speed" [(Address Unitroller) (Address ComptrollerG7) (Address Unitroller)] [0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_setCompSpeed(address,uint256)"] [[(Address ComptrollerG7)] [(Address Unitroller)] [(Address cUSDC) 30000000000000000]])
+From CompHolder (Governor GovernorAlpha Propose "Disable automatic comp speed refresh and automatic claims and change comp speed" [(Address Unitroller) (Address ComptrollerG7) (Address Unitroller)] [0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_setVtxSpeed(address,uint256)"] [[(Address ComptrollerG7)] [(Address Unitroller)] [(Address cUSDC) 30000000000000000]])
 
 -- Vote for, queue, and execute the proposal
 
@@ -45,9 +45,9 @@ IncreaseTime 604910
 Governor GovernorAlpha Proposal LastProposal Execute
 ComptrollerImpl ComptrollerG7 MergeABI
 
-Comptroller ClaimComp BigBorrower
+Comptroller ClaimVtx BigBorrower
 AdvanceBlocks 1000
 Expect Changes (Erc20 Comp TokenBalance BigBorrower) 2.893496802261224189e18
-Comptroller ClaimComp BigBorrower
+Comptroller ClaimVtx BigBorrower
 
 Print "Upgrade OK!"

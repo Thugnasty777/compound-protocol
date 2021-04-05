@@ -65,7 +65,7 @@ contract ComptrollerScenario is Comptroller {
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets[i];
             uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
-            setCompSpeedInternal(cToken, newSpeed);
+            setVtxSpeedInternal(cToken, newSpeed);
         }
     }
 }

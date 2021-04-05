@@ -24,15 +24,15 @@ From USDCWhale (Trx GasPrice 0 (CToken cUSDC Mint 10000e6))
 -- Baseline COMP claim speed
 Assert Equal (Comptroller CheckIsComped cDAI) True
 
-Comptroller ClaimComp DAIWhale
+Comptroller ClaimVtx DAIWhale
 AdvanceBlocks 1000
 Expect Changes (Erc20 Comp TokenBalance DAIWhale) 7.77e2
-Comptroller ClaimComp DAIWhale
+Comptroller ClaimVtx DAIWhale
 
 -- Propose to apply the patch
 
 From CompHolder (Comp Delegate CompHolder)
-From CompHolder (Governor GovernorAlpha Propose "Disable automatic comp speed refresh and automatic claims and change comp speed" [(Address Unitroller) (Address ComptrollerG7) (Address Unitroller)] [0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_setCompSpeed(address,uint256)"] [[(Address ComptrollerG7)] [(Address Unitroller)] [(Address cUSDC) 30000000000000000]])
+From CompHolder (Governor GovernorAlpha Propose "Disable automatic comp speed refresh and automatic claims and change comp speed" [(Address Unitroller) (Address ComptrollerG7) (Address Unitroller)] [0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_setVtxSpeed(address,uint256)"] [[(Address ComptrollerG7)] [(Address Unitroller)] [(Address cUSDC) 30000000000000000]])
 
 -- Vote for, queue, and execute the proposal
 
@@ -48,10 +48,10 @@ ComptrollerImpl ComptrollerG7 MergeABI
 Assert Equal (Comptroller CompSpeed cUSDC) 3.0e16
 
 -- Check that COMP is still accruing at the same speed
-Comptroller ClaimComp DAIWhale
+Comptroller ClaimVtx DAIWhale
 AdvanceBlocks 1000
 Expect Changes (Erc20 Comp TokenBalance DAIWhale) 7.77e2
-Comptroller ClaimComp DAIWhale
+Comptroller ClaimVtx DAIWhale
 
 -- Check that minting some USDC wont result in any automatic claims
 AdvanceBlocks 1000000
@@ -60,7 +60,7 @@ Expect Changes (Erc20 Comp TokenBalance USDCWhale) 0
 From USDCWhale (Trx GasPrice 0 (CToken cUSDC Mint 10000e6))
 
 -- Prepare second proposal
-From CompHolder (Governor GovernorAlpha Propose "Remove USDC market by setting comp speed to 0" [(Address Unitroller)] [0] ["_setCompSpeed(address,uint256)"] [[(Address cUSDC) 0]])
+From CompHolder (Governor GovernorAlpha Propose "Remove USDC market by setting comp speed to 0" [(Address Unitroller)] [0] ["_setVtxSpeed(address,uint256)"] [[(Address cUSDC) 0]])
 
 -- Vote for, queue, and execute the second proposal
 
@@ -77,15 +77,15 @@ AdvanceBlocks 1000
 Assert Equal (Comptroller CompSpeed cUSDC) 0
 
 -- True up balances
-Comptroller ClaimComp USDCWhale
+Comptroller ClaimVtx USDCWhale
 
 -- Check no more comp accrued
 AdvanceBlocks 1000000
 Expect Changes (Erc20 Comp TokenBalance USDCWhale) 0
-Comptroller ClaimComp USDCWhale
+Comptroller ClaimVtx USDCWhale
 
 -- Prepare final proposal
-From CompHolder (Governor GovernorAlpha Propose "Reset USDC comp speed" [(Address Unitroller)] [0] ["_setCompSpeed(address,uint256)"] [[(Address cUSDC) 27000000000000000]])
+From CompHolder (Governor GovernorAlpha Propose "Reset USDC comp speed" [(Address Unitroller)] [0] ["_setVtxSpeed(address,uint256)"] [[(Address cUSDC) 27000000000000000]])
 
 -- Vote for, queue, and execute the final proposal
 

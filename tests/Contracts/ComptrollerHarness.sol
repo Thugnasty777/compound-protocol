@@ -83,7 +83,7 @@ contract ComptrollerHarness is Comptroller {
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets[i];
             uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
-            setCompSpeedInternal(cToken, newSpeed);
+            setVtxSpeedInternal(cToken, newSpeed);
         }
     }
 
@@ -97,12 +97,12 @@ contract ComptrollerHarness is Comptroller {
 
     function harnessDistributeAllBorrowerComp(address cToken, address borrower, uint marketBorrowIndexMantissa) public {
         distributeBorrowerComp(cToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
-        compAccrued[borrower] = grantCompInternal(borrower, compAccrued[borrower]);
+        compAccrued[borrower] = grantVtxInternal(borrower, compAccrued[borrower]);
     }
 
     function harnessDistributeAllSupplierComp(address cToken, address supplier) public {
         distributeSupplierComp(cToken, supplier);
-        compAccrued[supplier] = grantCompInternal(supplier, compAccrued[supplier]);
+        compAccrued[supplier] = grantVtxInternal(supplier, compAccrued[supplier]);
     }
 
     function harnessUpdateCompBorrowIndex(address cToken, uint marketBorrowIndexMantissa) public {
@@ -123,7 +123,7 @@ contract ComptrollerHarness is Comptroller {
 
     function harnessTransferComp(address user, uint userAccrued, uint threshold) public returns (uint) {
         if (userAccrued > 0 && userAccrued >= threshold) {
-            return grantCompInternal(user, userAccrued);
+            return grantVtxInternal(user, userAccrued);
         }
         return userAccrued;
     }
@@ -131,7 +131,7 @@ contract ComptrollerHarness is Comptroller {
     function harnessAddCompMarkets(address[] memory cTokens) public {
         for (uint i = 0; i < cTokens.length; i++) {
             // temporarily set compSpeed to 1 (will be fixed by `harnessRefreshCompSpeeds`)
-            setCompSpeedInternal(CToken(cTokens[i]), 1);
+            setVtxSpeedInternal(CToken(cTokens[i]), 1);
         }
     }
 

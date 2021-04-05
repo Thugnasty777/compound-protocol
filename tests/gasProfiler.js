@@ -76,8 +76,8 @@ async function mint(cToken, minter, mintAmount, exchangeRate) {
   return send(cToken, 'mint', [mintAmount], { from: minter });
 }
 
-async function claimComp(comptroller, holder) {
-  return send(comptroller, 'claimComp', [holder], { from: holder });
+async function claimVtx(comptroller, holder) {
+  return send(comptroller, 'claimVtx', [holder], { from: holder });
 }
 
 /// GAS PROFILER: saves a digest of the gas prices of common CToken operations
@@ -184,10 +184,10 @@ describe('Gas report', () => {
       let interestRateModelOpts = {borrowRate: 0.000001};
       cToken = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
       if (patch == 'unitroller') {
-        await send(comptroller, '_setCompSpeed', [cToken._address, etherExp(0.05)]);
+        await send(comptroller, '_setVtxSpeed', [cToken._address, etherExp(0.05)]);
       } else {
         await send(comptroller, '_addCompMarkets', [[cToken].map(c => c._address)]);
-        await send(comptroller, 'setCompSpeed', [cToken._address, etherExp(0.05)]);
+        await send(comptroller, 'setVtxSpeed', [cToken._address, etherExp(0.05)]);
       }
       await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
     });
@@ -212,7 +212,7 @@ describe('Gas report', () => {
 
       console.log('Comp balance before claim', (await compBalance(comptroller, minter)).toString());
       console.log('Comp accrued before claim', (await compAccrued(comptroller, minter)).toString());
-      const claimReceipt = await claimComp(comptroller, minter);
+      const claimReceipt = await claimVtx(comptroller, minter);
       console.log('Comp balance after claim', (await compBalance(comptroller, minter)).toString());
       console.log('Comp accrued after claim', (await compAccrued(comptroller, minter)).toString());
       recordGasCost(claimReceipt.gasUsed, `${patch} claim comp`, filename);

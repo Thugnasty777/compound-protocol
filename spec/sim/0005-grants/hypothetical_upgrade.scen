@@ -18,7 +18,7 @@ ComptrollerImpl Deploy Standard ComptrollerG6
 Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (0)
 
 From CompHolder (Comp Delegate CompHolder)
-From CompHolder (Governor GovernorAlpha Propose "Grants Comptroller Patch and both types of grants issued" [(Address Unitroller) (Address ComptrollerG6) (Address Unitroller) (Address Unitroller)] [0 0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_grantComp(address,uint256)" "_setContributorCompSpeed(address,uint256)"] [[(Address ComptrollerG6)] [(Address Unitroller)] [(Address Tarun) 10000000] [(Address Tarun) 15]])
+From CompHolder (Governor GovernorAlpha Propose "Grants Comptroller Patch and both types of grants issued" [(Address Unitroller) (Address ComptrollerG6) (Address Unitroller) (Address Unitroller)] [0 0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_grantVtx(address,uint256)" "_setContributorVtxSpeed(address,uint256)"] [[(Address ComptrollerG6)] [(Address Unitroller)] [(Address Tarun) 10000000] [(Address Tarun) 15]])
 
 -- Vote for, queue, and execute the proposal
 
@@ -36,17 +36,17 @@ Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (10e6)
 
 -- Check contributor claim does not work without update
 AdvanceBlocks 997
-From Tarun (Comptroller ClaimComp Tarun)
+From Tarun (Comptroller ClaimVtx Tarun)
 Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (10e6)
 
 -- Check contributor claim amount is added
 From Tarun (Comptroller UpdateContributorRewards Tarun)
-From Tarun (Comptroller ClaimComp Tarun)
+From Tarun (Comptroller ClaimVtx Tarun)
 Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (10015000)
 
 
 -- Prepare second proposal
-From CompHolder (Governor GovernorAlpha Propose "Contributor speed reduction and second grant" [(Address Unitroller) (Address ComptrollerG6) (Address Unitroller) (Address Unitroller)] [0 0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_grantComp(address,uint256)" "_setContributorCompSpeed(address,uint256)"] [[(Address ComptrollerG6)] [(Address Unitroller)] [(Address Tarun) 20000000] [(Address Tarun) 5]])
+From CompHolder (Governor GovernorAlpha Propose "Contributor speed reduction and second grant" [(Address Unitroller) (Address ComptrollerG6) (Address Unitroller) (Address Unitroller)] [0 0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_grantVtx(address,uint256)" "_setContributorVtxSpeed(address,uint256)"] [[(Address ComptrollerG6)] [(Address Unitroller)] [(Address Tarun) 20000000] [(Address Tarun) 5]])
 
 -- Vote for, queue, and execute the second proposal
 
@@ -61,7 +61,7 @@ AdvanceBlocks 1000
 
 -- Check contributor claim amount is added
 From Tarun (Comptroller UpdateContributorRewards Tarun)
-From Tarun (Comptroller ClaimComp Tarun)
+From Tarun (Comptroller ClaimVtx Tarun)
 
 -- Initial value          10015000 = 10000000 grant + (997+3)*15
 -- Second grant           20000000
@@ -72,7 +72,7 @@ From Tarun (Comptroller ClaimComp Tarun)
 Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (30320130)
 
 -- Prepare final proposal
-From CompHolder (Governor GovernorAlpha Propose "Contributor speed elimination Patch" [(Address Unitroller)] [0] ["_setContributorCompSpeed(address,uint256)"] [[(Address Tarun) 0]])
+From CompHolder (Governor GovernorAlpha Propose "Contributor speed elimination Patch" [(Address Unitroller)] [0] ["_setContributorVtxSpeed(address,uint256)"] [[(Address Tarun) 0]])
 
 -- Vote for, queue, and execute the final proposal
 
@@ -87,7 +87,7 @@ AdvanceBlocks 10000
 
 -- Check no more COMP was allocated
 From Tarun (Comptroller UpdateContributorRewards Tarun)
-From Tarun (Comptroller ClaimComp Tarun)
+From Tarun (Comptroller ClaimVtx Tarun)
 -- Initial value          30320130
 -- Third proposal mining  100000 = 20000*5
 -- Extra blocks           0 = 1000*0

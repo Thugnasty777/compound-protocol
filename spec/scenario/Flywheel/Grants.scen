@@ -50,8 +50,8 @@ Macro InitSpeeds
     Mint Coburn 6e18 cBAT--tokenbalance = 6e18 / 2e9 = 3e9
     EnterMarkets Coburn cBAT
     Borrow Coburn 1e18 cZRX
-    Comptroller SetCompSpeed cZRX 1
-    Comptroller SetCompSpeed cBAT 1
+    Comptroller SetVtxSpeed cZRX 1
+    Comptroller SetVtxSpeed cBAT 1
     Comptroller RefreshCompSpeeds
     Comptroller Send "setCompAddress(address)" (Address COMP)
 
@@ -61,8 +61,8 @@ Test "COMP can be granted in combination with liquidity rewards"
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 0
     FastForward 1000 Blocks
-    Comptroller ClaimComp Geoff
-    Comptroller Send "_grantComp(address,uint256)" (Address Geoff) 1000
+    Comptroller ClaimVtx Geoff
+    Comptroller Send "_grantVtx(address,uint256)" (Address Geoff) 1000
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 1000000000000000001000
 
@@ -72,12 +72,12 @@ Test "COMP can be granted"
     InitSpeeds
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 0
-    Comptroller Send "_grantComp(address,uint256)" (Address Geoff) 1000
+    Comptroller Send "_grantVtx(address,uint256)" (Address Geoff) 1000
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 1000
     -- Assert Log CompGranted (recipient (Address Geoff)) (amount "1000")
     -- Can be granted multiple times
-    Comptroller Send "_grantComp(address,uint256)" (Address Geoff) 2000
+    Comptroller Send "_grantVtx(address,uint256)" (Address Geoff) 2000
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 3000
 
@@ -86,44 +86,44 @@ Test "COMP can be streamed to contributors"
     InitSpeeds
     Assert Equal (Comptroller CompAccrued Torrey) 0
     Assert Equal (Erc20 COMP TokenBalance Torrey) 0
-    Comptroller Send "_setContributorCompSpeed(address,uint256)" (Address Torrey) 300
+    Comptroller Send "_setContributorVtxSpeed(address,uint256)" (Address Torrey) 300
     -- Assert Log ContributorCompSpeedUpdated (recipient (Address Torrey)) (amount "300")
     FastForward 1000 Blocks
-    -- Just claimComp does not receive COMP
-    Comptroller ClaimComp Torrey
+    -- Just claimVtx does not receive VTX
+    Comptroller ClaimVtx Torrey
     Assert Equal (Comptroller CompAccrued Torrey) 0
     Assert Equal (Erc20 COMP TokenBalance Torrey) 0
-    -- Calling updateContributorRewards and then claimComp receives COMP
+    -- Calling updateContributorRewards and then claimVtx receives VTX
     Comptroller UpdateContributorRewards Torrey
     Assert Equal (Comptroller CompAccrued Torrey) 300000
-    Comptroller ClaimComp Torrey
+    Comptroller ClaimVtx Torrey
     Assert Equal (Comptroller CompAccrued Torrey) 0
     Assert Equal (Erc20 COMP TokenBalance Torrey) 300000
 
 Test "COMP can be streamed in combination with liquidity rewards"
     GrantsComptroller
     InitSpeeds
-    Comptroller Send "_setContributorCompSpeed(address,uint256)" (Address Geoff) 300
+    Comptroller Send "_setContributorVtxSpeed(address,uint256)" (Address Geoff) 300
     FastForward 1000 Blocks
-    -- Just claimComp does not receive COMP
+    -- Just claimVtx does not receive VTX
     Comptroller UpdateContributorRewards Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 300000
-    Comptroller ClaimComp Geoff
+    Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller CompAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 1000000000000000300000
 
 Test "COMP streaming can be changed for contributors"
     GrantsComptroller
     InitSpeeds
-    Comptroller Send "_setContributorCompSpeed(address,uint256)" (Address Torrey) 300
+    Comptroller Send "_setContributorVtxSpeed(address,uint256)" (Address Torrey) 300
     FastForward 1000 Blocks
-    Comptroller Send "_setContributorCompSpeed(address,uint256)" (Address Torrey) 600
+    Comptroller Send "_setContributorVtxSpeed(address,uint256)" (Address Torrey) 600
     FastForward 1000 Blocks
     Comptroller UpdateContributorRewards Torrey
-    Comptroller ClaimComp Torrey
+    Comptroller ClaimVtx Torrey
     Assert Equal (Comptroller CompAccrued Torrey) 0
     Assert Equal (Erc20 COMP TokenBalance Torrey) 900000
-    Comptroller Send "_setContributorCompSpeed(address,uint256)" (Address Torrey) 0
+    Comptroller Send "_setContributorVtxSpeed(address,uint256)" (Address Torrey) 0
     FastForward 2000 Blocks
     Assert Equal (Comptroller CompAccrued Torrey) 0
     Assert Equal (Erc20 COMP TokenBalance Torrey) 900000

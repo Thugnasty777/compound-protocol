@@ -196,7 +196,7 @@ let claimCompBatch = async (borrowersByCToken, opts) => {
 					)}\n`
 				);
 				try {
-					let tx = await send(Comptroller, 'claimComp', [
+					let tx = await send(Comptroller, 'claimVtx', [
 						chunk,
 						[cTokenAddr],
 						true,
