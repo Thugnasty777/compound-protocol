@@ -272,12 +272,12 @@ async function grantComp(world: World, from: string, comptroller: Comptroller, r
   return world;
 }
 
-async function setCompRate(world: World, from: string, comptroller: Comptroller, rate: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setCompRate(rate.encode()), from, ComptrollerErrorReporter);
+async function setVtxRate(world: World, from: string, comptroller: Comptroller, rate: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setVtxRate(rate.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Comp rate set to ${rate.show()}`,
+    `Vtx rate set to ${rate.show()}`,
     invokation
   );
 
@@ -776,17 +776,17 @@ export function comptrollerCommands() {
       (world, from, {comptroller, recipient, amount}) => grantComp(world, from, comptroller, recipient.val, amount)
     ),
     new Command<{comptroller: Comptroller, rate: NumberV}>(`
-      #### SetCompRate
+      #### SetVtxRate
 
-      * "Comptroller SetCompRate <rate>" - Sets COMP rate
-      * E.g. "Comptroller SetCompRate 1e18
+      * "Comptroller SetVtxRate <rate>" - Sets VTX rate
+      * E.g. "Comptroller SetVtxRate 1e18
       `,
-      "SetCompRate",
+      "SetVtxRate",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
         new Arg("rate", getNumberV)
       ],
-      (world, from, {comptroller, rate}) => setCompRate(world, from, comptroller, rate)
+      (world, from, {comptroller, rate}) => setVtxRate(world, from, comptroller, rate)
     ),
     new Command<{comptroller: Comptroller, cToken: CToken, speed: NumberV}>(`
       #### SetCompSpeed

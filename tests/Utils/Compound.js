@@ -91,7 +91,7 @@ async function makeComptroller(opts = {}) {
     await send(unitroller, '_setLiquidationIncentive', [liquidationIncentive]);
     await send(unitroller, '_setCloseFactor', [closeFactor]);
     await send(unitroller, '_setPriceOracle', [priceOracle._address]);
-    await send(unitroller, '_setCompRate', [compRate]);
+    await send(unitroller, '_setVtxRate', [compRate]);
     await send(unitroller, 'setCompAddress', [comp._address]); // harness only
 
     return Object.assign(unitroller, { priceOracle, comp });

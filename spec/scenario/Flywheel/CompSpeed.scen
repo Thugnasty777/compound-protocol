@@ -80,7 +80,7 @@ Test "Set comp rate is removed"
     GrantsComptroller
     InitSpeeds
     AllowFailures
-    Comptroller SetCompRate 5
+    Comptroller SetVtxRate 5
 
 Test "Comp is not claimed automatically"
     GrantsComptroller

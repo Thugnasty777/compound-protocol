@@ -213,7 +213,7 @@ Test "Changing COMP rate continues to distribute at the correct speed"
     --
     Assert Equal (Comptroller CompSpeed cZRX) 1e18
     FastForward 10 Blocks
-    Comptroller SetCompRate 2e18
+    Comptroller SetVtxRate 2e18
     Assert Equal (Comptroller CompSpeed cZRX) 2e18
     FastForward 10 Blocks
     Comptroller ClaimComp Geoff

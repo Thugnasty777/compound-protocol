@@ -52,7 +52,7 @@ contract ComptrollerHarness is Comptroller {
      * @param compRate_ The amount of COMP wei per block to distribute
      */
     function harnessSetCompRate(uint compRate_) public {
-        compRate = compRate_;
+        vtxRate = compRate_;
     }
 
     /**
@@ -82,7 +82,7 @@ contract ComptrollerHarness is Comptroller {
 
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(compRate, div_(utilities[i], totalUtility)) : 0;
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
             setCompSpeedInternal(cToken, newSpeed);
         }
     }

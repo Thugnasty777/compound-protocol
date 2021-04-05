@@ -1099,7 +1099,7 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
             _addMarketInternal(address(otherMarketsToAdd[i]));
         }
 
-        _setCompRate(compRate_);
+        _setVtxRate(compRate_);
         _addCompMarkets(compMarketsToAdd);
     }
 
@@ -1140,7 +1140,7 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
 
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(compRate, div_(utilities[i], totalUtility)) : 0;
+            uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
             compSpeeds[address(cToken)] = newSpeed;
             emit CompSpeedUpdated(cToken, newSpeed);
         }
@@ -1302,18 +1302,18 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
         }
     }
 
-    /*** Comp Distribution Admin ***/
+    /*** Vtx Distribution Admin ***/
 
     /**
-     * @notice Set the amount of COMP distributed per block
-     * @param compRate_ The amount of COMP wei per block to distribute
+     * @notice Set the amount of VTX distributed per block
+     * @param vtxRate_ The amount of VTX wei per block to distribute
      */
-    function _setCompRate(uint compRate_) public {
+    function _setVtxRate(uint vtxRate_) public {
         require(adminOrInitializing(), "only admin can change comp rate");
 
-        uint oldRate = compRate;
-        compRate = compRate_;
-        emit NewCompRate(oldRate, compRate_);
+        uint oldRate = vtxRate;
+        vtxRate = vtxRate_;
+        emit NewCompRate(oldRate, vtxRate_);
 
         refreshCompSpeeds();
     }
