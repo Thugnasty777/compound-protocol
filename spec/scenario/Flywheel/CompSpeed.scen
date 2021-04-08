@@ -48,32 +48,32 @@ Macro InitSpeeds
     Borrow Coburn 1e18 cZRX
     Comptroller SetVtxSpeed cZRX 1
     Comptroller SetVtxSpeed cBAT 1
-    Comptroller RefreshCompSpeeds
-    Comptroller Send "setCompAddress(address)" (Address COMP)
+    Comptroller RefreshVtxSpeeds
+    Comptroller Send "setVtxAddress(address)" (Address COMP)
 
 Test "COMP speed can be set per market"
     GrantsComptroller
     InitSpeeds
     -- Baseline comp amounts
-    Assert Equal (Comptroller CompAccrued Geoff) 0
+    Assert Equal (Comptroller VtxAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 0
     -- Comp speed can be set
     Comptroller SetVtxSpeed cZRX 2
     FastForward 1000 Blocks
     Comptroller ClaimVtx Geoff
-    Assert Equal (Comptroller CompAccrued Geoff) 0
+    Assert Equal (Comptroller VtxAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 2000
     -- Comp speed can be changed
     Comptroller SetVtxSpeed cZRX 4
     FastForward 1000 Blocks
     Comptroller ClaimVtx Geoff
-    Assert Equal (Comptroller CompAccrued Geoff) 0
+    Assert Equal (Comptroller VtxAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 6000
     -- Comp speed can be removed
     Comptroller SetVtxSpeed cZRX 0
     FastForward 1000 Blocks
     Comptroller ClaimVtx Geoff
-    Assert Equal (Comptroller CompAccrued Geoff) 0
+    Assert Equal (Comptroller VtxAccrued Geoff) 0
     Assert Equal (Erc20 COMP TokenBalance Geoff) 6000
 
 Test "Set comp rate is removed"

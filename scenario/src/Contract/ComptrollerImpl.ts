@@ -13,7 +13,7 @@ interface ComptrollerImplMethods {
 
   _become(
     comptroller: string,
-    compRate: encodedNumber,
+    vtxRate: encodedNumber,
     compMarkets: string[],
     otherMarkets: string[]
   ): Sendable<string>;

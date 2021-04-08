@@ -64,7 +64,7 @@ Test "Standard Upgrade, then downgrade then upgrade again"
     -- Upgrade to G3 again
     Unitroller SetPendingImpl ScenComptrollerG3
     ComptrollerImpl ScenComptrollerG3 BecomeG3 1e18 []
-    Assert Equal (Comptroller GetCompMarkets) [(Address cZRX) (Address cDAI)]
+    Assert Equal (Comptroller GetVtxMarkets) [(Address cZRX) (Address cDAI)]
     Assert Equal (Comptroller PauseGuardian) (Address Coburn)
     Assert Equal (Comptroller CloseFactor) 0.2
     Assert Equal (Comptroller MaxAssets) 20
@@ -206,19 +206,19 @@ Macro CheckV3Storage
     -- AllMarkets; 17
     Assert Equal (StorageAt Comptroller 13 0 "number") 2
     -- TODO: StorageAtArray Comptroller 13?
-    -- CompRate; 18
+    -- VtxRate; 18
     Assert Equal (StorageAt Comptroller 14 0 "number") 1e18
-    -- CompSpeeds; 19
+    -- VtxSpeeds; 19
     Assert Equal (StorageAt Comptroller 15 0 "number") 0
-    -- CompSupplyState; 20
+    -- VtxSupplyState; 20
     Assert Equal (StorageAt Comptroller 16 0 "number") 0
-    -- CompBorrowState; 21
+    -- VtxBorrowState; 21
     Assert Equal (StorageAt Comptroller 17 0 "number") 0
-    -- CompSupplierIndex; 22
+    -- VtxSupplierIndex; 22
     Assert Equal (StorageAt Comptroller 18 0 "number") 0
-    -- CompBorrowerIndex; 23
+    -- VtxBorrowerIndex; 23
     Assert Equal (StorageAt Comptroller 19 0 "number") 0
-    -- CompAccrued; 24
+    -- VtxAccrued; 24
     Assert Equal (StorageAt Comptroller 20 0 "number") 0
 
 -- Times out coverage, disable for now - ideally set flag to not run in coverage

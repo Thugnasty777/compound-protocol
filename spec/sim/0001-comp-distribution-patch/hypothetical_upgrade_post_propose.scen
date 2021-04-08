@@ -20,16 +20,16 @@ Governor GovernorAlpha Proposal 11 Execute
 
 -- Sanity check the upgrade
 
-Assert Equal (Comptroller CompRate) 0.22e18
-Assert Equal (Comptroller CheckIsComped cBAT) True
-Assert Equal (Comptroller CheckIsComped cDAI) True
-Assert Equal (Comptroller CheckIsComped cETH) True
-Assert Equal (Comptroller CheckIsComped cREP) True
-Assert Equal (Comptroller CheckIsComped cSAI) False
-Assert Equal (Comptroller CheckIsComped cUSDC) True
-Assert Equal (Comptroller CheckIsComped cUSDT) True
-Assert Equal (Comptroller CheckisComped cWBTC) True
-Assert Equal (Comptroller CheckIsComped cZRX) True
+Assert Equal (Comptroller VtxRate) 0.22e18
+Assert Equal (Comptroller CheckIsVtxed cBAT) True
+Assert Equal (Comptroller CheckIsVtxed cDAI) True
+Assert Equal (Comptroller CheckIsVtxed cETH) True
+Assert Equal (Comptroller CheckIsVtxed cREP) True
+Assert Equal (Comptroller CheckIsVtxed cSAI) False
+Assert Equal (Comptroller CheckIsVtxed cUSDC) True
+Assert Equal (Comptroller CheckIsVtxed cUSDT) True
+Assert Equal (Comptroller CheckisVtxed cWBTC) True
+Assert Equal (Comptroller CheckIsVtxed cZRX) True
 
 -- Sanity check the speeds
 
@@ -69,7 +69,7 @@ Assert Equal (PriceOracleProxy Price cZRX) 1465310000000000
 
 -- Refresh speeds
 
-Comptroller RefreshCompSpeeds
+Comptroller RefreshVtxSpeeds
 
 -- Check the new speeds match utility metric
 -- Total Utility =

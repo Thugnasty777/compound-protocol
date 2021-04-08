@@ -47,9 +47,9 @@ Borrow Seventh 1e18 cZRX
 ComptrollerImpl ComptrollerScen Become 1e18 [cZRX cBAT]
 Erc20 Deploy Standard COMP "COMP Token" 18
 Give (Address Comptroller) 5000000e18 COMP
-Comptroller Send "setCompAddress(address)" (Address COMP)
+Comptroller Send "setVtxAddress(address)" (Address COMP)
 
-Comptroller RefreshCompSpeeds
+Comptroller RefreshVtxSpeeds
 
 FastForward 300000 Blocks
 Read (Comptroller Address)

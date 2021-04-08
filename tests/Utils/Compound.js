@@ -61,12 +61,12 @@ async function makeComptroller(opts = {}) {
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const maxAssets = etherUnsigned(dfn(opts.maxAssets, 10));
     const liquidationIncentive = etherMantissa(1);
-    const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
+    const vtxRate = etherUnsigned(dfn(opts.vtxRate, 1e18));
     const compMarkets = opts.compMarkets || [];
     const otherMarkets = opts.otherMarkets || [];
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
-    await send(comptroller, '_become', [unitroller._address, compRate, compMarkets, otherMarkets]);
+    await send(comptroller, '_become', [unitroller._address, vtxRate, compMarkets, otherMarkets]);
     mergeInterface(unitroller, comptroller);
     await send(unitroller, '_setLiquidationIncentive', [liquidationIncentive]);
     await send(unitroller, '_setCloseFactor', [closeFactor]);
@@ -83,7 +83,7 @@ async function makeComptroller(opts = {}) {
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
     const comp = opts.comp || await deploy('Vtx', [opts.compOwner || root]);
-    const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
+    const vtxRate = etherUnsigned(dfn(opts.vtxRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
     await send(comptroller, '_become', [unitroller._address]);
@@ -91,8 +91,8 @@ async function makeComptroller(opts = {}) {
     await send(unitroller, '_setLiquidationIncentive', [liquidationIncentive]);
     await send(unitroller, '_setCloseFactor', [closeFactor]);
     await send(unitroller, '_setPriceOracle', [priceOracle._address]);
-    await send(unitroller, '_setVtxRate', [compRate]);
-    await send(unitroller, 'setCompAddress', [comp._address]); // harness only
+    await send(unitroller, '_setVtxRate', [vtxRate]);
+    await send(unitroller, 'setVtxAddress', [comp._address]); // harness only
 
     return Object.assign(unitroller, { priceOracle, comp });
   }
@@ -104,7 +104,7 @@ async function makeComptroller(opts = {}) {
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
     const comp = opts.comp || await deploy('Vtx', [opts.compOwner || root]);
-    const compRate = etherUnsigned(dfn(opts.compRate, 1e18));
+    const vtxRate = etherUnsigned(dfn(opts.vtxRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
     await send(comptroller, '_become', [unitroller._address]);
@@ -112,8 +112,8 @@ async function makeComptroller(opts = {}) {
     await send(unitroller, '_setLiquidationIncentive', [liquidationIncentive]);
     await send(unitroller, '_setCloseFactor', [closeFactor]);
     await send(unitroller, '_setPriceOracle', [priceOracle._address]);
-    await send(unitroller, 'setCompAddress', [comp._address]); // harness only
-    await send(unitroller, 'harnessSetCompRate', [compRate]);
+    await send(unitroller, 'setVtxAddress', [comp._address]); // harness only
+    await send(unitroller, 'harnessSetVtxRate', [vtxRate]);
 
     return Object.assign(unitroller, { priceOracle, comp });
   }
@@ -218,7 +218,7 @@ async function makeCToken(opts = {}) {
   }
 
   if (opts.addCompMarket) {
-    await send(comptroller, '_addCompMarket', [cToken._address]);
+    await send(comptroller, '_addVtxMarket', [cToken._address]);
   }
 
   if (opts.underlyingPrice) {

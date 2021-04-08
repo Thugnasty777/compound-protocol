@@ -4,7 +4,7 @@ import "../../contracts/Comptroller.sol";
 
 contract ComptrollerScenario is Comptroller {
     uint public blockNumber;
-    address public compAddress;
+    address public vtxAddress;
 
     constructor() Comptroller() public {}
 
@@ -13,12 +13,12 @@ contract ComptrollerScenario is Comptroller {
         return blockNumber;
     }
 
-    function setCompAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setVtxAddress(address vtxAddress_) public {
+        vtxAddress = vtxAddress_;
     }
 
-    function getCompAddress() public view returns (address) {
-        return compAddress;
+    function getVtxAddress() public view returns (address) {
+        return vtxAddress;
     }
 
     function setBlockNumber(uint number) public {
@@ -38,23 +38,23 @@ contract ComptrollerScenario is Comptroller {
     }
 
     /**
-     * @notice Recalculate and update COMP speeds for all COMP markets
+     * @notice Recalculate and update VTX speeds for all VTX markets
      */
-    function refreshCompSpeeds() public {
+    function refreshVtxSpeeds() public {
         CToken[] memory allMarkets_ = allMarkets;
 
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets_[i];
             Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-            updateCompSupplyIndex(address(cToken));
-            updateCompBorrowIndex(address(cToken), borrowIndex);
+            updateVtxSupplyIndex(address(cToken));
+            updateVtxBorrowIndex(address(cToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
         Exp[] memory utilities = new Exp[](allMarkets_.length);
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets_[i];
-            if (compSpeeds[address(cToken)] > 0) {
+            if (vtxSpeeds[address(cToken)] > 0) {
                 Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(cToken)});
                 Exp memory utility = mul_(assetPrice, cToken.totalBorrows());
                 utilities[i] = utility;

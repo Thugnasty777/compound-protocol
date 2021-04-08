@@ -4,7 +4,7 @@ import "../../contracts/ComptrollerG6.sol";
 
 contract ComptrollerScenarioG6 is ComptrollerG6 {
     uint public blockNumber;
-    address public compAddress;
+    address public vtxAddress;
 
     constructor() ComptrollerG6() public {}
 
@@ -13,12 +13,12 @@ contract ComptrollerScenarioG6 is ComptrollerG6 {
         return blockNumber;
     }
 
-    function setCompAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setVtxAddress(address vtxAddress_) public {
+        vtxAddress = vtxAddress_;
     }
 
-    function getCompAddress() public view returns (address) {
-        return compAddress;
+    function getVtxAddress() public view returns (address) {
+        return vtxAddress;
     }
 
     function setBlockNumber(uint number) public {
@@ -38,6 +38,6 @@ contract ComptrollerScenarioG6 is ComptrollerG6 {
     }
 
     function setVtxSpeed(address cToken, uint compSpeed) public {
-        compSpeeds[cToken] = compSpeed;
+        vtxSpeeds[cToken] = compSpeed;
     }
 }

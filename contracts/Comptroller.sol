@@ -43,17 +43,17 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     /// @notice Emitted when an action is paused on a market
     event ActionPaused(CToken cToken, string action, bool pauseState);
 
-    /// @notice Emitted when a new COMP speed is calculated for a market
-    event CompSpeedUpdated(CToken indexed cToken, uint newSpeed);
+    /// @notice Emitted when a new VTX speed is calculated for a market
+    event VtxSpeedUpdated(CToken indexed cToken, uint newSpeed);
 
     /// @notice Emitted when a new COMP speed is set for a contributor
     event ContributorVtxSpeedUpdated(address indexed contributor, uint newSpeed);
 
     /// @notice Emitted when COMP is distributed to a supplier
-    event DistributedSupplierComp(CToken indexed cToken, address indexed supplier, uint compDelta, uint compSupplyIndex);
+    event DistributedSupplierVtx(CToken indexed cToken, address indexed supplier, uint compDelta, uint compSupplyIndex);
 
     /// @notice Emitted when COMP is distributed to a borrower
-    event DistributedBorrowerComp(CToken indexed cToken, address indexed borrower, uint compDelta, uint compBorrowIndex);
+    event DistributedBorrowerVtx(CToken indexed cToken, address indexed borrower, uint compDelta, uint compBorrowIndex);
 
     /// @notice Emitted when borrow cap for a cToken is changed
     event NewBorrowCap(CToken indexed cToken, uint newBorrowCap);
@@ -234,8 +234,8 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         }
 
         // Keep the flywheel moving
-        updateCompSupplyIndex(cToken);
-        distributeSupplierComp(cToken, minter);
+        updateVtxSupplyIndex(cToken);
+        distributeSupplierVtx(cToken, minter);
 
         return uint(Error.NO_ERROR);
     }
@@ -274,8 +274,8 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         }
 
         // Keep the flywheel moving
-        updateCompSupplyIndex(cToken);
-        distributeSupplierComp(cToken, redeemer);
+        updateVtxSupplyIndex(cToken);
+        distributeSupplierVtx(cToken, redeemer);
 
         return uint(Error.NO_ERROR);
     }
@@ -372,8 +372,8 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
 
         // Keep the flywheel moving
         Exp memory borrowIndex = Exp({mantissa: CToken(cToken).borrowIndex()});
-        updateCompBorrowIndex(cToken, borrowIndex);
-        distributeBorrowerComp(cToken, borrower, borrowIndex);
+        updateVtxBorrowIndex(cToken, borrowIndex);
+        distributeBorrowerVtx(cToken, borrower, borrowIndex);
 
         return uint(Error.NO_ERROR);
     }
@@ -420,8 +420,8 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
 
         // Keep the flywheel moving
         Exp memory borrowIndex = Exp({mantissa: CToken(cToken).borrowIndex()});
-        updateCompBorrowIndex(cToken, borrowIndex);
-        distributeBorrowerComp(cToken, borrower, borrowIndex);
+        updateVtxBorrowIndex(cToken, borrowIndex);
+        distributeBorrowerVtx(cToken, borrower, borrowIndex);
 
         return uint(Error.NO_ERROR);
     }
@@ -550,9 +550,9 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         }
 
         // Keep the flywheel moving
-        updateCompSupplyIndex(cTokenCollateral);
-        distributeSupplierComp(cTokenCollateral, borrower);
-        distributeSupplierComp(cTokenCollateral, liquidator);
+        updateVtxSupplyIndex(cTokenCollateral);
+        distributeSupplierVtx(cTokenCollateral, borrower);
+        distributeSupplierVtx(cTokenCollateral, liquidator);
 
         return uint(Error.NO_ERROR);
     }
@@ -604,9 +604,9 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         }
 
         // Keep the flywheel moving
-        updateCompSupplyIndex(cToken);
-        distributeSupplierComp(cToken, src);
-        distributeSupplierComp(cToken, dst);
+        updateVtxSupplyIndex(cToken);
+        distributeSupplierVtx(cToken, src);
+        distributeSupplierVtx(cToken, dst);
 
         return uint(Error.NO_ERROR);
     }
@@ -924,8 +924,8 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
 
         cToken.isCToken(); // Sanity check to make sure its really a CToken
 
-        // Note that isComped is not in active use anymore
-        markets[address(cToken)] = Market({isListed: true, isComped: false, collateralFactorMantissa: 0});
+        // Note that isVtxed is not in active use anymore
+        markets[address(cToken)] = Market({isListed: true, isVtxed: false, collateralFactorMantissa: 0});
 
         _addMarketInternal(address(cToken));
 
@@ -1056,56 +1056,56 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     /**
      * @notice Set VTX speed for a single market
      * @param cToken The market whose VTX speed to update
-     * @param compSpeed New VTX speed for market
+     * @param vtxSpeed New VTX speed for market
      */
-    function setVtxSpeedInternal(CToken cToken, uint compSpeed) internal {
-        uint currentCompSpeed = compSpeeds[address(cToken)];
-        if (currentCompSpeed != 0) {
-            // note that COMP speed could be set to 0 to halt liquidity rewards for a market
+    function setVtxSpeedInternal(CToken cToken, uint vtxSpeed) internal {
+        uint currentVtxSpeed = vtxSpeeds[address(cToken)];
+        if (currentVtxSpeed != 0) {
+            // note that VTX speed could be set to 0 to halt liquidity rewards for a market
             Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-            updateCompSupplyIndex(address(cToken));
-            updateCompBorrowIndex(address(cToken), borrowIndex);
-        } else if (compSpeed != 0) {
+            updateVtxSupplyIndex(address(cToken));
+            updateVtxBorrowIndex(address(cToken), borrowIndex);
+        } else if (vtxSpeed != 0) {
             // Add the COMP market
             Market storage market = markets[address(cToken)];
-            require(market.isListed == true, "comp market is not listed");
+            require(market.isListed == true, "vtx market is not listed");
 
-            if (compSupplyState[address(cToken)].index == 0 && compSupplyState[address(cToken)].block == 0) {
-                compSupplyState[address(cToken)] = CompMarketState({
+            if (vtxSupplyState[address(cToken)].index == 0 && vtxSupplyState[address(cToken)].block == 0) {
+                vtxSupplyState[address(cToken)] = VtxMarketState({
                     index: compInitialIndex,
                     block: safe32(getBlockNumber(), "block number exceeds 32 bits")
                 });
             }
 
-            if (compBorrowState[address(cToken)].index == 0 && compBorrowState[address(cToken)].block == 0) {
-                compBorrowState[address(cToken)] = CompMarketState({
+            if (vtxBorrowState[address(cToken)].index == 0 && vtxBorrowState[address(cToken)].block == 0) {
+                vtxBorrowState[address(cToken)] = VtxMarketState({
                     index: compInitialIndex,
                     block: safe32(getBlockNumber(), "block number exceeds 32 bits")
                 });
             }
         }
 
-        if (currentCompSpeed != compSpeed) {
-            compSpeeds[address(cToken)] = compSpeed;
-            emit CompSpeedUpdated(cToken, compSpeed);
+        if (currentVtxSpeed != vtxSpeed) {
+            vtxSpeeds[address(cToken)] = vtxSpeed;
+            emit VtxSpeedUpdated(cToken, vtxSpeed);
         }
     }
 
     /**
-     * @notice Accrue COMP to the market by updating the supply index
+     * @notice Accrue VTX to the market by updating the supply index
      * @param cToken The market whose supply index to update
      */
-    function updateCompSupplyIndex(address cToken) internal {
-        CompMarketState storage supplyState = compSupplyState[cToken];
-        uint supplySpeed = compSpeeds[cToken];
+    function updateVtxSupplyIndex(address cToken) internal {
+        VtxMarketState storage supplyState = vtxSupplyState[cToken];
+        uint supplySpeed = vtxSpeeds[cToken];
         uint blockNumber = getBlockNumber();
         uint deltaBlocks = sub_(blockNumber, uint(supplyState.block));
         if (deltaBlocks > 0 && supplySpeed > 0) {
             uint supplyTokens = CToken(cToken).totalSupply();
-            uint compAccrued = mul_(deltaBlocks, supplySpeed);
-            Double memory ratio = supplyTokens > 0 ? fraction(compAccrued, supplyTokens) : Double({mantissa: 0});
+            uint vtxAccrued = mul_(deltaBlocks, supplySpeed);
+            Double memory ratio = supplyTokens > 0 ? fraction(vtxAccrued, supplyTokens) : Double({mantissa: 0});
             Double memory index = add_(Double({mantissa: supplyState.index}), ratio);
-            compSupplyState[cToken] = CompMarketState({
+            vtxSupplyState[cToken] = VtxMarketState({
                 index: safe224(index.mantissa, "new index exceeds 224 bits"),
                 block: safe32(blockNumber, "block number exceeds 32 bits")
             });
@@ -1115,20 +1115,20 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     }
 
     /**
-     * @notice Accrue COMP to the market by updating the borrow index
+     * @notice Accrue VTX to the market by updating the borrow index
      * @param cToken The market whose borrow index to update
      */
-    function updateCompBorrowIndex(address cToken, Exp memory marketBorrowIndex) internal {
-        CompMarketState storage borrowState = compBorrowState[cToken];
-        uint borrowSpeed = compSpeeds[cToken];
+    function updateVtxBorrowIndex(address cToken, Exp memory marketBorrowIndex) internal {
+        VtxMarketState storage borrowState = vtxBorrowState[cToken];
+        uint borrowSpeed = vtxSpeeds[cToken];
         uint blockNumber = getBlockNumber();
         uint deltaBlocks = sub_(blockNumber, uint(borrowState.block));
         if (deltaBlocks > 0 && borrowSpeed > 0) {
             uint borrowAmount = div_(CToken(cToken).totalBorrows(), marketBorrowIndex);
-            uint compAccrued = mul_(deltaBlocks, borrowSpeed);
-            Double memory ratio = borrowAmount > 0 ? fraction(compAccrued, borrowAmount) : Double({mantissa: 0});
+            uint vtxAccrued = mul_(deltaBlocks, borrowSpeed);
+            Double memory ratio = borrowAmount > 0 ? fraction(vtxAccrued, borrowAmount) : Double({mantissa: 0});
             Double memory index = add_(Double({mantissa: borrowState.index}), ratio);
-            compBorrowState[cToken] = CompMarketState({
+            vtxBorrowState[cToken] = VtxMarketState({
                 index: safe224(index.mantissa, "new index exceeds 224 bits"),
                 block: safe32(blockNumber, "block number exceeds 32 bits")
             });
@@ -1138,15 +1138,15 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     }
 
     /**
-     * @notice Calculate COMP accrued by a supplier and possibly transfer it to them
+     * @notice Calculate VTX accrued by a supplier and possibly transfer it to them
      * @param cToken The market in which the supplier is interacting
-     * @param supplier The address of the supplier to distribute COMP to
+     * @param supplier The address of the supplier to distribute VTX to
      */
-    function distributeSupplierComp(address cToken, address supplier) internal {
-        CompMarketState storage supplyState = compSupplyState[cToken];
+    function distributeSupplierVtx(address cToken, address supplier) internal {
+        VtxMarketState storage supplyState = vtxSupplyState[cToken];
         Double memory supplyIndex = Double({mantissa: supplyState.index});
-        Double memory supplierIndex = Double({mantissa: compSupplierIndex[cToken][supplier]});
-        compSupplierIndex[cToken][supplier] = supplyIndex.mantissa;
+        Double memory supplierIndex = Double({mantissa: vtxSupplierIndex[cToken][supplier]});
+        vtxSupplierIndex[cToken][supplier] = supplyIndex.mantissa;
 
         if (supplierIndex.mantissa == 0 && supplyIndex.mantissa > 0) {
             supplierIndex.mantissa = compInitialIndex;
@@ -1155,46 +1155,46 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         Double memory deltaIndex = sub_(supplyIndex, supplierIndex);
         uint supplierTokens = CToken(cToken).balanceOf(supplier);
         uint supplierDelta = mul_(supplierTokens, deltaIndex);
-        uint supplierAccrued = add_(compAccrued[supplier], supplierDelta);
-        compAccrued[supplier] = supplierAccrued;
-        emit DistributedSupplierComp(CToken(cToken), supplier, supplierDelta, supplyIndex.mantissa);
+        uint supplierAccrued = add_(vtxAccrued[supplier], supplierDelta);
+        vtxAccrued[supplier] = supplierAccrued;
+        emit DistributedSupplierVtx(CToken(cToken), supplier, supplierDelta, supplyIndex.mantissa);
     }
 
     /**
-     * @notice Calculate COMP accrued by a borrower and possibly transfer it to them
+     * @notice Calculate VTX accrued by a borrower and possibly transfer it to them
      * @dev Borrowers will not begin to accrue until after the first interaction with the protocol.
      * @param cToken The market in which the borrower is interacting
-     * @param borrower The address of the borrower to distribute COMP to
+     * @param borrower The address of the borrower to distribute VTX to
      */
-    function distributeBorrowerComp(address cToken, address borrower, Exp memory marketBorrowIndex) internal {
-        CompMarketState storage borrowState = compBorrowState[cToken];
+    function distributeBorrowerVtx(address cToken, address borrower, Exp memory marketBorrowIndex) internal {
+        VtxMarketState storage borrowState = vtxBorrowState[cToken];
         Double memory borrowIndex = Double({mantissa: borrowState.index});
-        Double memory borrowerIndex = Double({mantissa: compBorrowerIndex[cToken][borrower]});
-        compBorrowerIndex[cToken][borrower] = borrowIndex.mantissa;
+        Double memory borrowerIndex = Double({mantissa: vtxBorrowerIndex[cToken][borrower]});
+        vtxBorrowerIndex[cToken][borrower] = borrowIndex.mantissa;
 
         if (borrowerIndex.mantissa > 0) {
             Double memory deltaIndex = sub_(borrowIndex, borrowerIndex);
             uint borrowerAmount = div_(CToken(cToken).borrowBalanceStored(borrower), marketBorrowIndex);
             uint borrowerDelta = mul_(borrowerAmount, deltaIndex);
-            uint borrowerAccrued = add_(compAccrued[borrower], borrowerDelta);
-            compAccrued[borrower] = borrowerAccrued;
-            emit DistributedBorrowerComp(CToken(cToken), borrower, borrowerDelta, borrowIndex.mantissa);
+            uint borrowerAccrued = add_(vtxAccrued[borrower], borrowerDelta);
+            vtxAccrued[borrower] = borrowerAccrued;
+            emit DistributedBorrowerVtx(CToken(cToken), borrower, borrowerDelta, borrowIndex.mantissa);
         }
     }
 
     /**
-     * @notice Calculate additional accrued COMP for a contributor since last accrual
+     * @notice Calculate additional accrued VTX for a contributor since last accrual
      * @param contributor The address to calculate contributor rewards for
      */
     function updateContributorRewards(address contributor) public {
-        uint compSpeed = compContributorSpeeds[contributor];
+        uint vtxSpeed = vtxContributorSpeeds[contributor];
         uint blockNumber = getBlockNumber();
         uint deltaBlocks = sub_(blockNumber, lastContributorBlock[contributor]);
-        if (deltaBlocks > 0 && compSpeed > 0) {
-            uint newAccrued = mul_(deltaBlocks, compSpeed);
-            uint contributorAccrued = add_(compAccrued[contributor], newAccrued);
+        if (deltaBlocks > 0 && vtxSpeed > 0) {
+            uint newAccrued = mul_(deltaBlocks, vtxSpeed);
+            uint contributorAccrued = add_(vtxAccrued[contributor], newAccrued);
 
-            compAccrued[contributor] = contributorAccrued;
+            vtxAccrued[contributor] = contributorAccrued;
             lastContributorBlock[contributor] = blockNumber;
         }
     }
@@ -1231,17 +1231,17 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
             require(markets[address(cToken)].isListed, "market must be listed");
             if (borrowers == true) {
                 Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-                updateCompBorrowIndex(address(cToken), borrowIndex);
+                updateVtxBorrowIndex(address(cToken), borrowIndex);
                 for (uint j = 0; j < holders.length; j++) {
-                    distributeBorrowerComp(address(cToken), holders[j], borrowIndex);
-                    compAccrued[holders[j]] = grantVtxInternal(holders[j], compAccrued[holders[j]]);
+                    distributeBorrowerVtx(address(cToken), holders[j], borrowIndex);
+                    vtxAccrued[holders[j]] = grantVtxInternal(holders[j], vtxAccrued[holders[j]]);
                 }
             }
             if (suppliers == true) {
-                updateCompSupplyIndex(address(cToken));
+                updateVtxSupplyIndex(address(cToken));
                 for (uint j = 0; j < holders.length; j++) {
-                    distributeSupplierComp(address(cToken), holders[j]);
-                    compAccrued[holders[j]] = grantVtxInternal(holders[j], compAccrued[holders[j]]);
+                    distributeSupplierVtx(address(cToken), holders[j]);
+                    vtxAccrued[holders[j]] = grantVtxInternal(holders[j], vtxAccrued[holders[j]]);
                 }
             }
         }
@@ -1255,9 +1255,9 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
      * @return The amount of VTX which was NOT transferred to the user
      */
     function grantVtxInternal(address user, uint amount) internal returns (uint) {
-        Vtx vtx = Vtx(getCompAddress());
-        uint compRemaining = vtx.balanceOf(address(this));
-        if (amount > 0 && amount <= compRemaining) {
+        Vtx vtx = Vtx(getVtxAddress());
+        uint vtxRemaining = vtx.balanceOf(address(this));
+        if (amount > 0 && amount <= vtxRemaining) {
             vtx.transfer(user, amount);
             return 0;
         }
@@ -1305,7 +1305,7 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
         } else {
             lastContributorBlock[contributor] = getBlockNumber();
         }
-        compContributorSpeeds[contributor] = vtxSpeed;
+        vtxContributorSpeeds[contributor] = vtxSpeed;
 
         emit ContributorVtxSpeedUpdated(contributor, vtxSpeed);
     }
@@ -1324,10 +1324,10 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     }
 
     /**
-     * @notice Return the address of the COMP token
-     * @return The address of COMP
+     * @notice Return the address of the VTX token
+     * @return The address of VTX
      */
-    function getCompAddress() public view returns (address) {
+    function getVtxAddress() public view returns (address) {
         return 0xc00e94Cb662C3520282E6f5717214004A7f26888;
     }
 }

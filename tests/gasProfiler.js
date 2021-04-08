@@ -16,8 +16,8 @@ async function compBalance(comptroller, user) {
   return etherUnsigned(await call(comptroller.comp, 'balanceOf', [user]))
 }
 
-async function compAccrued(comptroller, user) {
-  return etherUnsigned(await call(comptroller, 'compAccrued', [user]));
+async function vtxAccrued(comptroller, user) {
+  return etherUnsigned(await call(comptroller, 'vtxAccrued', [user]));
 }
 
 async function fastForwardPatch(patch, comptroller, blocks) {
@@ -186,7 +186,7 @@ describe('Gas report', () => {
       if (patch == 'unitroller') {
         await send(comptroller, '_setVtxSpeed', [cToken._address, etherExp(0.05)]);
       } else {
-        await send(comptroller, '_addCompMarkets', [[cToken].map(c => c._address)]);
+        await send(comptroller, '_addVtxMarkets', [[cToken].map(c => c._address)]);
         await send(comptroller, 'setVtxSpeed', [cToken._address, etherExp(0.05)]);
       }
       await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
@@ -198,10 +198,10 @@ describe('Gas report', () => {
       await fastForwardPatch(patch, comptroller, 10);
 
       console.log('Comp balance before mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued before mint', (await compAccrued(comptroller, minter)).toString());
+      console.log('Comp accrued before mint', (await vtxAccrued(comptroller, minter)).toString());
       const mint2Receipt = await mint(cToken, minter, mintAmount, exchangeRate);
       console.log('Comp balance after mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued after mint', (await compAccrued(comptroller, minter)).toString());
+      console.log('Comp accrued after mint', (await vtxAccrued(comptroller, minter)).toString());
       recordGasCost(mint2Receipt.gasUsed, `${patch} second mint with comp accrued`, filename);
     });
 
@@ -211,10 +211,10 @@ describe('Gas report', () => {
       await fastForwardPatch(patch, comptroller, 10);
 
       console.log('Comp balance before claim', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued before claim', (await compAccrued(comptroller, minter)).toString());
+      console.log('Comp accrued before claim', (await vtxAccrued(comptroller, minter)).toString());
       const claimReceipt = await claimVtx(comptroller, minter);
       console.log('Comp balance after claim', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued after claim', (await compAccrued(comptroller, minter)).toString());
+      console.log('Vtx accrued after claim', (await vtxAccrued(comptroller, minter)).toString());
       recordGasCost(claimReceipt.gasUsed, `${patch} claim comp`, filename);
     });
   });

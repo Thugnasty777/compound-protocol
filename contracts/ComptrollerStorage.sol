@@ -69,8 +69,8 @@ contract ComptrollerV2Storage is ComptrollerV1Storage {
         /// @notice Per-market mapping of "accounts in this asset"
         mapping(address => bool) accountMembership;
 
-        /// @notice Whether or not this market receives COMP
-        bool isComped;
+        /// @notice Whether or not this market receives VTX
+        bool isVtxed;
     }
 
     /**
@@ -95,8 +95,8 @@ contract ComptrollerV2Storage is ComptrollerV1Storage {
 }
 
 contract ComptrollerV3Storage is ComptrollerV2Storage {
-    struct CompMarketState {
-        /// @notice The market's last updated compBorrowIndex or compSupplyIndex
+    struct VtxMarketState {
+        /// @notice The market's last updated vtxBorrowIndex or vtxSupplyIndex
         uint224 index;
 
         /// @notice The block number the index was last updated at
@@ -109,23 +109,23 @@ contract ComptrollerV3Storage is ComptrollerV2Storage {
     /// @notice The rate at which the flywheel distributes VTX, per block
     uint public vtxRate;
 
-    /// @notice The portion of compRate that each market currently receives
-    mapping(address => uint) public compSpeeds;
+    /// @notice The portion of vtxRate that each market currently receives
+    mapping(address => uint) public vtxSpeeds;
 
-    /// @notice The COMP market supply state for each market
-    mapping(address => CompMarketState) public compSupplyState;
+    /// @notice The VTX market supply state for each market
+    mapping(address => VtxMarketState) public vtxSupplyState;
 
-    /// @notice The COMP market borrow state for each market
-    mapping(address => CompMarketState) public compBorrowState;
+    /// @notice The VTX market borrow state for each market
+    mapping(address => VtxMarketState) public vtxBorrowState;
 
-    /// @notice The COMP borrow index for each market for each supplier as of the last time they accrued COMP
-    mapping(address => mapping(address => uint)) public compSupplierIndex;
+    /// @notice The VTX borrow index for each market for each supplier as of the last time they accrued VTX
+    mapping(address => mapping(address => uint)) public vtxSupplierIndex;
 
-    /// @notice The COMP borrow index for each market for each borrower as of the last time they accrued COMP
-    mapping(address => mapping(address => uint)) public compBorrowerIndex;
+    /// @notice The VTX borrow index for each market for each borrower as of the last time they accrued VTX
+    mapping(address => mapping(address => uint)) public vtxBorrowerIndex;
 
-    /// @notice The COMP accrued but not yet transferred to each user
-    mapping(address => uint) public compAccrued;
+    /// @notice The VTX accrued but not yet transferred to each user
+    mapping(address => uint) public vtxAccrued;
 }
 
 contract ComptrollerV4Storage is ComptrollerV3Storage {
@@ -137,9 +137,9 @@ contract ComptrollerV4Storage is ComptrollerV3Storage {
 }
 
 contract ComptrollerV5Storage is ComptrollerV4Storage {
-    /// @notice The portion of COMP that each contributor receives per block
-    mapping(address => uint) public compContributorSpeeds;
+    /// @notice The portion of VTX that each contributor receives per block
+    mapping(address => uint) public vtxContributorSpeeds;
 
-    /// @notice Last block at which a contributor's COMP rewards have been allocated
+    /// @notice Last block at which a contributor's VTX rewards have been allocated
     mapping(address => uint) public lastContributorBlock;
 }

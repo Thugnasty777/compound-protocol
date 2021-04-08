@@ -129,13 +129,13 @@ async function becomeG3(
   from: string,
   comptrollerImpl: ComptrollerImpl,
   unitroller: Unitroller,
-  compRate: encodedNumber,
+  vtxRate: encodedNumber,
   compMarkets: string[],
   otherMarkets: string[]
 ): Promise<World> {
   let invokation = await invoke(
     world,
-    comptrollerImpl.methods._become(unitroller._address, compRate, compMarkets, otherMarkets),
+    comptrollerImpl.methods._become(unitroller._address, vtxRate, compMarkets, otherMarkets),
     from,
     ComptrollerErrorReporter
   );
@@ -343,7 +343,7 @@ export function comptrollerImplCommands() {
     new Command<{
       unitroller: Unitroller;
       comptrollerImpl: ComptrollerImpl;
-      compRate: NumberV;
+      vtxRate: NumberV;
       compMarkets: ArrayV<AddressV>;
       otherMarkets: ArrayV<AddressV>;
     }>(
@@ -357,12 +357,12 @@ export function comptrollerImplCommands() {
       [
         new Arg('unitroller', getUnitroller, { implicit: true }),
         new Arg('comptrollerImpl', getComptrollerImpl),
-        new Arg('compRate', getNumberV, { default: new NumberV(1e18) }),
+        new Arg('vtxRate', getNumberV, { default: new NumberV(1e18) }),
         new Arg('compMarkets', getArrayV(getAddressV),  {default: new ArrayV([]) }),
         new Arg('otherMarkets', getArrayV(getAddressV), { default: new ArrayV([]) })
       ],
-      (world, from, { unitroller, comptrollerImpl, compRate, compMarkets, otherMarkets }) => {
-        return becomeG3(world, from, comptrollerImpl, unitroller, compRate.encode(), compMarkets.val.map(a => a.val), otherMarkets.val.map(a => a.val))
+      (world, from, { unitroller, comptrollerImpl, vtxRate, compMarkets, otherMarkets }) => {
+        return becomeG3(world, from, comptrollerImpl, unitroller, vtxRate.encode(), compMarkets.val.map(a => a.val), otherMarkets.val.map(a => a.val))
       },
       { namePos: 1 }
     ),

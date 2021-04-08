@@ -143,15 +143,15 @@ let accountRequest = async (network, opts) => {
 let filterInitialized = async (borrowersByCToken) => {
 	let res = {}
 	let batchSize = 75;
-	console.log(`Calling compBorrowerIndex for borrowers in batches of ${batchSize}...\n`);
+	console.log(`Calling vtxBorrowerIndex for borrowers in batches of ${batchSize}...\n`);
 	for(let cTokenAddr of Object.keys(borrowersByCToken)) {
-		let speed = await call(Comptroller, 'compSpeeds', [cTokenAddr]);
+		let speed = await call(Comptroller, 'vtxSpeeds', [cTokenAddr]);
 		if (Number(speed) != 0){
 			for (let borrowerChunk of getChunks(borrowersByCToken[cTokenAddr], batchSize)) {
 				try {
 					let indices = await Promise.all(borrowerChunk.map(
 						async(borrower) => {
-							return await call(Comptroller, 'compBorrowerIndex',[cTokenAddr, borrower])
+							return await call(Comptroller, 'vtxBorrowerIndex',[cTokenAddr, borrower])
 					}));
 					let uninitialized = borrowerChunk.filter((borrower, i) => Number(indices[i]) == 0);
 					res[cTokenAddr] = res[cTokenAddr] ? res[cTokenAddr].concat(uninitialized) : uninitialized;

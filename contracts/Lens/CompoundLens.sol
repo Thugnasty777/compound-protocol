@@ -14,7 +14,7 @@ interface ComptrollerLensInterface {
     function getAccountLiquidity(address) external view returns (uint, uint, uint);
     function getAssetsIn(address) external view returns (CToken[] memory);
     function claimVtx(address) external;
-    function compAccrued(address) external view returns (uint);
+    function vtxAccrued(address) external view returns (uint);
 }
 
 contract CompoundLens {
@@ -254,36 +254,36 @@ contract CompoundLens {
         return res;
     }
 
-    struct CompBalanceMetadata {
+    struct VtxBalanceMetadata {
         uint balance;
         uint votes;
         address delegate;
     }
 
-    function getCompBalanceMetadata(Vtx vtx, address account) external view returns (CompBalanceMetadata memory) {
-        return CompBalanceMetadata({
+    function getVtxBalanceMetadata(Vtx vtx, address account) external view returns (VtxBalanceMetadata memory) {
+        return VtxBalanceMetadata({
             balance: vtx.balanceOf(account),
             votes: uint256(vtx.getCurrentVotes(account)),
             delegate: vtx.delegates(account)
         });
     }
 
-    struct CompBalanceMetadataExt {
+    struct VtxBalanceMetadataExt {
         uint balance;
         uint votes;
         address delegate;
         uint allocated;
     }
 
-    function getCompBalanceMetadataExt(Vtx vtx, ComptrollerLensInterface comptroller, address account) external returns (CompBalanceMetadataExt memory) {
+    function getVtxBalanceMetadataExt(Vtx vtx, ComptrollerLensInterface comptroller, address account) external returns (VtxBalanceMetadataExt memory) {
         uint balance = vtx.balanceOf(account);
         comptroller.claimVtx(account);
         uint newBalance = vtx.balanceOf(account);
-        uint accrued = comptroller.compAccrued(account);
-        uint total = add(accrued, newBalance, "sum comp total");
+        uint accrued = comptroller.vtxAccrued(account);
+        uint total = add(accrued, newBalance, "sum vtx total");
         uint allocated = sub(total, balance, "sub allocated");
 
-        return CompBalanceMetadataExt({
+        return VtxBalanceMetadataExt({
             balance: balance,
             votes: uint256(vtx.getCurrentVotes(account)),
             delegate: vtx.delegates(account),
@@ -291,15 +291,15 @@ contract CompoundLens {
         });
     }
 
-    struct CompVotes {
+    struct VtxVotes {
         uint blockNumber;
         uint votes;
     }
 
-    function getCompVotes(Vtx vtx, address account, uint32[] calldata blockNumbers) external view returns (CompVotes[] memory) {
-        CompVotes[] memory res = new CompVotes[](blockNumbers.length);
+    function getVtxVotes(Vtx vtx, address account, uint32[] calldata blockNumbers) external view returns (VtxVotes[] memory) {
+        VtxVotes[] memory res = new VtxVotes[](blockNumbers.length);
         for (uint i = 0; i < blockNumbers.length; i++) {
-            res[i] = CompVotes({
+            res[i] = VtxVotes({
                 blockNumber: uint256(blockNumbers[i]),
                 votes: uint256(vtx.getPriorVotes(account, blockNumbers[i]))
             });

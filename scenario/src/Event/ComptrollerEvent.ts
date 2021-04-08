@@ -201,19 +201,19 @@ async function sendAny(world: World, from:string, comptroller: Comptroller, sign
 }
 
 async function addCompMarkets(world: World, from: string, comptroller: Comptroller, cTokens: CToken[]): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._addCompMarkets(cTokens.map(c => c._address)), from, ComptrollerErrorReporter);
+  let invokation = await invoke(world, comptroller.methods._addVtxMarkets(cTokens.map(c => c._address)), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Added COMP markets ${cTokens.map(c => c.name)}`,
+    `Added VTX markets ${cTokens.map(c => c.name)}`,
     invokation
   );
 
   return world;
 }
 
-async function dropCompMarket(world: World, from: string, comptroller: Comptroller, cToken: CToken): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._dropCompMarket(cToken._address), from, ComptrollerErrorReporter);
+async function dropVtxMarket(world: World, from: string, comptroller: Comptroller, cToken: CToken): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._dropVtxMarket(cToken._address), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
@@ -224,12 +224,12 @@ async function dropCompMarket(world: World, from: string, comptroller: Comptroll
   return world;
 }
 
-async function refreshCompSpeeds(world: World, from: string, comptroller: Comptroller): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods.refreshCompSpeeds(), from, ComptrollerErrorReporter);
+async function refreshVtxSpeeds(world: World, from: string, comptroller: Comptroller): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods.refreshVtxSpeeds(), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Refreshed COMP speeds`,
+    `Refreshed VTX speeds`,
     invokation
   );
 
@@ -686,7 +686,7 @@ export function comptrollerCommands() {
     new Command<{comptroller: Comptroller, signature: StringV, callArgs: StringV[]}>(`
       #### Send
       * Comptroller Send functionSignature:<String> callArgs[] - Sends any transaction to comptroller
-      * E.g: Comptroller Send "setCompAddress(address)" (Address COMP)
+      * E.g: Comptroller Send "setVtxAddress(address)" (Address VTX)
       `,
       "Send",
       [
@@ -710,30 +710,30 @@ export function comptrollerCommands() {
       (world, from, {comptroller, cTokens}) => addCompMarkets(world, from, comptroller, cTokens)
      ),
     new Command<{comptroller: Comptroller, cToken: CToken}>(`
-      #### DropCompMarket
+      #### DropVtxMarket
 
-      * "Comptroller DropCompMarket <Address>" - Makes a market COMP
-      * E.g. "Comptroller DropCompMarket cZRX
+      * "Comptroller DropVtxMarket <Address>" - Makes a market VTX
+      * E.g. "Comptroller DropVtxMarket cZRX
       `,
-      "DropCompMarket",
+      "DropVtxMarket",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
         new Arg("cToken", getCTokenV)
       ],
-      (world, from, {comptroller, cToken}) => dropCompMarket(world, from, comptroller, cToken)
+      (world, from, {comptroller, cToken}) => dropVtxMarket(world, from, comptroller, cToken)
      ),
 
     new Command<{comptroller: Comptroller}>(`
-      #### RefreshCompSpeeds
+      #### RefreshVtxSpeeds
 
-      * "Comptroller RefreshCompSpeeds" - Recalculates all the COMP market speeds
-      * E.g. "Comptroller RefreshCompSpeeds
+      * "Comptroller RefreshVtxSpeeds" - Recalculates all the VTX market speeds
+      * E.g. "Comptroller RefreshVtxSpeeds
       `,
-      "RefreshCompSpeeds",
+      "RefreshVtxSpeeds",
       [
         new Arg("comptroller", getComptroller, {implicit: true})
       ],
-      (world, from, {comptroller}) => refreshCompSpeeds(world, from, comptroller)
+      (world, from, {comptroller}) => refreshVtxSpeeds(world, from, comptroller)
     ),
     new Command<{comptroller: Comptroller, holder: AddressV}>(`
       #### ClaimVtx

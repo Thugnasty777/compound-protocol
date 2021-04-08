@@ -4,7 +4,7 @@ import "../../contracts/ComptrollerG4.sol";
 
 contract ComptrollerScenarioG4 is ComptrollerG4 {
     uint public blockNumber;
-    address public compAddress;
+    address public vtxAddress;
 
     constructor() ComptrollerG4() public {}
 

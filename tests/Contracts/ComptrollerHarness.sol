@@ -4,19 +4,19 @@ import "../../contracts/Comptroller.sol";
 import "../../contracts/PriceOracle.sol";
 
 contract ComptrollerKovan is Comptroller {
-  function getCompAddress() public view returns (address) {
+  function getVtxAddress() public view returns (address) {
     return 0x61460874a7196d6a22D1eE4922473664b3E95270;
   }
 }
 
 contract ComptrollerRopsten is Comptroller {
-  function getCompAddress() public view returns (address) {
+  function getVtxAddress() public view returns (address) {
     return 0x1Fe16De955718CFAb7A44605458AB023838C2793;
   }
 }
 
 contract ComptrollerHarness is Comptroller {
-    address compAddress;
+    address vtxAddress;
     uint public blockNumber;
 
     constructor() Comptroller() public {}
@@ -25,54 +25,54 @@ contract ComptrollerHarness is Comptroller {
         pauseGuardian = harnessedPauseGuardian;
     }
 
-    function setCompSupplyState(address cToken, uint224 index, uint32 blockNumber_) public {
-        compSupplyState[cToken].index = index;
-        compSupplyState[cToken].block = blockNumber_;
+    function setVtxSupplyState(address cToken, uint224 index, uint32 blockNumber_) public {
+        vtxSupplyState[cToken].index = index;
+        vtxSupplyState[cToken].block = blockNumber_;
     }
 
-    function setCompBorrowState(address cToken, uint224 index, uint32 blockNumber_) public {
-        compBorrowState[cToken].index = index;
-        compBorrowState[cToken].block = blockNumber_;
+    function setVtxBorrowState(address cToken, uint224 index, uint32 blockNumber_) public {
+        vtxBorrowState[cToken].index = index;
+        vtxBorrowState[cToken].block = blockNumber_;
     }
 
-    function setCompAccrued(address user, uint userAccrued) public {
-        compAccrued[user] = userAccrued;
+    function setVtxAccrued(address user, uint userAccrued) public {
+        vtxAccrued[user] = userAccrued;
     }
 
-    function setCompAddress(address compAddress_) public {
-        compAddress = compAddress_;
+    function setVtxAddress(address vtxAddress_) public {
+        vtxAddress = vtxAddress_;
     }
 
-    function getCompAddress() public view returns (address) {
-        return compAddress;
-    }
-
-    /**
-     * @notice Set the amount of COMP distributed per block
-     * @param compRate_ The amount of COMP wei per block to distribute
-     */
-    function harnessSetCompRate(uint compRate_) public {
-        vtxRate = compRate_;
+    function getVtxAddress() public view returns (address) {
+        return vtxAddress;
     }
 
     /**
-     * @notice Recalculate and update COMP speeds for all COMP markets
+     * @notice Set the amount of VTX distributed per block
+     * @param vtxRate_ The amount of VTX wei per block to distribute
      */
-    function harnessRefreshCompSpeeds() public {
+    function harnessSetVtxRate(uint vtxRate_) public {
+        vtxRate = vtxRate_;
+    }
+
+    /**
+     * @notice Recalculate and update VTX speeds for all VTX markets
+     */
+    function harnessRefreshVtxSpeeds() public {
         CToken[] memory allMarkets_ = allMarkets;
 
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets_[i];
             Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-            updateCompSupplyIndex(address(cToken));
-            updateCompBorrowIndex(address(cToken), borrowIndex);
+            updateVtxSupplyIndex(address(cToken));
+            updateVtxBorrowIndex(address(cToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
         Exp[] memory utilities = new Exp[](allMarkets_.length);
         for (uint i = 0; i < allMarkets_.length; i++) {
             CToken cToken = allMarkets_[i];
-            if (compSpeeds[address(cToken)] > 0) {
+            if (vtxSpeeds[address(cToken)] > 0) {
                 Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(cToken)});
                 Exp memory utility = mul_(assetPrice, cToken.totalBorrows());
                 utilities[i] = utility;
@@ -87,41 +87,41 @@ contract ComptrollerHarness is Comptroller {
         }
     }
 
-    function setCompBorrowerIndex(address cToken, address borrower, uint index) public {
-        compBorrowerIndex[cToken][borrower] = index;
+    function setVtxBorrowerIndex(address cToken, address borrower, uint index) public {
+        vtxBorrowerIndex[cToken][borrower] = index;
     }
 
-    function setCompSupplierIndex(address cToken, address supplier, uint index) public {
-        compSupplierIndex[cToken][supplier] = index;
+    function setVtxSupplierIndex(address cToken, address supplier, uint index) public {
+        vtxSupplierIndex[cToken][supplier] = index;
     }
 
     function harnessDistributeAllBorrowerComp(address cToken, address borrower, uint marketBorrowIndexMantissa) public {
-        distributeBorrowerComp(cToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
-        compAccrued[borrower] = grantVtxInternal(borrower, compAccrued[borrower]);
+        distributeBorrowerVtx(cToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
+        vtxAccrued[borrower] = grantVtxInternal(borrower, vtxAccrued[borrower]);
     }
 
     function harnessDistributeAllSupplierComp(address cToken, address supplier) public {
-        distributeSupplierComp(cToken, supplier);
-        compAccrued[supplier] = grantVtxInternal(supplier, compAccrued[supplier]);
+        distributeSupplierVtx(cToken, supplier);
+        vtxAccrued[supplier] = grantVtxInternal(supplier, vtxAccrued[supplier]);
     }
 
-    function harnessUpdateCompBorrowIndex(address cToken, uint marketBorrowIndexMantissa) public {
-        updateCompBorrowIndex(cToken, Exp({mantissa: marketBorrowIndexMantissa}));
+    function harnessUpdateVtxBorrowIndex(address cToken, uint marketBorrowIndexMantissa) public {
+        updateVtxBorrowIndex(cToken, Exp({mantissa: marketBorrowIndexMantissa}));
     }
 
-    function harnessUpdateCompSupplyIndex(address cToken) public {
-        updateCompSupplyIndex(cToken);
+    function harnessUpdateVtxSupplyIndex(address cToken) public {
+        updateVtxSupplyIndex(cToken);
     }
 
-    function harnessDistributeBorrowerComp(address cToken, address borrower, uint marketBorrowIndexMantissa) public {
-        distributeBorrowerComp(cToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
+    function harnessDistributeBorrowerVtx(address cToken, address borrower, uint marketBorrowIndexMantissa) public {
+        distributeBorrowerVtx(cToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
     }
 
-    function harnessDistributeSupplierComp(address cToken, address supplier) public {
-        distributeSupplierComp(cToken, supplier);
+    function harnessDistributeSupplierVtx(address cToken, address supplier) public {
+        distributeSupplierVtx(cToken, supplier);
     }
 
-    function harnessTransferComp(address user, uint userAccrued, uint threshold) public returns (uint) {
+    function harnessTransferVtx(address user, uint userAccrued, uint threshold) public returns (uint) {
         if (userAccrued > 0 && userAccrued >= threshold) {
             return grantVtxInternal(user, userAccrued);
         }
@@ -130,7 +130,7 @@ contract ComptrollerHarness is Comptroller {
 
     function harnessAddCompMarkets(address[] memory cTokens) public {
         for (uint i = 0; i < cTokens.length; i++) {
-            // temporarily set compSpeed to 1 (will be fixed by `harnessRefreshCompSpeeds`)
+            // temporarily set compSpeed to 1 (will be fixed by `harnessRefreshVtxSpeeds`)
             setVtxSpeedInternal(CToken(cTokens[i]), 1);
         }
     }
@@ -148,11 +148,11 @@ contract ComptrollerHarness is Comptroller {
         return blockNumber;
     }
 
-    function getCompMarkets() public view returns (address[] memory) {
+    function getVtxMarkets() public view returns (address[] memory) {
         uint m = allMarkets.length;
         uint n = 0;
         for (uint i = 0; i < m; i++) {
-            if (compSpeeds[address(allMarkets[i])] > 0) {
+            if (vtxSpeeds[address(allMarkets[i])] > 0) {
                 n++;
             }
         }
@@ -160,7 +160,7 @@ contract ComptrollerHarness is Comptroller {
         address[] memory compMarkets = new address[](n);
         uint k = 0;
         for (uint i = 0; i < m; i++) {
-            if (compSpeeds[address(allMarkets[i])] > 0) {
+            if (vtxSpeeds[address(allMarkets[i])] > 0) {
                 compMarkets[k++] = address(allMarkets[i]);
             }
         }
