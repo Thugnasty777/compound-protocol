@@ -29,43 +29,43 @@ contract ComptrollerScenario is Comptroller {
         return blockNumber;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(VToken vToken) public view returns (uint) {
+        return accountAssets[address(vToken)].length;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(VToken vToken) public {
+        markets[address(vToken)].isListed = false;
     }
 
     /**
      * @notice Recalculate and update VTX speeds for all VTX markets
      */
     function refreshVtxSpeeds() public {
-        CToken[] memory allMarkets_ = allMarkets;
+        VToken[] memory allMarkets_ = allMarkets;
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets_[i];
-            Exp memory borrowIndex = Exp({mantissa: cToken.borrowIndex()});
-            updateVtxSupplyIndex(address(cToken));
-            updateVtxBorrowIndex(address(cToken), borrowIndex);
+            VToken vToken = allMarkets_[i];
+            Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
+            updateVtxSupplyIndex(address(vToken));
+            updateVtxBorrowIndex(address(vToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
         Exp[] memory utilities = new Exp[](allMarkets_.length);
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets_[i];
-            if (vtxSpeeds[address(cToken)] > 0) {
-                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(cToken)});
-                Exp memory utility = mul_(assetPrice, cToken.totalBorrows());
+            VToken vToken = allMarkets_[i];
+            if (vtxSpeeds[address(vToken)] > 0) {
+                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(vToken)});
+                Exp memory utility = mul_(assetPrice, vToken.totalBorrows());
                 utilities[i] = utility;
                 totalUtility = add_(totalUtility, utility);
             }
         }
 
         for (uint i = 0; i < allMarkets_.length; i++) {
-            CToken cToken = allMarkets[i];
+            VToken vToken = allMarkets[i];
             uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
-            setVtxSpeedInternal(cToken, newSpeed);
+            setVtxSpeedInternal(vToken, newSpeed);
         }
     }
 }

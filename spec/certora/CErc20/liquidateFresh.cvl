@@ -28,7 +28,7 @@ description "Break liquidate" {
       - no effect on exchange rate
       - self-liquidate has no effect
       |---------------------+--------+------------+----------+-------|
-      |                     | CToken | Liquidator | Borrower | Other |
+      |                     | VToken | Liquidator | Borrower | Other |
       |---------------------+--------+------------+----------+-------|
       | cash                |   +A   |     -A     |     0    |   0   |
       | borrows             |   -A   |      0     |    -A    |   0   |
@@ -46,22 +46,22 @@ description "Break liquidate" {
     // borrowed
     uint256 exchangeRatePre = sinvoke exchangeRateStored(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
     uint256 liquidatorCashPre = sinvoke getCashOf(e0, liquidator);
     uint256 borrowerCashPre = sinvoke getCashOf(e0, borrower);
     uint256 otherCashPre = sinvoke getCashOf(e0, other);
 
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
     uint256 liquidatorBorrowsPre = sinvoke borrowBalanceStored(e0, liquidator);
     uint256 borrowerBorrowsPre = sinvoke borrowBalanceStored(e0, borrower);
     uint256 otherBorrowsPre = sinvoke borrowBalanceStored(e0, other);
 
-    uint256 cTokenTokensPre = sinvoke totalSupply(e0);
+    uint256 vTokenTokensPre = sinvoke totalSupply(e0);
     uint256 liquidatorTokensPre = sinvoke balanceOf(e0, liquidator);
     uint256 borrowerTokensPre = sinvoke balanceOf(e0, borrower);
     uint256 otherTokensPre = sinvoke balanceOf(e0, other);
 
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
 
     // collateral
     uint256 collateralExchangeRatePre = sinvoke exchangeRateStoredInOther(e0);
@@ -84,7 +84,7 @@ description "Break liquidate" {
     uint256 collateralReservesPre = sinvoke totalReservesInOther(e0);
 
     // Just Do It
-    // Note: cTokenCollateral is linked via Compound.spclnk in order to support checking its balances
+    // Note: vTokenCollateral is linked via Compound.spclnk in order to support checking its balances
     //  not perfect since it only proves the balance sheet is safe for a particular token configuration
     require result == invoke liquidateBorrowFreshPub(e1, liquidator, borrower, repayAmount);
     bool liquidateBorrowFreshReverted = lastReverted;
@@ -94,22 +94,22 @@ description "Break liquidate" {
     // borrowed
     uint256 exchangeRatePost = sinvoke exchangeRateStored(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenCashPost = sinvoke getCash(e2);
     uint256 liquidatorCashPost = sinvoke getCashOf(e2, liquidator);
     uint256 borrowerCashPost = sinvoke getCashOf(e2, borrower);
     uint256 otherCashPost = sinvoke getCashOf(e2, other);
 
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
     uint256 liquidatorBorrowsPost = sinvoke borrowBalanceStored(e2, liquidator);
     uint256 borrowerBorrowsPost = sinvoke borrowBalanceStored(e2, borrower);
     uint256 otherBorrowsPost = sinvoke borrowBalanceStored(e2, other);
 
-    uint256 cTokenTokensPost = sinvoke totalSupply(e2);
+    uint256 vTokenTokensPost = sinvoke totalSupply(e2);
     uint256 liquidatorTokensPost = sinvoke balanceOf(e2, liquidator);
     uint256 borrowerTokensPost = sinvoke balanceOf(e2, borrower);
     uint256 otherTokensPost = sinvoke balanceOf(e2, other);
 
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
 
     // collateral
     uint256 collateralExchangeRatePost = sinvoke exchangeRateStoredInOther(e2);
@@ -134,10 +134,10 @@ description "Break liquidate" {
     // Measure
     bool staticBalance =
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (liquidatorCashPost == liquidatorCashPre) &&
         (liquidatorBorrowsPost == liquidatorBorrowsPre) &&
         (liquidatorTokensPost == liquidatorTokensPre) &&
@@ -166,10 +166,10 @@ description "Break liquidate" {
     bool dynamicBalance =
         (repayAmount != 0) &&
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre + repayAmount) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre - repayAmount) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre + repayAmount) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre - repayAmount) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (liquidatorCashPost == liquidatorCashPre - repayAmount) &&
         (liquidatorBorrowsPost == liquidatorBorrowsPre) &&
         (liquidatorTokensPost == liquidatorTokensPre) &&
@@ -219,7 +219,7 @@ description "Break seize" {
     /*
       - no effect on exchange rate
       |----------+--------+------------+----------+-------|
-      |          | CToken | Liquidator | Borrower | Other |
+      |          | VToken | Liquidator | Borrower | Other |
       |----------+--------+------------+----------+-------|
       | cash     |    0   |      0     |     0    |   0   |
       | borrows  |    0   |      0     |     0    |   0   |
@@ -232,22 +232,22 @@ description "Break seize" {
 
     uint256 exchangeRatePre = sinvoke exchangeRateStored(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
     uint256 liquidatorCashPre = sinvoke getCashOf(e0, liquidator);
     uint256 borrowerCashPre = sinvoke getCashOf(e0, borrower);
     uint256 otherCashPre = sinvoke getCashOf(e0, other);
 
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
     uint256 liquidatorBorrowsPre = sinvoke borrowBalanceStored(e0, liquidator);
     uint256 borrowerBorrowsPre = sinvoke borrowBalanceStored(e0, borrower);
     uint256 otherBorrowsPre = sinvoke borrowBalanceStored(e0, other);
 
-    uint256 cTokenTokensPre = sinvoke totalSupply(e0);
+    uint256 vTokenTokensPre = sinvoke totalSupply(e0);
     uint256 liquidatorTokensPre = sinvoke balanceOf(e0, liquidator);
     uint256 borrowerTokensPre = sinvoke balanceOf(e0, borrower);
     uint256 otherTokensPre = sinvoke balanceOf(e0, other);
 
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
 
     // Just Do It
     require result == invoke seize(e1, liquidator, borrower, seizeTokens);
@@ -257,30 +257,30 @@ description "Break seize" {
 
     uint256 exchangeRatePost = sinvoke exchangeRateStored(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenCashPost = sinvoke getCash(e2);
     uint256 liquidatorCashPost = sinvoke getCashOf(e2, liquidator);
     uint256 borrowerCashPost = sinvoke getCashOf(e2, borrower);
     uint256 otherCashPost = sinvoke getCashOf(e2, other);
 
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
     uint256 liquidatorBorrowsPost = sinvoke borrowBalanceStored(e2, liquidator);
     uint256 borrowerBorrowsPost = sinvoke borrowBalanceStored(e2, borrower);
     uint256 otherBorrowsPost = sinvoke borrowBalanceStored(e2, other);
 
-    uint256 cTokenTokensPost = sinvoke totalSupply(e2);
+    uint256 vTokenTokensPost = sinvoke totalSupply(e2);
     uint256 liquidatorTokensPost = sinvoke balanceOf(e2, liquidator);
     uint256 borrowerTokensPost = sinvoke balanceOf(e2, borrower);
     uint256 otherTokensPost = sinvoke balanceOf(e2, other);
 
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
 
     // Measure
     bool staticBalance =
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (liquidatorCashPost == liquidatorCashPre) &&
         (liquidatorBorrowsPost == liquidatorBorrowsPre) &&
         (liquidatorTokensPost == liquidatorTokensPre) &&
@@ -294,10 +294,10 @@ description "Break seize" {
     bool dynamicBalance =
         (seizeTokens != 0) &&
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (liquidatorCashPost == liquidatorCashPre) &&
         (liquidatorBorrowsPost == liquidatorBorrowsPre) &&
         (liquidatorTokensPost == liquidatorTokensPre + seizeTokens) &&

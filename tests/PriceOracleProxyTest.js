@@ -6,7 +6,7 @@ const {
 } = require('./Utils/Ethereum');
 
 const {
-  makeCToken,
+  makeVToken,
   makePriceOracle,
 } = require('./Utils/Vortex');
 
@@ -17,12 +17,12 @@ describe('PriceOracleProxy', () => {
 
   beforeEach(async () => {
     [root, ...accounts] = saddle.accounts;
-    cEth = await makeCToken({kind: "cether", comptrollerOpts: {kind: "v1-no-proxy"}, supportMarket: true});
-    cUsdc = await makeCToken({comptroller: cEth.comptroller, supportMarket: true});
-    cSai = await makeCToken({comptroller: cEth.comptroller, supportMarket: true});
-    cDai = await makeCToken({comptroller: cEth.comptroller, supportMarket: true});
-    cUsdt = await makeCToken({comptroller: cEth.comptroller, supportMarket: true});
-    cOther = await makeCToken({comptroller: cEth.comptroller, supportMarket: true});
+    cEth = await makeVToken({kind: "cether", comptrollerOpts: {kind: "v1-no-proxy"}, supportMarket: true});
+    cUsdc = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
+    cSai = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
+    cDai = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
+    cUsdt = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
+    cOther = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
 
     backingOracle = await makePriceOracle();
     oracle = await deploy('PriceOracleProxy',
@@ -76,16 +76,16 @@ describe('PriceOracleProxy', () => {
   });
 
   describe("getUnderlyingPrice", () => {
-    let setAndVerifyBackingPrice = async (cToken, price) => {
+    let setAndVerifyBackingPrice = async (vToken, price) => {
       await send(
         backingOracle,
         "setUnderlyingPrice",
-        [cToken._address, etherMantissa(price)]);
+        [vToken._address, etherMantissa(price)]);
 
       let backingOraclePrice = await call(
         backingOracle,
         "assetPrices",
-        [cToken.underlying._address]);
+        [vToken.underlying._address]);
 
       expect(Number(backingOraclePrice)).toEqual(price * 1e18);
     };
@@ -116,7 +116,7 @@ describe('PriceOracleProxy', () => {
     });
 
     it("returns 0 for token without a price", async () => {
-      let unlistedToken = await makeCToken({comptroller: cEth.comptroller});
+      let unlistedToken = await makeVToken({comptroller: cEth.comptroller});
 
       await readAndVerifyProxyPrice(unlistedToken, 0);
     });

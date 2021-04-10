@@ -396,14 +396,14 @@
             "contract": "FaucetToken"
         }
     },
-    "CTokenDelegate": {
+    "VTokenDelegate": {
         "undefined": {
             "address": "0xC8016288dB9dFE5a1cA2503879dCDE8807377186",
             "contract": "CErc20Delegate",
             "description": "Delegate CErc20Delegate"
         }
     },
-    "cTokens": {
+    "vTokens": {
         "cUSDC": {
             "name": "Compound USDC",
             "symbol": "cUSDC",

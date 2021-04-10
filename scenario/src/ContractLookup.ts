@@ -9,7 +9,7 @@ import { CErc20Delegate } from './Contract/CErc20Delegate';
 import { Vtx } from './Contract/Vtx';
 import { Comptroller } from './Contract/Comptroller';
 import { ComptrollerImpl } from './Contract/ComptrollerImpl';
-import { CToken } from './Contract/CToken';
+import { VToken } from './Contract/VToken';
 import { Governor } from './Contract/Governor';
 import { Erc20 } from './Contract/Erc20';
 import { InterestRateModel } from './Contract/InterestRateModel';
@@ -93,12 +93,12 @@ export async function getComptrollerImpl(world: World, comptrollerImplArg: Event
   return getWorldContract(world, [['Comptroller', mustString(comptrollerImplArg), 'address']]);
 }
 
-export function getCTokenAddress(world: World, cTokenArg: string): string {
-  return getContractDataString(world, [['cTokens', cTokenArg, 'address']]);
+export function getVTokenAddress(world: World, vTokenArg: string): string {
+  return getContractDataString(world, [['vTokens', vTokenArg, 'address']]);
 }
 
-export function getCTokenDelegateAddress(world: World, cTokenDelegateArg: string): string {
-  return getContractDataString(world, [['CTokenDelegate', cTokenDelegateArg, 'address']]);
+export function getVTokenDelegateAddress(world: World, vTokenDelegateArg: string): string {
+  return getContractDataString(world, [['VTokenDelegate', vTokenDelegateArg, 'address']]);
 }
 
 export function getErc20Address(world: World, erc20Arg: string): string {
@@ -175,24 +175,24 @@ export async function getErc20Data(
   return [contract, erc20Arg, <Map<string, string>>(<any>data)];
 }
 
-export async function getCTokenData(
+export async function getVTokenData(
   world: World,
-  cTokenArg: string
-): Promise<[CToken, string, Map<string, string>]> {
-  let contract = getWorldContract<CToken>(world, [['cTokens', cTokenArg, 'address']]);
-  let data = getContractData(world, [['CTokens', cTokenArg]]);
+  vTokenArg: string
+): Promise<[VToken, string, Map<string, string>]> {
+  let contract = getWorldContract<VToken>(world, [['vTokens', vTokenArg, 'address']]);
+  let data = getContractData(world, [['VTokens', vTokenArg]]);
 
-  return [contract, cTokenArg, <Map<string, string>>(<any>data)];
+  return [contract, vTokenArg, <Map<string, string>>(<any>data)];
 }
 
-export async function getCTokenDelegateData(
+export async function getVTokenDelegateData(
   world: World,
-  cTokenDelegateArg: string
+  vTokenDelegateArg: string
 ): Promise<[CErc20Delegate, string, Map<string, string>]> {
-  let contract = getWorldContract<CErc20Delegate>(world, [['CTokenDelegate', cTokenDelegateArg, 'address']]);
-  let data = getContractData(world, [['CTokenDelegate', cTokenDelegateArg]]);
+  let contract = getWorldContract<CErc20Delegate>(world, [['VTokenDelegate', vTokenDelegateArg, 'address']]);
+  let data = getContractData(world, [['VTokenDelegate', vTokenDelegateArg]]);
 
-  return [contract, cTokenDelegateArg, <Map<string, string>>(<any>data)];
+  return [contract, vTokenDelegateArg, <Map<string, string>>(<any>data)];
 }
 
 export async function getComptrollerImplData(
@@ -228,8 +228,8 @@ export function getAddress(world: World, addressArg: string): string {
 
   return getContractDataString(world, [
     ['Contracts', addressArg],
-    ['cTokens', addressArg, 'address'],
-    ['CTokenDelegate', addressArg, 'address'],
+    ['vTokens', addressArg, 'address'],
+    ['VTokenDelegate', addressArg, 'address'],
     ['Tokens', addressArg, 'address'],
     ['Comptroller', addressArg, 'address']
   ]);

@@ -3,7 +3,7 @@ import {addAction, describeUser, World} from '../World';
 import {decodeCall, getPastEvents} from '../Contract';
 import {Comptroller} from '../Contract/Comptroller';
 import {ComptrollerImpl} from '../Contract/ComptrollerImpl';
-import {CToken} from '../Contract/CToken';
+import {VToken} from '../Contract/VToken';
 import {invoke} from '../Invokation';
 import {
   getAddressV,
@@ -27,7 +27,7 @@ import {buildComptrollerImpl} from '../Builder/ComptrollerImplBuilder';
 import {ComptrollerErrorReporter} from '../ErrorReporter';
 import {getComptroller, getComptrollerImpl} from '../ContractLookup';
 import {getLiquidity} from '../Value/ComptrollerValue';
-import {getCTokenV} from '../Value/CTokenValue';
+import {getVTokenV} from '../Value/VTokenValue';
 import {encodedNumber} from '../Encoding';
 import {encodeABI, rawValues} from "../Utils";
 
@@ -88,30 +88,30 @@ async function setLiquidationIncentive(world: World, from: string, comptroller: 
   return world;
 }
 
-async function supportMarket(world: World, from: string, comptroller: Comptroller, cToken: CToken): Promise<World> {
+async function supportMarket(world: World, from: string, comptroller: Comptroller, vToken: VToken): Promise<World> {
   if (world.dryRun) {
     // Skip this specifically on dry runs since it's likely to crash due to a number of reasons
-    world.printer.printLine(`Dry run: Supporting market  \`${cToken._address}\``);
+    world.printer.printLine(`Dry run: Supporting market  \`${vToken._address}\``);
     return world;
   }
 
-  let invokation = await invoke(world, comptroller.methods._supportMarket(cToken._address), from, ComptrollerErrorReporter);
+  let invokation = await invoke(world, comptroller.methods._supportMarket(vToken._address), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Supported market ${cToken.name}`,
+    `Supported market ${vToken.name}`,
     invokation
   );
 
   return world;
 }
 
-async function unlistMarket(world: World, from: string, comptroller: Comptroller, cToken: CToken): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods.unlist(cToken._address), from, ComptrollerErrorReporter);
+async function unlistMarket(world: World, from: string, comptroller: Comptroller, vToken: VToken): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods.unlist(vToken._address), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Unlisted market ${cToken.name}`,
+    `Unlisted market ${vToken.name}`,
     invokation
   );
 
@@ -154,12 +154,12 @@ async function setPriceOracle(world: World, from: string, comptroller: Comptroll
   return world;
 }
 
-async function setCollateralFactor(world: World, from: string, comptroller: Comptroller, cToken: CToken, collateralFactor: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setCollateralFactor(cToken._address, collateralFactor.encode()), from, ComptrollerErrorReporter);
+async function setCollateralFactor(world: World, from: string, comptroller: Comptroller, vToken: VToken, collateralFactor: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setCollateralFactor(vToken._address, collateralFactor.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Set collateral factor for ${cToken.name} to ${collateralFactor.show()}`,
+    `Set collateral factor for ${vToken.name} to ${collateralFactor.show()}`,
     invokation
   );
 
@@ -200,24 +200,24 @@ async function sendAny(world: World, from:string, comptroller: Comptroller, sign
   return world;
 }
 
-async function addVtxMarkets(world: World, from: string, comptroller: Comptroller, cTokens: CToken[]): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._addVtxMarkets(cTokens.map(c => c._address)), from, ComptrollerErrorReporter);
+async function addVtxMarkets(world: World, from: string, comptroller: Comptroller, vTokens: VToken[]): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._addVtxMarkets(vTokens.map(c => c._address)), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Added VTX markets ${cTokens.map(c => c.name)}`,
+    `Added VTX markets ${vTokens.map(c => c.name)}`,
     invokation
   );
 
   return world;
 }
 
-async function dropVtxMarket(world: World, from: string, comptroller: Comptroller, cToken: CToken): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._dropVtxMarket(cToken._address), from, ComptrollerErrorReporter);
+async function dropVtxMarket(world: World, from: string, comptroller: Comptroller, vToken: VToken): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._dropVtxMarket(vToken._address), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Drop VTX market ${cToken.name}`,
+    `Drop VTX market ${vToken.name}`,
     invokation
   );
 
@@ -284,12 +284,12 @@ async function setVtxRate(world: World, from: string, comptroller: Comptroller, 
   return world;
 }
 
-async function setVtxSpeed(world: World, from: string, comptroller: Comptroller, cToken: CToken, speed: NumberV): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setVtxSpeed(cToken._address, speed.encode()), from, ComptrollerErrorReporter);
+async function setVtxSpeed(world: World, from: string, comptroller: Comptroller, vToken: VToken, speed: NumberV): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setVtxSpeed(vToken._address, speed.encode()), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Vtx speed for market ${cToken._address} set to ${speed.show()}`,
+    `Vtx speed for market ${vToken._address} set to ${speed.show()}`,
     invokation
   );
 
@@ -385,7 +385,7 @@ async function setGuardianPaused(world: World, from: string, comptroller: Comptr
   return world;
 }
 
-async function setGuardianMarketPaused(world: World, from: string, comptroller: Comptroller, cToken: CToken, action: string, state: boolean): Promise<World> {
+async function setGuardianMarketPaused(world: World, from: string, comptroller: Comptroller, vToken: VToken, action: string, state: boolean): Promise<World> {
   let fun;
   switch(action){
     case "Mint":
@@ -395,7 +395,7 @@ async function setGuardianMarketPaused(world: World, from: string, comptroller: 
       fun = comptroller.methods._setBorrowPaused
       break;
   }
-  let invokation = await invoke(world, fun(cToken._address, state), from, ComptrollerErrorReporter);
+  let invokation = await invoke(world, fun(vToken._address, state), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
@@ -406,12 +406,12 @@ async function setGuardianMarketPaused(world: World, from: string, comptroller: 
   return world;
 }
 
-async function setMarketBorrowCaps(world: World, from: string, comptroller: Comptroller, cTokens: CToken[], borrowCaps: NumberV[]): Promise<World> {
-  let invokation = await invoke(world, comptroller.methods._setMarketBorrowCaps(cTokens.map(c => c._address), borrowCaps.map(c => c.encode())), from, ComptrollerErrorReporter);
+async function setMarketBorrowCaps(world: World, from: string, comptroller: Comptroller, vTokens: VToken[], borrowCaps: NumberV[]): Promise<World> {
+  let invokation = await invoke(world, comptroller.methods._setMarketBorrowCaps(vTokens.map(c => c._address), borrowCaps.map(c => c.encode())), from, ComptrollerErrorReporter);
 
   world = addAction(
     world,
-    `Borrow caps on ${cTokens} set to ${borrowCaps}`,
+    `Borrow caps on ${vTokens} set to ${borrowCaps}`,
     invokation
   );
 
@@ -445,7 +445,7 @@ export function comptrollerCommands() {
     new Command<{comptroller: Comptroller, action: StringV, isPaused: BoolV}>(`
         #### SetPaused
 
-        * "Comptroller SetPaused <Action> <Bool>" - Pauses or unpaused given cToken function
+        * "Comptroller SetPaused <Action> <Bool>" - Pauses or unpaused given vToken function
           * E.g. "Comptroller SetPaused "Mint" True"
       `,
       "SetPaused",
@@ -456,57 +456,57 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, action, isPaused}) => setPaused(world, from, comptroller, action.val, isPaused.val)
     ),
-    new Command<{comptroller: Comptroller, cToken: CToken}>(`
+    new Command<{comptroller: Comptroller, vToken: VToken}>(`
         #### SupportMarket
 
-        * "Comptroller SupportMarket <CToken>" - Adds support in the Comptroller for the given cToken
+        * "Comptroller SupportMarket <VToken>" - Adds support in the Comptroller for the given vToken
           * E.g. "Comptroller SupportMarket cZRX"
       `,
       "SupportMarket",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, from, {comptroller, cToken}) => supportMarket(world, from, comptroller, cToken)
+      (world, from, {comptroller, vToken}) => supportMarket(world, from, comptroller, vToken)
     ),
-    new Command<{comptroller: Comptroller, cToken: CToken}>(`
+    new Command<{comptroller: Comptroller, vToken: VToken}>(`
         #### UnList
 
-        * "Comptroller UnList <CToken>" - Mock unlists a given market in tests
+        * "Comptroller UnList <VToken>" - Mock unlists a given market in tests
           * E.g. "Comptroller UnList cZRX"
       `,
       "UnList",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, from, {comptroller, cToken}) => unlistMarket(world, from, comptroller, cToken)
+      (world, from, {comptroller, vToken}) => unlistMarket(world, from, comptroller, vToken)
     ),
-    new Command<{comptroller: Comptroller, cTokens: CToken[]}>(`
+    new Command<{comptroller: Comptroller, vTokens: VToken[]}>(`
         #### EnterMarkets
 
-        * "Comptroller EnterMarkets (<CToken> ...)" - User enters the given markets
+        * "Comptroller EnterMarkets (<VToken> ...)" - User enters the given markets
           * E.g. "Comptroller EnterMarkets (cZRX cETH)"
       `,
       "EnterMarkets",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cTokens", getCTokenV, {mapped: true})
+        new Arg("vTokens", getVTokenV, {mapped: true})
       ],
-      (world, from, {comptroller, cTokens}) => enterMarkets(world, from, comptroller, cTokens.map((c) => c._address))
+      (world, from, {comptroller, vTokens}) => enterMarkets(world, from, comptroller, vTokens.map((c) => c._address))
     ),
-    new Command<{comptroller: Comptroller, cToken: CToken}>(`
+    new Command<{comptroller: Comptroller, vToken: VToken}>(`
         #### ExitMarket
 
-        * "Comptroller ExitMarket <CToken>" - User exits the given markets
+        * "Comptroller ExitMarket <VToken>" - User exits the given markets
           * E.g. "Comptroller ExitMarket cZRX"
       `,
       "ExitMarket",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, from, {comptroller, cToken}) => exitMarket(world, from, comptroller, cToken._address)
+      (world, from, {comptroller, vToken}) => exitMarket(world, from, comptroller, vToken._address)
     ),
     new Command<{comptroller: Comptroller, maxAssets: NumberV}>(`
         #### SetMaxAssets
@@ -547,19 +547,19 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, priceOracle}) => setPriceOracle(world, from, comptroller, priceOracle.val)
     ),
-    new Command<{comptroller: Comptroller, cToken: CToken, collateralFactor: NumberV}>(`
+    new Command<{comptroller: Comptroller, vToken: VToken, collateralFactor: NumberV}>(`
         #### SetCollateralFactor
 
-        * "Comptroller SetCollateralFactor <CToken> <Number>" - Sets the collateral factor for given cToken to number
+        * "Comptroller SetCollateralFactor <VToken> <Number>" - Sets the collateral factor for given vToken to number
           * E.g. "Comptroller SetCollateralFactor cZRX 0.1"
       `,
       "SetCollateralFactor",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV),
+        new Arg("vToken", getVTokenV),
         new Arg("collateralFactor", getExpNumberV)
       ],
-      (world, from, {comptroller, cToken, collateralFactor}) => setCollateralFactor(world, from, comptroller, cToken, collateralFactor)
+      (world, from, {comptroller, vToken, collateralFactor}) => setCollateralFactor(world, from, comptroller, vToken, collateralFactor)
     ),
     new Command<{comptroller: Comptroller, closeFactor: NumberV}>(`
         #### SetCloseFactor
@@ -616,7 +616,7 @@ export function comptrollerCommands() {
     new Command<{comptroller: Comptroller, action: StringV, isPaused: BoolV}>(`
         #### SetGuardianPaused
 
-        * "Comptroller SetGuardianPaused <Action> <Bool>" - Pauses or unpaused given cToken function
+        * "Comptroller SetGuardianPaused <Action> <Bool>" - Pauses or unpaused given vToken function
         * E.g. "Comptroller SetGuardianPaused "Transfer" True"
         `,
         "SetGuardianPaused",
@@ -628,26 +628,26 @@ export function comptrollerCommands() {
         (world, from, {comptroller, action, isPaused}) => setGuardianPaused(world, from, comptroller, action.val, isPaused.val)
     ),
 
-    new Command<{comptroller: Comptroller, cToken: CToken, action: StringV, isPaused: BoolV}>(`
+    new Command<{comptroller: Comptroller, vToken: VToken, action: StringV, isPaused: BoolV}>(`
         #### SetGuardianMarketPaused
 
-        * "Comptroller SetGuardianMarketPaused <CToken> <Action> <Bool>" - Pauses or unpaused given cToken function
+        * "Comptroller SetGuardianMarketPaused <VToken> <Action> <Bool>" - Pauses or unpaused given vToken function
         * E.g. "Comptroller SetGuardianMarketPaused cREP "Mint" True"
         `,
         "SetGuardianMarketPaused",
         [
           new Arg("comptroller", getComptroller, {implicit: true}),
-          new Arg("cToken", getCTokenV),
+          new Arg("vToken", getVTokenV),
           new Arg("action", getStringV),
           new Arg("isPaused", getBoolV)
         ],
-        (world, from, {comptroller, cToken, action, isPaused}) => setGuardianMarketPaused(world, from, comptroller, cToken, action.val, isPaused.val)
+        (world, from, {comptroller, vToken, action, isPaused}) => setGuardianMarketPaused(world, from, comptroller, vToken, action.val, isPaused.val)
     ),
 
     new Command<{comptroller: Comptroller, blocks: NumberV, _keyword: StringV}>(`
         #### FastForward
 
-        * "FastForward n:<Number> Blocks" - Moves the block number forward "n" blocks. Note: in "CTokenScenario" and "ComptrollerScenario" the current block number is mocked (starting at 100000). This is the only way for the protocol to see a higher block number (for accruing interest).
+        * "FastForward n:<Number> Blocks" - Moves the block number forward "n" blocks. Note: in "VTokenScenario" and "ComptrollerScenario" the current block number is mocked (starting at 100000). This is the only way for the protocol to see a higher block number (for accruing interest).
           * E.g. "Comptroller FastForward 5 Blocks" - Move block number forward 5 blocks.
       `,
       "FastForward",
@@ -696,7 +696,7 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, signature, callArgs}) => sendAny(world, from, comptroller, signature.val, rawValues(callArgs))
     ),
-    new Command<{comptroller: Comptroller, cTokens: CToken[]}>(`
+    new Command<{comptroller: Comptroller, vTokens: VToken[]}>(`
       #### AddVtxMarkets
 
       * "Comptroller AddVtxMarkets (<Address> ...)" - Makes a market VTX-enabled
@@ -705,11 +705,11 @@ export function comptrollerCommands() {
       "AddVtxMarkets",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cTokens", getCTokenV, {mapped: true})
+        new Arg("vTokens", getVTokenV, {mapped: true})
       ],
-      (world, from, {comptroller, cTokens}) => addVtxMarkets(world, from, comptroller, cTokens)
+      (world, from, {comptroller, vTokens}) => addVtxMarkets(world, from, comptroller, vTokens)
      ),
-    new Command<{comptroller: Comptroller, cToken: CToken}>(`
+    new Command<{comptroller: Comptroller, vToken: VToken}>(`
       #### DropVtxMarket
 
       * "Comptroller DropVtxMarket <Address>" - Makes a market VTX
@@ -718,9 +718,9 @@ export function comptrollerCommands() {
       "DropVtxMarket",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, from, {comptroller, cToken}) => dropVtxMarket(world, from, comptroller, cToken)
+      (world, from, {comptroller, vToken}) => dropVtxMarket(world, from, comptroller, vToken)
      ),
 
     new Command<{comptroller: Comptroller}>(`
@@ -788,18 +788,18 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, rate}) => setVtxRate(world, from, comptroller, rate)
     ),
-    new Command<{comptroller: Comptroller, cToken: CToken, speed: NumberV}>(`
+    new Command<{comptroller: Comptroller, vToken: VToken, speed: NumberV}>(`
       #### SetVtxSpeed
-      * "Comptroller SetVtxSpeed <cToken> <rate>" - Sets VTX speed for market
-      * E.g. "Comptroller SetVtxSpeed cToken 1000
+      * "Comptroller SetVtxSpeed <vToken> <rate>" - Sets VTX speed for market
+      * E.g. "Comptroller SetVtxSpeed vToken 1000
       `,
       "SetVtxSpeed",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV),
+        new Arg("vToken", getVTokenV),
         new Arg("speed", getNumberV)
       ],
-      (world, from, {comptroller, cToken, speed}) => setVtxSpeed(world, from, comptroller, cToken, speed)
+      (world, from, {comptroller, vToken, speed}) => setVtxSpeed(world, from, comptroller, vToken, speed)
     ),
     new Command<{comptroller: Comptroller, contributor: AddressV, speed: NumberV}>(`
       #### SetContributorVtxSpeed
@@ -814,19 +814,19 @@ export function comptrollerCommands() {
       ],
       (world, from, {comptroller, contributor, speed}) => setContributorVtxSpeed(world, from, comptroller, contributor.val, speed)
     ),
-    new Command<{comptroller: Comptroller, cTokens: CToken[], borrowCaps: NumberV[]}>(`
+    new Command<{comptroller: Comptroller, vTokens: VToken[], borrowCaps: NumberV[]}>(`
       #### SetMarketBorrowCaps
 
-      * "Comptroller SetMarketBorrowCaps (<CToken> ...) (<borrowCap> ...)" - Sets Market Borrow Caps
+      * "Comptroller SetMarketBorrowCaps (<VToken> ...) (<borrowCap> ...)" - Sets Market Borrow Caps
       * E.g "Comptroller SetMarketBorrowCaps (cZRX cUSDC) (10000.0e18, 1000.0e6)
       `,
       "SetMarketBorrowCaps",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cTokens", getCTokenV, {mapped: true}),
+        new Arg("vTokens", getVTokenV, {mapped: true}),
         new Arg("borrowCaps", getNumberV, {mapped: true})
       ],
-      (world, from, {comptroller,cTokens,borrowCaps}) => setMarketBorrowCaps(world, from, comptroller, cTokens, borrowCaps)
+      (world, from, {comptroller,vTokens,borrowCaps}) => setMarketBorrowCaps(world, from, comptroller, vTokens, borrowCaps)
     ),
     new Command<{comptroller: Comptroller, newBorrowCapGuardian: AddressV}>(`
         #### SetBorrowCapGuardian

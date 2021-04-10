@@ -359,7 +359,7 @@
             "oracle_key": "0x0000000000000000000000000000000000000001"
         }
     },
-    "CTokenDelegate": {
+    "VTokenDelegate": {
         "cUsdtDelegate": {
             "address": "0x976aa93ca5Aaa569109f4267589c619a097f001D",
             "contract": "CErc20Delegate",
@@ -376,7 +376,7 @@
             "description": "Standard CUni Delegate"
         }
     },
-    "cTokens": {
+    "vTokens": {
         "cUSDC": {
             "name": "Compound USD Coin",
             "symbol": "cUSDC",

@@ -21,8 +21,8 @@ import { getUserValue, userFetchers } from './Value/UserValue';
 import { comptrollerFetchers, getComptrollerValue } from './Value/ComptrollerValue';
 import { comptrollerImplFetchers, getComptrollerImplValue } from './Value/ComptrollerImplValue';
 import { getUnitrollerValue, unitrollerFetchers } from './Value/UnitrollerValue';
-import { cTokenFetchers, getCTokenValue } from './Value/CTokenValue';
-import { cTokenDelegateFetchers, getCTokenDelegateValue } from './Value/CTokenDelegateValue';
+import { vTokenFetchers, getVTokenValue } from './Value/VTokenValue';
+import { vTokenDelegateFetchers, getVTokenDelegateValue } from './Value/VTokenDelegateValue';
 import { erc20Fetchers, getErc20Value } from './Value/Erc20Value';
 import { mcdFetchers, getMCDValue } from './Value/MCDValue';
 import { getInterestRateModelValue, interestRateModelFetchers } from './Value/InterestRateModelValue';
@@ -778,8 +778,8 @@ const fetchers = [
 
       * "Equal given:<Value> expected:<Value>" - Returns true if given values are equal
         * E.g. "Equal (Exactly 0) Zero"
-        * E.g. "Equal (CToken cZRX TotalSupply) (Exactly 55)"
-        * E.g. "Equal (CToken cZRX Comptroller) (Comptroller Address)"
+        * E.g. "Equal (VToken cZRX TotalSupply) (Exactly 55)"
+        * E.g. "Equal (VToken cZRX Comptroller) (Comptroller Address)"
     `,
     'Equal',
     [new Arg('given', getCoreValue), new Arg('expected', getCoreValue)],
@@ -847,25 +847,25 @@ const fetchers = [
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### CToken
+      #### VToken
 
-      * "CToken ...cTokenArgs" - Returns cToken value
+      * "VToken ...vTokenArgs" - Returns vToken value
     `,
-    'CToken',
-    [new Arg('res', getCTokenValue, { variadic: true })],
+    'VToken',
+    [new Arg('res', getVTokenValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: cTokenFetchers() }
+    { subExpressions: vTokenFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### CTokenDelegate
+      #### VTokenDelegate
 
-      * "CTokenDelegate ...cTokenDelegateArgs" - Returns cToken delegate value
+      * "VTokenDelegate ...vTokenDelegateArgs" - Returns vToken delegate value
     `,
-    'CTokenDelegate',
-    [new Arg('res', getCTokenDelegateValue, { variadic: true })],
+    'VTokenDelegate',
+    [new Arg('res', getVTokenDelegateValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: cTokenDelegateFetchers() }
+    { subExpressions: vTokenDelegateFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `

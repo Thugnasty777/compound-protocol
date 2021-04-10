@@ -13,8 +13,8 @@ Macro FlywheelComptroller price=1.0 borrowRate=0.000005 compInitAmount=5000000e1
     Comptroller SetMaxAssets 20
     Comptroller SetCloseFactor 0.5
     Comptroller LiquidationIncentive 1.1
-    NewCToken ZRX cZRX
-    NewCToken BAT cBAT
+    NewVToken ZRX cZRX
+    NewVToken BAT cBAT
     Support cZRX collateralFactor:0.5
     Support cBAT collateralFactor:0.5
     -- final

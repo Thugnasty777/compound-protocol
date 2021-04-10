@@ -6,7 +6,7 @@ interface ComptrollerMethods {
   getAccountLiquidity(string): Callable<{0: number, 1: number, 2: number}>
   getHypotheticalAccountLiquidity(account: string, asset: string, redeemTokens: encodedNumber, borrowAmount: encodedNumber): Callable<{0: number, 1: number, 2: number}>
   membershipLength(string): Callable<string>
-  checkMembership(user: string, cToken: string): Callable<string>
+  checkMembership(user: string, vToken: string): Callable<string>
   getAssetsIn(string): Callable<string[]>
   admin(): Callable<string>
   oracle(): Callable<string>
@@ -60,9 +60,9 @@ interface ComptrollerMethods {
   updateContributorRewards(account: string): Sendable<void>
   _grantVtx(account: string, encodedNumber): Sendable<void>
   _setVtxRate(encodedNumber): Sendable<void>
-  _setVtxSpeed(cToken: string, encodedNumber): Sendable<void>
+  _setVtxSpeed(vToken: string, encodedNumber): Sendable<void>
   _setContributorVtxSpeed(account: string, encodedNumber): Sendable<void>
-  _setMarketBorrowCaps(cTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
+  _setMarketBorrowCaps(vTokens:string[], borrowCaps:encodedNumber[]): Sendable<void>
   _setBorrowCapGuardian(string): Sendable<void>
   borrowCapGuardian(): Callable<string>
   borrowCaps(string): Callable<string>

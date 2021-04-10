@@ -119,7 +119,7 @@ async function makeComptroller(opts = {}) {
   }
 }
 
-async function makeCToken(opts = {}) {
+async function makeVToken(opts = {}) {
   const {
     root = saddle.account,
     kind = 'cerc20'
@@ -130,15 +130,15 @@ async function makeCToken(opts = {}) {
   const exchangeRate = etherMantissa(dfn(opts.exchangeRate, 1));
   const decimals = etherUnsigned(dfn(opts.decimals, 8));
   const symbol = opts.symbol || (kind === 'cether' ? 'cETH' : 'cOMG');
-  const name = opts.name || `CToken ${symbol}`;
+  const name = opts.name || `VToken ${symbol}`;
   const admin = opts.admin || root;
 
-  let cToken, underlying;
+  let vToken, underlying;
   let cDelegator, cDelegatee, cDaiMaker;
 
   switch (kind) {
     case 'cether':
-      cToken = await deploy('CEtherHarness',
+      vToken = await deploy('CEtherHarness',
         [
           comptroller._address,
           interestRateModel._address,
@@ -168,7 +168,7 @@ async function makeCToken(opts = {}) {
           encodeParameters(['address', 'address'], [cDaiMaker._address, cDaiMaker._address])
         ]
       );
-      cToken = await saddle.getContractAt('CDaiDelegateHarness', cDelegator._address);
+      vToken = await saddle.getContractAt('CDaiDelegateHarness', cDelegator._address);
       break;
 
     case 'ccomp':
@@ -188,7 +188,7 @@ async function makeCToken(opts = {}) {
           "0x0"
         ]
       );
-      cToken = await saddle.getContractAt('CCompLikeDelegate', cDelegator._address);
+      vToken = await saddle.getContractAt('CCompLikeDelegate', cDelegator._address);
       break;
 
     case 'cerc20':
@@ -209,29 +209,29 @@ async function makeCToken(opts = {}) {
           "0x0"
         ]
       );
-      cToken = await saddle.getContractAt('CErc20DelegateHarness', cDelegator._address);
+      vToken = await saddle.getContractAt('CErc20DelegateHarness', cDelegator._address);
       break;
   }
 
   if (opts.supportMarket) {
-    await send(comptroller, '_supportMarket', [cToken._address]);
+    await send(comptroller, '_supportMarket', [vToken._address]);
   }
 
   if (opts.addVtxMarket) {
-    await send(comptroller, '_addVtxMarket', [cToken._address]);
+    await send(comptroller, '_addVtxMarket', [vToken._address]);
   }
 
   if (opts.underlyingPrice) {
     const price = etherMantissa(opts.underlyingPrice);
-    await send(comptroller.priceOracle, 'setUnderlyingPrice', [cToken._address, price]);
+    await send(comptroller.priceOracle, 'setUnderlyingPrice', [vToken._address, price]);
   }
 
   if (opts.collateralFactor) {
     const factor = etherMantissa(opts.collateralFactor);
-    expect(await send(comptroller, '_setCollateralFactor', [cToken._address, factor])).toSucceed();
+    expect(await send(comptroller, '_setCollateralFactor', [vToken._address, factor])).toSucceed();
   }
 
-  return Object.assign(cToken, { name, symbol, underlying, comptroller, interestRateModel });
+  return Object.assign(vToken, { name, symbol, underlying, comptroller, interestRateModel });
 }
 
 async function makeInterestRateModel(opts = {}) {
@@ -299,29 +299,29 @@ async function totalSupply(token) {
   return etherUnsigned(await call(token, 'totalSupply'));
 }
 
-async function borrowSnapshot(cToken, account) {
-  const { principal, interestIndex } = await call(cToken, 'harnessAccountBorrows', [account]);
+async function borrowSnapshot(vToken, account) {
+  const { principal, interestIndex } = await call(vToken, 'harnessAccountBorrows', [account]);
   return { principal: etherUnsigned(principal), interestIndex: etherUnsigned(interestIndex) };
 }
 
-async function totalBorrows(cToken) {
-  return etherUnsigned(await call(cToken, 'totalBorrows'));
+async function totalBorrows(vToken) {
+  return etherUnsigned(await call(vToken, 'totalBorrows'));
 }
 
-async function totalReserves(cToken) {
-  return etherUnsigned(await call(cToken, 'totalReserves'));
+async function totalReserves(vToken) {
+  return etherUnsigned(await call(vToken, 'totalReserves'));
 }
 
-async function enterMarkets(cTokens, from) {
-  return await send(cTokens[0].comptroller, 'enterMarkets', [cTokens.map(c => c._address)], { from });
+async function enterMarkets(vTokens, from) {
+  return await send(vTokens[0].comptroller, 'enterMarkets', [vTokens.map(c => c._address)], { from });
 }
 
-async function fastForward(cToken, blocks = 5) {
-  return await send(cToken, 'harnessFastForward', [blocks]);
+async function fastForward(vToken, blocks = 5) {
+  return await send(vToken, 'harnessFastForward', [blocks]);
 }
 
-async function setBalance(cToken, account, balance) {
-  return await send(cToken, 'harnessSetBalance', [account, balance]);
+async function setBalance(vToken, account, balance) {
+  return await send(vToken, 'harnessSetBalance', [account, balance]);
 }
 
 async function setEtherBalance(cEther, balance) {
@@ -331,24 +331,24 @@ async function setEtherBalance(cEther, balance) {
   expect(await send(cEther, 'harnessDoTransferIn', [root, balance], { value: balance })).toSucceed();
 }
 
-async function getBalances(cTokens, accounts) {
+async function getBalances(vTokens, accounts) {
   const balances = {};
-  for (let cToken of cTokens) {
-    const cBalances = balances[cToken._address] = {};
+  for (let vToken of vTokens) {
+    const cBalances = balances[vToken._address] = {};
     for (let account of accounts) {
       cBalances[account] = {
         eth: await etherBalance(account),
-        cash: cToken.underlying && await balanceOf(cToken.underlying, account),
-        tokens: await balanceOf(cToken, account),
-        borrows: (await borrowSnapshot(cToken, account)).principal
+        cash: vToken.underlying && await balanceOf(vToken.underlying, account),
+        tokens: await balanceOf(vToken, account),
+        borrows: (await borrowSnapshot(vToken, account)).principal
       };
     }
-    cBalances[cToken._address] = {
-      eth: await etherBalance(cToken._address),
-      cash: cToken.underlying && await balanceOf(cToken.underlying, cToken._address),
-      tokens: await totalSupply(cToken),
-      borrows: await totalBorrows(cToken),
-      reserves: await totalReserves(cToken)
+    cBalances[vToken._address] = {
+      eth: await etherBalance(vToken._address),
+      cash: vToken.underlying && await balanceOf(vToken.underlying, vToken._address),
+      tokens: await totalSupply(vToken),
+      borrows: await totalBorrows(vToken),
+      reserves: await totalReserves(vToken)
     };
   }
   return balances;
@@ -356,76 +356,76 @@ async function getBalances(cTokens, accounts) {
 
 async function adjustBalances(balances, deltas) {
   for (let delta of deltas) {
-    let cToken, account, key, diff;
+    let vToken, account, key, diff;
     if (delta.length == 4) {
-      ([cToken, account, key, diff] = delta);
+      ([vToken, account, key, diff] = delta);
     } else {
-      ([cToken, key, diff] = delta);
-      account = cToken._address;
+      ([vToken, key, diff] = delta);
+      account = vToken._address;
     }
 
-    balances[cToken._address][account][key] = new BigNumber(balances[cToken._address][account][key]).plus(diff);
+    balances[vToken._address][account][key] = new BigNumber(balances[vToken._address][account][key]).plus(diff);
   }
   return balances;
 }
 
 
-async function preApprove(cToken, from, amount, opts = {}) {
+async function preApprove(vToken, from, amount, opts = {}) {
   if (dfn(opts.faucet, true)) {
-    expect(await send(cToken.underlying, 'harnessSetBalance', [from, amount], { from })).toSucceed();
+    expect(await send(vToken.underlying, 'harnessSetBalance', [from, amount], { from })).toSucceed();
   }
 
-  return send(cToken.underlying, 'approve', [cToken._address, amount], { from });
+  return send(vToken.underlying, 'approve', [vToken._address, amount], { from });
 }
 
-async function quickMint(cToken, minter, mintAmount, opts = {}) {
+async function quickMint(vToken, minter, mintAmount, opts = {}) {
   // make sure to accrue interest
-  await fastForward(cToken, 1);
+  await fastForward(vToken, 1);
 
   if (dfn(opts.approve, true)) {
-    expect(await preApprove(cToken, minter, mintAmount, opts)).toSucceed();
+    expect(await preApprove(vToken, minter, mintAmount, opts)).toSucceed();
   }
   if (dfn(opts.exchangeRate)) {
-    expect(await send(cToken, 'harnessSetExchangeRate', [etherMantissa(opts.exchangeRate)])).toSucceed();
+    expect(await send(vToken, 'harnessSetExchangeRate', [etherMantissa(opts.exchangeRate)])).toSucceed();
   }
-  return send(cToken, 'mint', [mintAmount], { from: minter });
+  return send(vToken, 'mint', [mintAmount], { from: minter });
 }
 
 
-async function preSupply(cToken, account, tokens, opts = {}) {
+async function preSupply(vToken, account, tokens, opts = {}) {
   if (dfn(opts.total, true)) {
-    expect(await send(cToken, 'harnessSetTotalSupply', [tokens])).toSucceed();
+    expect(await send(vToken, 'harnessSetTotalSupply', [tokens])).toSucceed();
   }
-  return send(cToken, 'harnessSetBalance', [account, tokens]);
+  return send(vToken, 'harnessSetBalance', [account, tokens]);
 }
 
-async function quickRedeem(cToken, redeemer, redeemTokens, opts = {}) {
-  await fastForward(cToken, 1);
+async function quickRedeem(vToken, redeemer, redeemTokens, opts = {}) {
+  await fastForward(vToken, 1);
 
   if (dfn(opts.supply, true)) {
-    expect(await preSupply(cToken, redeemer, redeemTokens, opts)).toSucceed();
+    expect(await preSupply(vToken, redeemer, redeemTokens, opts)).toSucceed();
   }
   if (dfn(opts.exchangeRate)) {
-    expect(await send(cToken, 'harnessSetExchangeRate', [etherMantissa(opts.exchangeRate)])).toSucceed();
+    expect(await send(vToken, 'harnessSetExchangeRate', [etherMantissa(opts.exchangeRate)])).toSucceed();
   }
-  return send(cToken, 'redeem', [redeemTokens], { from: redeemer });
+  return send(vToken, 'redeem', [redeemTokens], { from: redeemer });
 }
 
-async function quickRedeemUnderlying(cToken, redeemer, redeemAmount, opts = {}) {
-  await fastForward(cToken, 1);
+async function quickRedeemUnderlying(vToken, redeemer, redeemAmount, opts = {}) {
+  await fastForward(vToken, 1);
 
   if (dfn(opts.exchangeRate)) {
-    expect(await send(cToken, 'harnessSetExchangeRate', [etherMantissa(opts.exchangeRate)])).toSucceed();
+    expect(await send(vToken, 'harnessSetExchangeRate', [etherMantissa(opts.exchangeRate)])).toSucceed();
   }
-  return send(cToken, 'redeemUnderlying', [redeemAmount], { from: redeemer });
+  return send(vToken, 'redeemUnderlying', [redeemAmount], { from: redeemer });
 }
 
-async function setOraclePrice(cToken, price) {
-  return send(cToken.comptroller.priceOracle, 'setUnderlyingPrice', [cToken._address, etherMantissa(price)]);
+async function setOraclePrice(vToken, price) {
+  return send(vToken.comptroller.priceOracle, 'setUnderlyingPrice', [vToken._address, etherMantissa(price)]);
 }
 
-async function setBorrowRate(cToken, rate) {
-  return send(cToken.interestRateModel, 'setBorrowRate', [etherMantissa(rate)]);
+async function setBorrowRate(vToken, rate) {
+  return send(vToken.interestRateModel, 'setBorrowRate', [etherMantissa(rate)]);
 }
 
 async function getBorrowRate(interestRateModel, cash, borrows, reserves) {
@@ -436,17 +436,17 @@ async function getSupplyRate(interestRateModel, cash, borrows, reserves, reserve
   return call(interestRateModel, 'getSupplyRate', [cash, borrows, reserves, reserveFactor].map(etherUnsigned));
 }
 
-async function pretendBorrow(cToken, borrower, accountIndex, marketIndex, principalRaw, blockNumber = 2e7) {
-  await send(cToken, 'harnessSetTotalBorrows', [etherUnsigned(principalRaw)]);
-  await send(cToken, 'harnessSetAccountBorrows', [borrower, etherUnsigned(principalRaw), etherMantissa(accountIndex)]);
-  await send(cToken, 'harnessSetBorrowIndex', [etherMantissa(marketIndex)]);
-  await send(cToken, 'harnessSetAccrualBlockNumber', [etherUnsigned(blockNumber)]);
-  await send(cToken, 'harnessSetBlockNumber', [etherUnsigned(blockNumber)]);
+async function pretendBorrow(vToken, borrower, accountIndex, marketIndex, principalRaw, blockNumber = 2e7) {
+  await send(vToken, 'harnessSetTotalBorrows', [etherUnsigned(principalRaw)]);
+  await send(vToken, 'harnessSetAccountBorrows', [borrower, etherUnsigned(principalRaw), etherMantissa(accountIndex)]);
+  await send(vToken, 'harnessSetBorrowIndex', [etherMantissa(marketIndex)]);
+  await send(vToken, 'harnessSetAccrualBlockNumber', [etherUnsigned(blockNumber)]);
+  await send(vToken, 'harnessSetBlockNumber', [etherUnsigned(blockNumber)]);
 }
 
 module.exports = {
   makeComptroller,
-  makeCToken,
+  makeVToken,
   makeInterestRateModel,
   makePriceOracle,
   makeToken,

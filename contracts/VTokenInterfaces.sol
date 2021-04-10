@@ -4,7 +4,7 @@ import "./ComptrollerInterface.sol";
 import "./InterestRateModel.sol";
 import "./EIP20NonStandardInterface.sol";
 
-contract CTokenStorage {
+contract VTokenStorage {
     /**
      * @dev Guard variable for re-entrancy checks
      */
@@ -47,7 +47,7 @@ contract CTokenStorage {
     address payable public pendingAdmin;
 
     /**
-     * @notice Contract which oversees inter-cToken operations
+     * @notice Contract which oversees inter-vToken operations
      */
     ComptrollerInterface public comptroller;
 
@@ -57,7 +57,7 @@ contract CTokenStorage {
     InterestRateModel public interestRateModel;
 
     /**
-     * @notice Initial exchange rate used when minting the first CTokens (used when totalSupply = 0)
+     * @notice Initial exchange rate used when minting the first VTokens (used when totalSupply = 0)
      */
     uint internal initialExchangeRateMantissa;
 
@@ -117,11 +117,11 @@ contract CTokenStorage {
     mapping(address => BorrowSnapshot) internal accountBorrows;
 }
 
-contract CTokenInterface is CTokenStorage {
+contract VTokenInterface is VTokenStorage {
     /**
-     * @notice Indicator that this is a CToken contract (for inspection)
+     * @notice Indicator that this is a VToken contract (for inspection)
      */
-    bool public constant isCToken = true;
+    bool public constant isVToken = true;
 
 
     /*** Market Events ***/
@@ -154,7 +154,7 @@ contract CTokenInterface is CTokenStorage {
     /**
      * @notice Event emitted when a borrow is liquidated
      */
-    event LiquidateBorrow(address liquidator, address borrower, uint repayAmount, address cTokenCollateral, uint seizeTokens);
+    event LiquidateBorrow(address liquidator, address borrower, uint repayAmount, address vTokenCollateral, uint seizeTokens);
 
 
     /*** Admin Events ***/
@@ -243,7 +243,7 @@ contract CTokenInterface is CTokenStorage {
 
 contract CErc20Storage {
     /**
-     * @notice Underlying asset for this CToken
+     * @notice Underlying asset for this VToken
      */
     address public underlying;
 }
@@ -258,7 +258,7 @@ contract CErc20Interface is CErc20Storage {
     function borrow(uint borrowAmount) external returns (uint);
     function repayBorrow(uint repayAmount) external returns (uint);
     function repayBorrowBehalf(address borrower, uint repayAmount) external returns (uint);
-    function liquidateBorrow(address borrower, uint repayAmount, CTokenInterface cTokenCollateral) external returns (uint);
+    function liquidateBorrow(address borrower, uint repayAmount, VTokenInterface vTokenCollateral) external returns (uint);
     function sweepToken(EIP20NonStandardInterface token) external;
 
 

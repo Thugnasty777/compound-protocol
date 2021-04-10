@@ -19,7 +19,7 @@ description "Break borrow with result=$result borrower=$borrower borrowAmount=$b
       - no *other* storage should change - XXX can we specify this?
 
       |----------+--------+----------+-------|
-      |          | CToken | Borrower | Other |
+      |          | VToken | Borrower | Other |
       |----------+--------+----------+-------|
       | cash     |   -A   |    +A    |   0   |
       | borrows  |   +A   |    +A    |   0   |
@@ -32,19 +32,19 @@ description "Break borrow with result=$result borrower=$borrower borrowAmount=$b
 
     uint256 exchangeRatePre = sinvoke exchangeRateStored(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
     uint256 borrowerCashPre = sinvoke getCashOf(e0, borrower);
     uint256 otherCashPre = sinvoke getCashOf(e0, other);
 
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
     uint256 borrowerBorrowsPre = sinvoke borrowBalanceStored(e0, borrower);
     uint256 otherBorrowsPre = sinvoke borrowBalanceStored(e0, other);
 
-    uint256 cTokenTokensPre = sinvoke totalSupply(e0);
+    uint256 vTokenTokensPre = sinvoke totalSupply(e0);
     uint256 borrowerTokensPre = sinvoke balanceOf(e0, borrower);
     uint256 otherTokensPre = sinvoke balanceOf(e0, other);
 
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
 
     // Just Do It
     require result == invoke borrowFreshPub(e1, borrower, borrowAmount);
@@ -54,27 +54,27 @@ description "Break borrow with result=$result borrower=$borrower borrowAmount=$b
 
     uint256 exchangeRatePost = sinvoke exchangeRateStored(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenCashPost = sinvoke getCash(e2);
     uint256 borrowerCashPost = sinvoke getCashOf(e2, borrower);
     uint256 otherCashPost = sinvoke getCashOf(e2, other);
 
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
     uint256 borrowerBorrowsPost = sinvoke borrowBalanceStored(e2, borrower);
     uint256 otherBorrowsPost = sinvoke borrowBalanceStored(e2, other);
 
-    uint256 cTokenTokensPost = sinvoke totalSupply(e2);
+    uint256 vTokenTokensPost = sinvoke totalSupply(e2);
     uint256 borrowerTokensPost = sinvoke balanceOf(e2, borrower);
     uint256 otherTokensPost = sinvoke balanceOf(e2, other);
 
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
 
     // Measure
     bool staticBalance =
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (borrowerCashPost == borrowerCashPre) &&
         (borrowerBorrowsPost == borrowerBorrowsPre) &&
         (borrowerTokensPost == borrowerTokensPre) &&
@@ -85,10 +85,10 @@ description "Break borrow with result=$result borrower=$borrower borrowAmount=$b
     bool dynamicBalance =
         (borrowAmount != 0) &&
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre - borrowAmount) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre + borrowAmount) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre - borrowAmount) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre + borrowAmount) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (borrowerCashPost == borrowerCashPre + borrowAmount) &&
         (borrowerBorrowsPost == borrowerBorrowsPre + borrowAmount) &&
         (borrowerTokensPost == borrowerTokensPre) &&
@@ -123,7 +123,7 @@ description "Break repay borrow with realRepayAmount=$realRepayAmount borrowerBo
 
     /*
       |----------+--------+-------+----------+-------|
-      |          | CToken | Payer | Borrower | Other |
+      |          | VToken | Payer | Borrower | Other |
       |----------+--------+-------+----------+-------|
       | cash     |   +A   |  -A   |   -A/0   |   0   |
       | borrows  |   -A   | -A/0  |    -A    |   0   |
@@ -136,22 +136,22 @@ description "Break repay borrow with realRepayAmount=$realRepayAmount borrowerBo
 
     uint256 exchangeRatePre = sinvoke exchangeRateStored(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
     uint256 payerCashPre = sinvoke getCashOf(e0, payer);
     uint256 borrowerCashPre = sinvoke getCashOf(e0, borrower);
     uint256 otherCashPre = sinvoke getCashOf(e0, other);
 
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
     uint256 payerBorrowsPre = sinvoke borrowBalanceStored(e0, payer);
     uint256 borrowerBorrowsPre = sinvoke borrowBalanceStored(e0, borrower);
     uint256 otherBorrowsPre = sinvoke borrowBalanceStored(e0, other);
 
-    uint256 cTokenTokensPre = sinvoke totalSupply(e0);
+    uint256 vTokenTokensPre = sinvoke totalSupply(e0);
     uint256 payerTokensPre = sinvoke balanceOf(e0, payer);
     uint256 borrowerTokensPre = sinvoke balanceOf(e0, borrower);
     uint256 otherTokensPre = sinvoke balanceOf(e0, other);
 
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
 
     // Just Do It
     require result == invoke repayBorrowFreshPub(e1, payer, borrower, repayAmount);
@@ -161,30 +161,30 @@ description "Break repay borrow with realRepayAmount=$realRepayAmount borrowerBo
 
     uint256 exchangeRatePost = sinvoke exchangeRateStored(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenCashPost = sinvoke getCash(e2);
     uint256 payerCashPost = sinvoke getCashOf(e2, payer);
     uint256 borrowerCashPost = sinvoke getCashOf(e2, borrower);
     uint256 otherCashPost = sinvoke getCashOf(e2, other);
 
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
     uint256 payerBorrowsPost = sinvoke borrowBalanceStored(e2, payer);
     uint256 borrowerBorrowsPost = sinvoke borrowBalanceStored(e2, borrower);
     uint256 otherBorrowsPost = sinvoke borrowBalanceStored(e2, other);
 
-    uint256 cTokenTokensPost = sinvoke totalSupply(e2);
+    uint256 vTokenTokensPost = sinvoke totalSupply(e2);
     uint256 payerTokensPost = sinvoke balanceOf(e2, payer);
     uint256 borrowerTokensPost = sinvoke balanceOf(e2, borrower);
     uint256 otherTokensPost = sinvoke balanceOf(e2, other);
 
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
 
     // Measure
     bool staticBalance =
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (payerCashPost == payerCashPre) &&
         (payerBorrowsPost == payerBorrowsPre) &&
         (payerTokensPost == payerTokensPre) &&
@@ -217,10 +217,10 @@ description "Break repay borrow with realRepayAmount=$realRepayAmount borrowerBo
     bool dynamicBalance =
         (realRepayAmount != 0) &&
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre + realRepayAmount) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre - realRepayAmount) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre + realRepayAmount) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre - realRepayAmount) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (payerCashPost == payerCashPre - realRepayAmount) &&
         (payerBorrowsPost == payerBorrowsExpected) &&
         (payerTokensPost == payerTokensPre) &&

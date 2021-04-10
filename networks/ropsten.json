@@ -348,14 +348,14 @@
       "address": "0x0000000000000000000000000000000000000000"
     }
   },
-  "CTokenDelegate": {
+  "VTokenDelegate": {
     "undefined": {
       "address": "0x244563F1CCCf6c66644F0A5d2C31cfE260d31d5a",
       "contract": "CErc20Delegate",
       "description": "Delegate CErc20Delegate"
     }
   },
-  "cTokens": {
+  "vTokens": {
     "cZRX": {
       "name": "Compound ZRX",
       "symbol": "cZRX",

@@ -6,7 +6,7 @@ const {
 
 const {
   makeComptroller,
-  makeCToken,
+  makeVToken,
   makePriceOracle,
   pretendBorrow,
   borrowSnapshot

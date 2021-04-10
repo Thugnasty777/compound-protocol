@@ -10,7 +10,7 @@ usage:
 	npx saddle script -n {network} flywheel:init {
 		batch: number || null, // how many borrowrs to claim vtx for at once. default 100 (~2.3M gas)
 		stage: bool || null // use stage API? default false
-		cTokens: string[] || null, // which borrowers to get. defaults to all cTokens
+		vTokens: string[] || null, // which borrowers to get. defaults to all vTokens
 		readFixture: bool || null, // save api response? default false
 		writeFixture: bool || null, // read from saved response? default false
 	}
@@ -41,7 +41,7 @@ let getConfig = (configArgs) => {
 		}
 	}
 	let res = {
-		cTokens: getArray(config, 'cTokens', false) || [],
+		vTokens: getArray(config, 'vTokens', false) || [],
 		readFixture: getBoolean(config, 'readFixture', false) || false,
 		writeFixture: getBoolean(config, 'writeFixture', false) || false,
 		stage: getBoolean(config, 'stage', false) || false,
@@ -51,7 +51,7 @@ let getConfig = (configArgs) => {
 	return res;
 };
 
-let getCTokenAddresses = (cTokenArgs) => {
+let getVTokenAddresses = (vTokenArgs) => {
 	let all = [
 		'cUSDC',
 		'cDAI',
@@ -63,7 +63,7 @@ let getCTokenAddresses = (cTokenArgs) => {
 		'cZRX',
 		'cWBTC',
 	];
-	let list = cTokenArgs.length == 0 ? all : cTokenArgs;
+	let list = vTokenArgs.length == 0 ? all : vTokenArgs;
 	let map = {};
 	for(let val of list) {
 		let addr = eval(`$${val}`).toLowerCase();
@@ -140,21 +140,21 @@ let accountRequest = async (network, opts) => {
 	return JSON.parse(res).accounts;
 };
 
-let filterInitialized = async (borrowersByCToken) => {
+let filterInitialized = async (borrowersByVToken) => {
 	let res = {}
 	let batchSize = 75;
 	console.log(`Calling vtxBorrowerIndex for borrowers in batches of ${batchSize}...\n`);
-	for(let cTokenAddr of Object.keys(borrowersByCToken)) {
-		let speed = await call(Comptroller, 'vtxSpeeds', [cTokenAddr]);
+	for(let vTokenAddr of Object.keys(borrowersByVToken)) {
+		let speed = await call(Comptroller, 'vtxSpeeds', [vTokenAddr]);
 		if (Number(speed) != 0){
-			for (let borrowerChunk of getChunks(borrowersByCToken[cTokenAddr], batchSize)) {
+			for (let borrowerChunk of getChunks(borrowersByVToken[vTokenAddr], batchSize)) {
 				try {
 					let indices = await Promise.all(borrowerChunk.map(
 						async(borrower) => {
-							return await call(Comptroller, 'vtxBorrowerIndex',[cTokenAddr, borrower])
+							return await call(Comptroller, 'vtxBorrowerIndex',[vTokenAddr, borrower])
 					}));
 					let uninitialized = borrowerChunk.filter((borrower, i) => Number(indices[i]) == 0);
-					res[cTokenAddr] = res[cTokenAddr] ? res[cTokenAddr].concat(uninitialized) : uninitialized;
+					res[vTokenAddr] = res[vTokenAddr] ? res[vTokenAddr].concat(uninitialized) : uninitialized;
 				} catch(e) {
 					console.error(`Web3 calls failed with ${e}`);
 					throw `Web3 calls failed w ${e}`;
@@ -166,12 +166,12 @@ let filterInitialized = async (borrowersByCToken) => {
 };
 
 // {[ctokenAddr] : borrowers}
-let filterBorrowers = (apiAccounts, cTokenList) => {
+let filterBorrowers = (apiAccounts, vTokenList) => {
 	return apiAccounts.reduce((acc, account) => {
 		let validBorrowers = account.tokens.filter(
-			(accountCToken) =>
-				cTokenList.includes(accountCToken.address) &&
-				accountCToken.borrow_balance_underlying.value > 0
+			(accountVToken) =>
+				vTokenList.includes(accountVToken.address) &&
+				accountVToken.borrow_balance_underlying.value > 0
 		);
 		for (let borrower of validBorrowers) {
 			let ctokenAddr = borrower.address;
@@ -183,22 +183,22 @@ let filterBorrowers = (apiAccounts, cTokenList) => {
 	}, {});
 };
 
-let claimCompBatch = async (borrowersByCToken, opts) => {
-	for (let cTokenAddr of Object.keys(borrowersByCToken)) {
-		let borrowers = borrowersByCToken[cTokenAddr];
+let claimCompBatch = async (borrowersByVToken, opts) => {
+	for (let vTokenAddr of Object.keys(borrowersByVToken)) {
+		let borrowers = borrowersByVToken[vTokenAddr];
 		for (let chunk of getChunks(borrowers, opts.batch)) {
 			if (chunk.length == 0) {
-				console.log(`No borrowers to claim for ${cTokenAddr}`);
+				console.log(`No borrowers to claim for ${vTokenAddr}`);
 			} else {
 				console.log(
-					`Sending tx to claim ${cTokenAddr.toString()} borrows for ${JSON.stringify(
+					`Sending tx to claim ${vTokenAddr.toString()} borrows for ${JSON.stringify(
 						chunk
 					)}\n`
 				);
 				try {
 					let tx = await send(Comptroller, 'claimVtx', [
 						chunk,
-						[cTokenAddr],
+						[vTokenAddr],
 						true,
 						false,
 					]);
@@ -214,25 +214,25 @@ let claimCompBatch = async (borrowersByCToken, opts) => {
 };
 
 (async () => {
-	let borrowersByCToken;
-	let cTokenMap; // symbol => addrs
+	let borrowersByVToken;
+	let vTokenMap; // symbol => addrs
 	let opts = getConfig(args[0]);
 	if (network == 'development') {
-		borrowersByCToken = getTestData();
+		borrowersByVToken = getTestData();
 	} else if (isKnownNetwork(network)) {
 		let apiAccounts = opts.readFixture
 			? await readFixture()
 			: await accountRequest(network, opts);
-		let cTokenAddresses = Object.values(getCTokenAddresses(opts.cTokens));
-		borrowersByCToken = filterBorrowers(apiAccounts, cTokenAddresses);
+		let vTokenAddresses = Object.values(getVTokenAddresses(opts.vTokens));
+		borrowersByVToken = filterBorrowers(apiAccounts, vTokenAddresses);
 		if (opts.writeFixture) await writeFixture(apiAccounts);
 	} else {
 		printUsage();
 	}
-	let unInit = await filterInitialized(borrowersByCToken);
+	let unInit = await filterInitialized(borrowersByVToken);
 	print('Uninitialized accounts before: ', unInit);
 
 	await claimCompBatch(unInit, opts);
-	unInit = await filterInitialized(borrowersByCToken);
+	unInit = await filterInitialized(borrowersByVToken);
 	print('Uninitialized accounts after: ', unInit);
 })();

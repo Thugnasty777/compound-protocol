@@ -145,12 +145,12 @@ description "Failed to set comptroller: result=$result (currAdmin=$currAdmin, cu
      "If setting pending implementation succeeded, will fail with unauthorized (got ${result_accept}) only if different implementation tried to accept on behalf of ${desiredComptroller} (sent by ${e_accept.msg.sender}) and did not change the next comptroller: ${nextComptroller} from current one ${currComptroller}.";
 }
 
-rule mustEnterMarkets(address cToken, address borrower, uint256 borrowAmount) {
+rule mustEnterMarkets(address vToken, address borrower, uint256 borrowAmount) {
     env e0;
 
-    bool inMarketPre = sinvoke checkMembership(e0, borrower, cToken);
-    bool canBorrow = sinvoke borrowAllowed(e0, cToken, borrower, borrowAmount) == 0;
-    bool inMarketPost = sinvoke checkMembership(e0, borrower, cToken);
+    bool inMarketPre = sinvoke checkMembership(e0, borrower, vToken);
+    bool canBorrow = sinvoke borrowAllowed(e0, vToken, borrower, borrowAmount) == 0;
+    bool inMarketPost = sinvoke checkMembership(e0, borrower, vToken);
     // We used to require you to be in the market to borrow, now trying to borrow will enter
     // assert canBorrow => inMarketPre, "Must be in market before being allowed to borrow";
     assert canBorrow => inMarketPost, "Must be in market if allowed to borrow";

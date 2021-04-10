@@ -1,7 +1,7 @@
 import { Event } from '../Event';
 import { World } from '../World';
 import { CErc20Delegator, CErc20DelegatorScenario } from '../Contract/CErc20Delegator';
-import { CToken } from '../Contract/CToken';
+import { VToken } from '../Contract/VToken';
 import { Invokation, invoke } from '../Invokation';
 import { getAddressV, getExpNumberV, getNumberV, getStringV } from '../CoreValue';
 import { AddressV, NumberV, StringV } from '../Value';
@@ -18,7 +18,7 @@ const CEtherScenarioContract = getTestContract('CEtherScenario');
 const CEvilContract = getTestContract('CEvil');
 
 export interface TokenData {
-  invokation: Invokation<CToken>;
+  invokation: Invokation<VToken>;
   name: string;
   symbol: string;
   decimals?: number;
@@ -29,11 +29,11 @@ export interface TokenData {
   admin?: string;
 }
 
-export async function buildCToken(
+export async function buildVToken(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; cToken: CToken; tokenData: TokenData }> {
+): Promise<{ world: World; vToken: VToken; tokenData: TokenData }> {
   const fetchers = [
     new Fetcher<
       {
@@ -53,8 +53,8 @@ export async function buildCToken(
     `
       #### CErc20Delegator
 
-      * "CErc20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal CToken
-        * E.g. "CToken Deploy CErc20Delegator cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (CToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+      * "CErc20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal VToken
+        * E.g. "VToken Deploy CErc20Delegator cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
       'CErc20Delegator',
       [
@@ -126,8 +126,8 @@ export async function buildCToken(
     `
       #### CErc20DelegatorScenario
 
-      * "CErc20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A CToken Scenario for local testing
-        * E.g. "CToken Deploy CErc20DelegatorScenario cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (CToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+      * "CErc20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A VToken Scenario for local testing
+        * E.g. "VToken Deploy CErc20DelegatorScenario cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
       'CErc20DelegatorScenario',
       [
@@ -184,8 +184,8 @@ export async function buildCToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV, admin: AddressV}, TokenData>(`
         #### Scenario
 
-        * "Scenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A CToken Scenario for local testing
-          * E.g. "CToken Deploy Scenario cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "Scenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
+          * E.g. "VToken Deploy Scenario cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "Scenario",
       [
@@ -200,7 +200,7 @@ export async function buildCToken(
       ],
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CErc20ScenarioContract.deploy<CToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await CErc20ScenarioContract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
@@ -215,8 +215,8 @@ export async function buildCToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
         #### CEtherScenario
 
-        * "CEtherScenario symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A CToken Scenario for local testing
-          * E.g. "CToken Deploy CEtherScenario cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "CEtherScenario symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
+          * E.g. "VToken Deploy CEtherScenario cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CEtherScenario",
       [
@@ -230,7 +230,7 @@ export async function buildCToken(
       ],
       async (world, {symbol, name, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CEtherScenarioContract.deploy<CToken>(world, from, [name.val, symbol.val, decimals.val, admin.val, comptroller.val, interestRateModel.val, initialExchangeRate.val]),
+          invokation: await CEtherScenarioContract.deploy<VToken>(world, from, [name.val, symbol.val, decimals.val, admin.val, comptroller.val, interestRateModel.val, initialExchangeRate.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
@@ -245,8 +245,8 @@ export async function buildCToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
         #### CEther
 
-        * "CEther symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A CToken Scenario for local testing
-          * E.g. "CToken Deploy CEther cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "CEther symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
+          * E.g. "VToken Deploy CEther cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CEther",
       [
@@ -260,7 +260,7 @@ export async function buildCToken(
       ],
       async (world, {symbol, name, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CEtherContract.deploy<CToken>(world, from, [comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await CEtherContract.deploy<VToken>(world, from, [comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
@@ -275,8 +275,8 @@ export async function buildCToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
         #### CErc20
 
-        * "CErc20 symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official CToken contract
-          * E.g. "CToken Deploy CErc20 cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "CErc20 symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official VToken contract
+          * E.g. "VToken Deploy CErc20 cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CErc20",
       [
@@ -292,7 +292,7 @@ export async function buildCToken(
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
 
         return {
-          invokation: await CErc20Contract.deploy<CToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await CErc20Contract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
@@ -307,8 +307,8 @@ export async function buildCToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
         #### CEvil
 
-        * "CEvil symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A malicious CToken contract
-          * E.g. "CToken Deploy CEvil cEVL \"Vortex EVL\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "CEvil symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A malicious VToken contract
+          * E.g. "VToken Deploy CEvil cEVL \"Vortex EVL\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CEvil",
       [
@@ -323,7 +323,7 @@ export async function buildCToken(
       ],
       async (world, {symbol, name, underlying, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CEvilContract.deploy<CToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await CEvilContract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
@@ -338,8 +338,8 @@ export async function buildCToken(
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, underlying: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
         #### Standard
 
-        * "symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official CToken contract
-          * E.g. "CToken Deploy Standard cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official VToken contract
+          * E.g. "VToken Deploy Standard cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "Standard",
       [
@@ -356,7 +356,7 @@ export async function buildCToken(
         // Note: we're going to use the scenario contract as the standard deployment on local networks
         if (world.isLocalNetwork()) {
           return {
-            invokation: await CErc20ScenarioContract.deploy<CToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+            invokation: await CErc20ScenarioContract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
             name: name.val,
             symbol: symbol.val,
             decimals: decimals.toNumber(),
@@ -367,7 +367,7 @@ export async function buildCToken(
           };
         } else {
           return {
-            invokation: await CErc20Contract.deploy<CToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+            invokation: await CErc20Contract.deploy<VToken>(world, from, [underlying.val, comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
             name: name.val,
             symbol: symbol.val,
             decimals: decimals.toNumber(),
@@ -382,7 +382,7 @@ export async function buildCToken(
     )
   ];
 
-  let tokenData = await getFetcherValue<any, TokenData>("DeployCToken", fetchers, world, params);
+  let tokenData = await getFetcherValue<any, TokenData>("DeployVToken", fetchers, world, params);
   let invokation = tokenData.invokation;
   delete tokenData.invokation;
 
@@ -390,19 +390,19 @@ export async function buildCToken(
     throw invokation.error;
   }
 
-  const cToken = invokation.value!;
-  tokenData.address = cToken._address;
+  const vToken = invokation.value!;
+  tokenData.address = vToken._address;
 
   world = await storeAndSaveContract(
     world,
-    cToken,
+    vToken,
     tokenData.symbol,
     invokation,
     [
-      { index: ['cTokens', tokenData.symbol], data: tokenData },
+      { index: ['vTokens', tokenData.symbol], data: tokenData },
       { index: ['Tokens', tokenData.symbol], data: tokenData }
     ]
   );
 
-  return {world, cToken, tokenData};
+  return {world, vToken, tokenData};
 }

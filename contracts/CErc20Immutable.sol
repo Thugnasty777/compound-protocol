@@ -4,7 +4,7 @@ import "./CErc20.sol";
 
 /**
  * @title VortexErc20Immutable Contract
- * @notice CTokens which wrap an EIP-20 underlying and are immutable
+ * @notice VTokens which wrap an EIP-20 underlying and are immutable
  * @author Vortex
  */
 contract CErc20Immutable is CErc20 {

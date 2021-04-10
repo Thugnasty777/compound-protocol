@@ -4,7 +4,7 @@ import "./CErc20Delegate.sol";
 
 /**
  * @title Vortex's CDai Contract
- * @notice CToken which wraps Multi-Collateral DAI
+ * @notice VToken which wraps Multi-Collateral DAI
  * @author Vortex
  */
 contract CDaiDelegate is CErc20Delegate {
@@ -91,7 +91,7 @@ contract CDaiDelegate is CErc20Delegate {
         daiJoin.exit(address(this), bal / RAY);
     }
 
-    /*** CToken Overrides ***/
+    /*** VToken Overrides ***/
 
     /**
       * @notice Accrues DSR then applies accrued interest to total borrows and reserves
@@ -102,7 +102,7 @@ contract CDaiDelegate is CErc20Delegate {
         // Accumulate DSR interest
         PotLike(potAddress).drip();
 
-        // Accumulate CToken interest
+        // Accumulate VToken interest
         return super.accrueInterest();
     }
 

@@ -8,7 +8,7 @@ interface CompLike {
 
 /**
  * @title Vortex's CCompLikeDelegate Contract
- * @notice CTokens which can 'delegate votes' of their underlying ERC-20
+ * @notice VTokens which can 'delegate votes' of their underlying ERC-20
  * @author Vortex
  */
 contract CCompLikeDelegate is CErc20Delegate {

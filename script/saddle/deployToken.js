@@ -39,7 +39,7 @@ function sleep(timeout) {
     return printUsage();
   }
 
-  console.log(`Deploying cToken with ${JSON.stringify(conf)}`);
+  console.log(`Deploying vToken with ${JSON.stringify(conf)}`);
 
   let deployArgs = [conf.underlying, conf.comptroller, conf.interestRateModel, conf.initialExchangeRateMantissa.toString(), conf.name, conf.symbol, conf.decimals, conf.admin];
   let contract = await saddle.deploy('CErc20Immutable', deployArgs);

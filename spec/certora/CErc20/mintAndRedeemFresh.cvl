@@ -20,7 +20,7 @@ description "Break mint with result=$result minter=$minter mintAmount=$mintAmoun
       - no *other* storage should change - XXX can we specify this?
 
       |----------+--------+--------+-------|
-      |          | CToken | Minter | Other |
+      |          | VToken | Minter | Other |
       |----------+--------+--------+-------|
       | cash     |   +A   |   -A   |   0   |
       | borrows  |    0   |    0   |   0   |
@@ -33,29 +33,29 @@ description "Break mint with result=$result minter=$minter mintAmount=$mintAmoun
 
     uint256 exchangeRatePre = sinvoke exchangeRateStored(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
     uint256 minterCashPre = sinvoke getCashOf(e0, minter);
     uint256 otherCashPre = sinvoke getCashOf(e0, other);
 
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
     uint256 minterBorrowsPre = sinvoke borrowBalanceStored(e0, minter);
     uint256 otherBorrowsPre = sinvoke borrowBalanceStored(e0, other);
 
-    uint256 cTokenTokensPre = sinvoke totalSupply(e0);
+    uint256 vTokenTokensPre = sinvoke totalSupply(e0);
     uint256 minterTokensPre = sinvoke balanceOf(e0, minter);
     uint256 otherTokensPre = sinvoke balanceOf(e0, other);
 
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
 
-    uint256 cTokenSupplyPre = cTokenCashPre + cTokenBorrowsPre - cTokenReservesPre; // XXX
+    uint256 vTokenSupplyPre = vTokenCashPre + vTokenBorrowsPre - vTokenReservesPre; // XXX
 
     // A few constraints
-    /* require cTokenBorrowsPre == 0; // XXX */
-    /* require cTokenSupplyPre >= 0; // XXX shouldn't be necessary, should underflow */
-    /* require cTokenTokensPre > 0; // XXX shouldn't be necessary */
+    /* require vTokenBorrowsPre == 0; // XXX */
+    /* require vTokenSupplyPre >= 0; // XXX shouldn't be necessary, should underflow */
+    /* require vTokenTokensPre > 0; // XXX shouldn't be necessary */
     //require exchangeRatePre == 2000000000000000000; // XXX
-    /* require exchangeRatePre * cTokenTokensPre == cTokenSupplyPre; // XXX */
-    require minterTokensPre + otherTokensPre <= cTokenTokensPre; // XXX shouldn't be necessary, though weird
+    /* require exchangeRatePre * vTokenTokensPre == vTokenSupplyPre; // XXX */
+    require minterTokensPre + otherTokensPre <= vTokenTokensPre; // XXX shouldn't be necessary, though weird
     /* require mintAmount == mintTokens * exchangeRatePre; */
 
     // Just do it
@@ -66,27 +66,27 @@ description "Break mint with result=$result minter=$minter mintAmount=$mintAmoun
 
     uint256 exchangeRatePost = sinvoke exchangeRateStored(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenCashPost = sinvoke getCash(e2);
     uint256 minterCashPost = sinvoke getCashOf(e2, minter);
     uint256 otherCashPost = sinvoke getCashOf(e2, other);
 
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
     uint256 minterBorrowsPost = sinvoke borrowBalanceStored(e2, minter);
     uint256 otherBorrowsPost = sinvoke borrowBalanceStored(e2, other);
 
-    uint256 cTokenTokensPost = sinvoke totalSupply(e2);
+    uint256 vTokenTokensPost = sinvoke totalSupply(e2);
     uint256 minterTokensPost = sinvoke balanceOf(e2, minter);
     uint256 otherTokensPost = sinvoke balanceOf(e2, other);
 
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
 
     // Measure
     bool staticBalance =
         /* (exchangeRatePost == exchangeRatePre) && */
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (minterCashPost == minterCashPre) &&
         (minterBorrowsPost == minterBorrowsPre) &&
         (minterTokensPost == minterTokensPre) &&
@@ -97,10 +97,10 @@ description "Break mint with result=$result minter=$minter mintAmount=$mintAmoun
     bool dynamicBalance =
         (mintAmount != 0) &&
         /* (exchangeRatePost >= exchangeRatePre) && // XXX ugh */
-        (cTokenCashPost == cTokenCashPre + mintAmount) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        //XXX(cTokenTokensPost == cTokenTokensPre + mintTokens) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre + mintAmount) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        //XXX(vTokenTokensPost == vTokenTokensPre + mintTokens) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (minterCashPost == minterCashPre - mintAmount) &&
         (minterBorrowsPost == minterBorrowsPre) &&
         //XXX(minterTokensPost == minterTokensPre + mintTokens) &&
@@ -135,7 +135,7 @@ description "Break redeem with result=$result redeemer=$redeemer redeemAmount=$r
       - no *other* storage should change - XXX can we specify this?
 
       |----------+--------+----------+-------|
-      |          | CToken | Redeemer | Other |
+      |          | VToken | Redeemer | Other |
       |----------+--------+----------+-------|
       | cash     |   -A   |    +A    |   0   |
       | borrows  |    0   |     0    |   0   |
@@ -148,21 +148,21 @@ description "Break redeem with result=$result redeemer=$redeemer redeemAmount=$r
 
     uint256 exchangeRatePre = sinvoke exchangeRateStored(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
     uint256 redeemerCashPre = sinvoke getCashOf(e0, redeemer);
     uint256 otherCashPre = sinvoke getCashOf(e0, other);
 
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
     uint256 redeemerBorrowsPre = sinvoke borrowBalanceStored(e0, redeemer);
     uint256 otherBorrowsPre = sinvoke borrowBalanceStored(e0, other);
 
-    uint256 cTokenTokensPre = sinvoke totalSupply(e0);
+    uint256 vTokenTokensPre = sinvoke totalSupply(e0);
     uint256 redeemerTokensPre = sinvoke balanceOf(e0, redeemer);
     uint256 otherTokensPre = sinvoke balanceOf(e0, other);
 
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
 
-    uint256 cTokenSupplyPre = cTokenCashPre + cTokenBorrowsPre - cTokenReservesPre; // XXX
+    uint256 vTokenSupplyPre = vTokenCashPre + vTokenBorrowsPre - vTokenReservesPre; // XXX
 
     // Just do it
     require result == invoke redeemFreshPub(e1, redeemer, 0, redeemAmount);
@@ -172,27 +172,27 @@ description "Break redeem with result=$result redeemer=$redeemer redeemAmount=$r
 
     uint256 exchangeRatePost = sinvoke exchangeRateStored(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenCashPost = sinvoke getCash(e2);
     uint256 redeemerCashPost = sinvoke getCashOf(e2, redeemer);
     uint256 otherCashPost = sinvoke getCashOf(e2, other);
 
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
     uint256 redeemerBorrowsPost = sinvoke borrowBalanceStored(e2, redeemer);
     uint256 otherBorrowsPost = sinvoke borrowBalanceStored(e2, other);
 
-    uint256 cTokenTokensPost = sinvoke totalSupply(e2);
+    uint256 vTokenTokensPost = sinvoke totalSupply(e2);
     uint256 redeemerTokensPost = sinvoke balanceOf(e2, redeemer);
     uint256 otherTokensPost = sinvoke balanceOf(e2, other);
 
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
 
     // Measure
     bool staticBalance =
         /* (exchangeRatePost == exchangeRatePre) && */
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenTokensPost == cTokenTokensPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenTokensPost == vTokenTokensPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (redeemerCashPost == redeemerCashPre) &&
         (redeemerBorrowsPost == redeemerBorrowsPre) &&
         (redeemerTokensPost == redeemerTokensPre) &&
@@ -203,10 +203,10 @@ description "Break redeem with result=$result redeemer=$redeemer redeemAmount=$r
     bool dynamicBalance =
         (redeemAmount != 0) &&
         /* (exchangeRatePost >= exchangeRatePre) && // XXX ugh */
-        (cTokenCashPost == cTokenCashPre - redeemAmount) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        //XXX(cTokenTokensPost == cTokenTokensPre - redeemTokens) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre - redeemAmount) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        //XXX(vTokenTokensPost == vTokenTokensPre - redeemTokens) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (redeemerCashPost == redeemerCashPre + redeemAmount) &&
         (redeemerBorrowsPost == redeemerBorrowsPre) &&
         //XXX(redeemerTokensPost == redeemerTokensPre - redeemTokens) &&

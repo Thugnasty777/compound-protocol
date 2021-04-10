@@ -17,11 +17,11 @@ contract ComptrollerScenarioG4 is ComptrollerG4 {
         blockNumber = number;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(VToken vToken) public view returns (uint) {
+        return accountAssets[address(vToken)].length;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(VToken vToken) public {
+        markets[address(vToken)].isListed = false;
     }
 }

@@ -1,6 +1,6 @@
 const {
   makeComptroller,
-  makeCToken
+  makeVToken
 } = require('../Utils/Vortex');
 const {
   etherExp,
@@ -17,7 +17,7 @@ describe.skip('Flywheel trace ops', () => {
     let interestRateModelOpts = {borrowRate: 0.000001};
     [root, a1, a2, a3, ...accounts] = saddle.accounts;
     comptroller = await makeComptroller();
-    market = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
+    market = await makeVToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
     await send(comptroller, '_addVtxMarkets', [[market].map(c => c._address)]);
   });
 

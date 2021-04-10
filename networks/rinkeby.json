@@ -217,7 +217,7 @@
             "name": "Wrapped BTC",
             "symbol": "WBTC",
             "decimals": 8,
-            "contract": "WBTCToken",
+            "contract": "WBTVToken",
             "address": "0x577D296678535e4903D59A4C929B718e1D575e0A"
         },
         "REP": {
@@ -253,14 +253,14 @@
             "contract": "FaucetToken"
         }
     },
-    "CTokenDelegate": {
+    "VTokenDelegate": {
         "cUsdtDelegate": {
             "address": "0x98394a121D26F90F4841e7BFE9dD4Aba05E666E4",
             "contract": "CErc20Delegate",
             "description": "Standard CErc20 Delegate"
         }
     },
-    "cTokens": {
+    "vTokens": {
         "cZRX": {
             "name": "Compound 0x 📈",
             "symbol": "cZRX",

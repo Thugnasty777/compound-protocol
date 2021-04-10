@@ -3,7 +3,7 @@
 Vortex Protocol
 =================
 
-The Vortex Protocol is an Ethereum smart contract for supplying or borrowing assets. Through the cToken contracts, accounts on the blockchain *supply* capital (Ether or ERC-20 tokens) to receive cTokens or *borrow* assets from the protocol (holding other assets as collateral). The Vortex cToken contracts track these balances and algorithmically set interest rates for borrowers.
+The Vortex Protocol is an Ethereum smart contract for supplying or borrowing assets. Through the vToken contracts, accounts on the blockchain *supply* capital (Ether or ERC-20 tokens) to receive vTokens or *borrow* assets from the protocol (holding other assets as collateral). The Vortex vToken contracts track these balances and algorithmically set interest rates for borrowers.
 
 Before getting started with this repo, please read:
 
@@ -25,13 +25,13 @@ Contracts
 We detail a few of the core contracts in the Vortex protocol.
 
 <dl>
-  <dt>CToken, CErc20 and CEther</dt>
-  <dd>The Vortex cTokens, which are self-contained borrowing and lending contracts. CToken contains the core logic and CErc20 and CEther add public interfaces for Erc20 tokens and ether, respectively. Each CToken is assigned an interest rate and risk model (see InterestRateModel and Comptroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each CToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
+  <dt>VToken, CErc20 and CEther</dt>
+  <dd>The Vortex vTokens, which are self-contained borrowing and lending contracts. VToken contains the core logic and CErc20 and CEther add public interfaces for Erc20 tokens and ether, respectively. Each VToken is assigned an interest rate and risk model (see InterestRateModel and Comptroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each VToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
 </dl>
 
 <dl>
   <dt>Comptroller</dt>
-  <dd>The risk model contract, which validates permissible user actions and disallows actions if they do not fit certain risk parameters. For instance, the Comptroller enforces that each borrowing user must maintain a sufficient collateral balance across all cTokens.</dd>
+  <dd>The risk model contract, which validates permissible user actions and disallows actions if they do not fit certain risk parameters. For instance, the Comptroller enforces that each borrowing user must maintain a sufficient collateral balance across all vTokens.</dd>
 </dl>
 
 <dl>
@@ -41,7 +41,7 @@ We detail a few of the core contracts in the Vortex protocol.
 
 <dl>
   <dt>Governor Alpha</dt>
-  <dd>The administrator of the Vortex timelock contract. Holders of Comp token may create and vote on proposals which will be queued into the Vortex timelock and then have effects on Vortex cToken and Comptroller contracts. This contract may be replaced in the future with a beta version.</dd>
+  <dd>The administrator of the Vortex timelock contract. Holders of Comp token may create and vote on proposals which will be queued into the Vortex timelock and then have effects on Vortex vToken and Comptroller contracts. This contract may be replaced in the future with a beta version.</dd>
 </dl>
 
 <dl>
@@ -90,8 +90,8 @@ The Vortex Protocol has a simple scenario evaluation tool to test and evaluate s
     yarn repl -n development
     yarn repl -n rinkeby
 
-    > Read CToken cBAT Address
-    Command: Read CToken cBAT Address
+    > Read VToken cBAT Address
+    Command: Read VToken cBAT Address
     AddressV<val=0xAD53863b864AE703D31b819d29c14cDA93D7c6a6>
 
 You can read more about the scenario runner in the [Scenario Docs](https://github.com/compound-finance/compound-protocol/tree/master/scenario/SCENARIO.md) on steps for using the repl.
@@ -180,14 +180,14 @@ This command will start a saddle console conencted to Goerli testnet (see [Saddl
     '10000000000000000000000000'
 ```
 
-Deploying a CToken from Source
+Deploying a VToken from Source
 ------------------------------
 
 Note: you will need to set `~/.ethereum/<network>` with your private key or assign your private key to the environment variable `ACCOUNT`.
 
 Note: for all sections including Etherscan verification, you must set the `ETHERSCAN_API_KEY` to a valid API Key from [Etherscan](https://etherscan.io/apis).
 
-To deploy a new cToken, you can run the `token:deploy`. command, as follows. If you set `VERIFY=true`, the script will verify the token on Etherscan as well. The JSON here is the token config JSON, which should be specific to the token you wish to list.
+To deploy a new vToken, you can run the `token:deploy`. command, as follows. If you set `VERIFY=true`, the script will verify the token on Etherscan as well. The JSON here is the token config JSON, which should be specific to the token you wish to list.
 
 ```bash
 npx saddle -n rinkeby script token:deploy '{
@@ -232,7 +232,7 @@ npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D680
 }'
 ```
 
-## Deploying a CToken from Docker Build
+## Deploying a VToken from Docker Build
 ---------------------------------------
 
 To deploy a specific version of the Vortex Protocol, you can use the `token:deploy` script through Docker:

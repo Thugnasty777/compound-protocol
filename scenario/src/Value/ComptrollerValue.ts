@@ -1,7 +1,7 @@
 import {Event} from '../Event';
 import {World} from '../World';
 import {Comptroller} from '../Contract/Comptroller';
-import {CToken} from '../Contract/CToken';
+import {VToken} from '../Contract/VToken';
 import {
   getAddressV,
   getCoreValue,
@@ -19,7 +19,7 @@ import {
 import {Arg, Fetcher, getFetcherValue} from '../Command';
 import {getComptroller} from '../ContractLookup';
 import {encodedNumber} from '../Encoding';
-import {getCTokenV} from '../Value/CTokenValue';
+import {getVTokenV} from '../Value/VTokenValue';
 import { encodeParameters, encodeABI } from '../Utils';
 
 export async function getComptrollerAddress(world: World, comptroller: Comptroller): Promise<AddressV> {
@@ -74,8 +74,8 @@ async function getPendingAdmin(world: World, comptroller: Comptroller): Promise<
   return new AddressV(await comptroller.methods.pendingAdmin().call());
 }
 
-async function getCollateralFactor(world: World, comptroller: Comptroller, cToken: CToken): Promise<NumberV> {
-  let {0: _isListed, 1: collateralFactorMantissa} = await comptroller.methods.markets(cToken._address).call();
+async function getCollateralFactor(world: World, comptroller: Comptroller, vToken: VToken): Promise<NumberV> {
+  let {0: _isListed, 1: collateralFactorMantissa} = await comptroller.methods.markets(vToken._address).call();
   return new NumberV(collateralFactorMantissa, 1e18);
 }
 
@@ -83,8 +83,8 @@ async function membershipLength(world: World, comptroller: Comptroller, user: st
   return new NumberV(await comptroller.methods.membershipLength(user).call());
 }
 
-async function checkMembership(world: World, comptroller: Comptroller, user: string, cToken: CToken): Promise<BoolV> {
-  return new BoolV(await comptroller.methods.checkMembership(user, cToken._address).call());
+async function checkMembership(world: World, comptroller: Comptroller, user: string, vToken: VToken): Promise<BoolV> {
+  return new BoolV(await comptroller.methods.checkMembership(user, vToken._address).call());
 }
 
 async function getAssetsIn(world: World, comptroller: Comptroller, user: string): Promise<ListV> {
@@ -99,14 +99,14 @@ async function getVtxMarkets(world: World, comptroller: Comptroller): Promise<Li
   return new ListV(mkts.map((a) => new AddressV(a)));
 }
 
-async function checkListed(world: World, comptroller: Comptroller, cToken: CToken): Promise<BoolV> {
-  let {0: isListed, 1: _collateralFactorMantissa} = await comptroller.methods.markets(cToken._address).call();
+async function checkListed(world: World, comptroller: Comptroller, vToken: VToken): Promise<BoolV> {
+  let {0: isListed, 1: _collateralFactorMantissa} = await comptroller.methods.markets(vToken._address).call();
 
   return new BoolV(isListed);
 }
 
-async function checkIsVtxed(world: World, comptroller: Comptroller, cToken: CToken): Promise<BoolV> {
-  let {0: isListed, 1: _collateralFactorMantissa, 2: isVtxed} = await comptroller.methods.markets(cToken._address).call();
+async function checkIsVtxed(world: World, comptroller: Comptroller, vToken: VToken): Promise<BoolV> {
+  let {0: isListed, 1: _collateralFactorMantissa, 2: isVtxed} = await comptroller.methods.markets(vToken._address).call();
   return new BoolV(isVtxed);
 }
 
@@ -135,7 +135,7 @@ export function comptrollerFetchers() {
       ],
       (world, {comptroller, account}) => getLiquidity(world, comptroller, account.val)
     ),
-    new Fetcher<{comptroller: Comptroller, account: AddressV, action: StringV, amount: NumberV, cToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, account: AddressV, action: StringV, amount: NumberV, vToken: VToken}, NumberV>(`
         #### Hypothetical
 
         * "Comptroller Hypothetical <User> <Action> <Asset> <Number>" - Returns a given user's trued up liquidity given a hypothetical change in asset with redeeming a certain number of tokens and/or borrowing a given amount.
@@ -148,9 +148,9 @@ export function comptrollerFetchers() {
         new Arg("account", getAddressV),
         new Arg("action", getStringV),
         new Arg("amount", getNumberV),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      async (world, {comptroller, account, action, cToken, amount}) => {
+      async (world, {comptroller, account, action, vToken, amount}) => {
         let redeemTokens: NumberV;
         let borrowAmount: NumberV;
 
@@ -167,7 +167,7 @@ export function comptrollerFetchers() {
             throw new Error(`Unknown hypothetical: ${action.val}`);
         }
 
-        return await getHypotheticalLiquidity(world, comptroller, account.val, cToken._address, redeemTokens.encode(), borrowAmount.encode());
+        return await getHypotheticalLiquidity(world, comptroller, account.val, vToken._address, redeemTokens.encode(), borrowAmount.encode());
       }
     ),
     new Fetcher<{comptroller: Comptroller}, AddressV>(`
@@ -252,18 +252,18 @@ export function comptrollerFetchers() {
       [new Arg("comptroller", getComptroller, {implicit: true})],
       (world, {comptroller}) => getBlockNumber(world, comptroller)
     ),
-    new Fetcher<{comptroller: Comptroller, cToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, vToken: VToken}, NumberV>(`
         #### CollateralFactor
 
-        * "Comptroller CollateralFactor <CToken>" - Returns the collateralFactor associated with a given asset
+        * "Comptroller CollateralFactor <VToken>" - Returns the collateralFactor associated with a given asset
           * E.g. "Comptroller CollateralFactor cZRX"
       `,
       "CollateralFactor",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, {comptroller, cToken}) => getCollateralFactor(world, comptroller, cToken)
+      (world, {comptroller, vToken}) => getCollateralFactor(world, comptroller, vToken)
     ),
     new Fetcher<{comptroller: Comptroller, account: AddressV}, NumberV>(`
         #### MembershipLength
@@ -278,19 +278,19 @@ export function comptrollerFetchers() {
       ],
       (world, {comptroller, account}) => membershipLength(world, comptroller, account.val)
     ),
-    new Fetcher<{comptroller: Comptroller, account: AddressV, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Comptroller, account: AddressV, vToken: VToken}, BoolV>(`
         #### CheckMembership
 
-        * "Comptroller CheckMembership <User> <CToken>" - Returns one if user is in asset, zero otherwise.
+        * "Comptroller CheckMembership <User> <VToken>" - Returns one if user is in asset, zero otherwise.
           * E.g. "Comptroller CheckMembership Geoff cZRX"
       `,
       "CheckMembership",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
         new Arg("account", getAddressV),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, {comptroller, account, cToken}) => checkMembership(world, comptroller, account.val, cToken)
+      (world, {comptroller, account, vToken}) => checkMembership(world, comptroller, account.val, vToken)
     ),
     new Fetcher<{comptroller: Comptroller, account: AddressV}, ListV>(`
         #### AssetsIn
@@ -305,31 +305,31 @@ export function comptrollerFetchers() {
       ],
       (world, {comptroller, account}) => getAssetsIn(world, comptroller, account.val)
     ),
-    new Fetcher<{comptroller: Comptroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Comptroller, vToken: VToken}, BoolV>(`
         #### CheckListed
 
-        * "Comptroller CheckListed <CToken>" - Returns true if market is listed, false otherwise.
+        * "Comptroller CheckListed <VToken>" - Returns true if market is listed, false otherwise.
           * E.g. "Comptroller CheckListed cZRX"
       `,
       "CheckListed",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, {comptroller, cToken}) => checkListed(world, comptroller, cToken)
+      (world, {comptroller, vToken}) => checkListed(world, comptroller, vToken)
     ),
-    new Fetcher<{comptroller: Comptroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Comptroller, vToken: VToken}, BoolV>(`
         #### CheckIsVtxed
 
-        * "Comptroller CheckIsVtxed <CToken>" - Returns true if market is listed, false otherwise.
+        * "Comptroller CheckIsVtxed <VToken>" - Returns true if market is listed, false otherwise.
           * E.g. "Comptroller CheckIsVtxed cZRX"
       `,
       "CheckIsVtxed",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("cToken", getCTokenV)
+        new Arg("vToken", getVTokenV)
       ],
-      (world, {comptroller, cToken}) => checkIsVtxed(world, comptroller, cToken)
+      (world, {comptroller, vToken}) => checkIsVtxed(world, comptroller, vToken)
     ),
     new Fetcher<{comptroller: Comptroller}, AddressV>(`
         #### PauseGuardian
@@ -386,7 +386,7 @@ export function comptrollerFetchers() {
         async (world, {comptroller}) => new BoolV(await comptroller.methods.seizeGuardianPaused().call())
     ),
 
-    new Fetcher<{comptroller: Comptroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Comptroller, vToken: VToken}, BoolV>(`
         #### MintGuardianMarketPaused
 
         * "MintGuardianMarketPaused" - Returns the Comptrollers's Mint paused status in market
@@ -395,11 +395,11 @@ export function comptrollerFetchers() {
         "MintGuardianMarketPaused",
         [
           new Arg("comptroller", getComptroller, {implicit: true}),
-          new Arg("cToken", getCTokenV)
+          new Arg("vToken", getVTokenV)
         ],
-        async (world, {comptroller, cToken}) => new BoolV(await comptroller.methods.mintGuardianPaused(cToken._address).call())
+        async (world, {comptroller, vToken}) => new BoolV(await comptroller.methods.mintGuardianPaused(vToken._address).call())
     ),
-    new Fetcher<{comptroller: Comptroller, cToken: CToken}, BoolV>(`
+    new Fetcher<{comptroller: Comptroller, vToken: VToken}, BoolV>(`
         #### BorrowGuardianMarketPaused
 
         * "BorrowGuardianMarketPaused" - Returns the Comptrollers's Borrow paused status in market
@@ -408,9 +408,9 @@ export function comptrollerFetchers() {
         "BorrowGuardianMarketPaused",
         [
           new Arg("comptroller", getComptroller, {implicit: true}),
-          new Arg("cToken", getCTokenV)
+          new Arg("vToken", getVTokenV)
         ],
-        async (world, {comptroller, cToken}) => new BoolV(await comptroller.methods.borrowGuardianPaused(cToken._address).call())
+        async (world, {comptroller, vToken}) => new BoolV(await comptroller.methods.borrowGuardianPaused(vToken._address).call())
     ),
 
     new Fetcher<{comptroller: Comptroller}, ListV>(`
@@ -457,7 +457,7 @@ export function comptrollerFetchers() {
         return new NumberV(resNum);
       }
     ),
-    new Fetcher<{comptroller: Comptroller, CToken: CToken, key: StringV}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, VToken: VToken, key: StringV}, NumberV>(`
         #### VtxSupplyState(address)
 
         * "Comptroller VtxSupplyState cZRX "index"
@@ -465,15 +465,15 @@ export function comptrollerFetchers() {
       "VtxSupplyState",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("VToken", getVTokenV),
         new Arg("key", getStringV),
       ],
-      async (world, {comptroller, CToken, key}) => {
-        const result = await comptroller.methods.vtxSupplyState(CToken._address).call();
+      async (world, {comptroller, VToken, key}) => {
+        const result = await comptroller.methods.vtxSupplyState(VToken._address).call();
         return new NumberV(result[key.val]);
       }
     ),
-    new Fetcher<{comptroller: Comptroller, CToken: CToken, key: StringV}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, VToken: VToken, key: StringV}, NumberV>(`
         #### VtxBorrowState(address)
 
         * "Comptroller VtxBorrowState cZRX "index"
@@ -481,11 +481,11 @@ export function comptrollerFetchers() {
       "VtxBorrowState",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("VToken", getVTokenV),
         new Arg("key", getStringV),
       ],
-      async (world, {comptroller, CToken, key}) => {
-        const result = await comptroller.methods.vtxBorrowState(CToken._address).call();
+      async (world, {comptroller, VToken, key}) => {
+        const result = await comptroller.methods.vtxBorrowState(VToken._address).call();
         return new NumberV(result[key.val]);
       }
     ),
@@ -504,7 +504,7 @@ export function comptrollerFetchers() {
         return new NumberV(result);
       }
     ),
-    new Fetcher<{comptroller: Comptroller, CToken: CToken, account: AddressV}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, VToken: VToken, account: AddressV}, NumberV>(`
         #### vtxSupplierIndex
 
         * "Comptroller VtxSupplierIndex cZRX Coburn
@@ -512,14 +512,14 @@ export function comptrollerFetchers() {
       "VtxSupplierIndex",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("VToken", getVTokenV),
         new Arg("account", getAddressV),
       ],
-      async (world, {comptroller, CToken, account}) => {
-        return new NumberV(await comptroller.methods.vtxSupplierIndex(CToken._address, account.val).call());
+      async (world, {comptroller, VToken, account}) => {
+        return new NumberV(await comptroller.methods.vtxSupplierIndex(VToken._address, account.val).call());
       }
     ),
-    new Fetcher<{comptroller: Comptroller, CToken: CToken, account: AddressV}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, VToken: VToken, account: AddressV}, NumberV>(`
         #### VtxBorrowerIndex
 
         * "Comptroller VtxBorrowerIndex cZRX Coburn
@@ -527,14 +527,14 @@ export function comptrollerFetchers() {
       "VtxBorrowerIndex",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("VToken", getVTokenV),
         new Arg("account", getAddressV),
       ],
-      async (world, {comptroller, CToken, account}) => {
-        return new NumberV(await comptroller.methods.vtxBorrowerIndex(CToken._address, account.val).call());
+      async (world, {comptroller, VToken, account}) => {
+        return new NumberV(await comptroller.methods.vtxBorrowerIndex(VToken._address, account.val).call());
       }
     ),
-    new Fetcher<{comptroller: Comptroller, CToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, VToken: VToken}, NumberV>(`
         #### VtxSpeed
 
         * "Comptroller VtxSpeed cZRX
@@ -542,10 +542,10 @@ export function comptrollerFetchers() {
       "VtxSpeed",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("VToken", getVTokenV),
       ],
-      async (world, {comptroller, CToken}) => {
-        return new NumberV(await comptroller.methods.vtxSpeeds(CToken._address).call());
+      async (world, {comptroller, VToken}) => {
+        return new NumberV(await comptroller.methods.vtxSpeeds(VToken._address).call());
       }
     ),
     new Fetcher<{comptroller: Comptroller}, AddressV>(`
@@ -560,7 +560,7 @@ export function comptrollerFetchers() {
         ],
         async (world, {comptroller}) => new AddressV(await comptroller.methods.borrowCapGuardian().call())
     ),
-    new Fetcher<{comptroller: Comptroller, CToken: CToken}, NumberV>(`
+    new Fetcher<{comptroller: Comptroller, VToken: VToken}, NumberV>(`
         #### BorrowCaps
 
         * "Comptroller BorrowCaps cZRX
@@ -568,10 +568,10 @@ export function comptrollerFetchers() {
       "BorrowCaps",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
-        new Arg("CToken", getCTokenV),
+        new Arg("VToken", getVTokenV),
       ],
-      async (world, {comptroller, CToken}) => {
-        return new NumberV(await comptroller.methods.borrowCaps(CToken._address).call());
+      async (world, {comptroller, VToken}) => {
+        return new NumberV(await comptroller.methods.borrowCaps(VToken._address).call());
       }
     )
   ];

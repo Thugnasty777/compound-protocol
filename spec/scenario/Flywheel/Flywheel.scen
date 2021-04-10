@@ -12,8 +12,8 @@ Macro FlywheelComptroller price=1.0 borrowRate=0.000005 compInitAmount=5000000e1
     Comptroller SetMaxAssets 20
     Comptroller SetCloseFactor 0.5
     Comptroller LiquidationIncentive 1.1
-    NewCToken ZRX cZRX
-    NewCToken BAT cBAT
+    NewVToken ZRX cZRX
+    NewVToken BAT cBAT
     Support cZRX collateralFactor:0.5
     Support cBAT collateralFactor:0.5
     -- final
@@ -113,7 +113,7 @@ Test "Accrue VTX during a liquidation"
     --coburn zrx borrow, bat supply. geoff zrx supply
     FastForward 600000 Blocks--1e18 borrow * (1 + 600000 * 0.000005) = 3.5e18 borrow > 6e18 collateral * 0.5 CF
     Prep Geoff Some ZRX cZRX
-    From Geoff (CToken cZRX Liquidate Coburn cBAT 0.5e18)
+    From Geoff (VToken cZRX Liquidate Coburn cBAT 0.5e18)
     -- zrx borrow index is updated and vtx distributed
     -- * new index = initVal + deltaBlocks * borrowSpeed * 1e36 / totalBorrows
     -- * new index = 1e36 + 600000 * 1e18 * 1e36 / 1e18 = 6.00001E41
@@ -162,7 +162,7 @@ Test "Accrue VTX during a transfer"
 Test "Accrues correctly when market is added, deactivated, and activated again"
     FlywheelComptroller
     InitSpeeds
-    NewCToken DAI cDAI
+    NewVToken DAI cDAI
     --
     Support cDAI collateralFactor:0.5
     Comptroller AddVtxMarkets cDAI

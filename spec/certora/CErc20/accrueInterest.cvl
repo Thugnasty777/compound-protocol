@@ -8,7 +8,7 @@ description "Break accrueInterest with result=$result, block delta is $delta" {
     require e1.block.number >= e0.block.number;
 
     // fetch pre
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
 
     uint256 borrowRateMaxMantissa = 5000000000000;
     uint256 borrowRateMantissaPre = sinvoke borrowRatePerBlock(e0);

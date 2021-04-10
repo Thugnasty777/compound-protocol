@@ -15,36 +15,36 @@ exchangeRateDecreases(uint result, address minter, uint256 mintAmount, uint256 m
 
     uint256 exchangeRatePre = sinvoke exchangeRateCurrent(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
-    uint256 cTokenTokensPre = sinvoke totalSupply(e0);
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
-    uint256 cTokenSupplyPre = cTokenCashPre + cTokenBorrowsPre - cTokenReservesPre;
+    uint256 vTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenTokensPre = sinvoke totalSupply(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenSupplyPre = vTokenCashPre + vTokenBorrowsPre - vTokenReservesPre;
 
     // Simplifying assumptions to analyze the vulnerability
-    require cTokenBorrowsPre == 0; // XXX not necessary, simplifies analysis
-    require cTokenSupplyPre >= 0; // XXX not necessary, should underflow
-    require cTokenTokensPre > 0; // XXX not necessary
-    require exchangeRatePre * cTokenTokensPre == cTokenSupplyPre * 1000000000000000000; // XXX
+    require vTokenBorrowsPre == 0; // XXX not necessary, simplifies analysis
+    require vTokenSupplyPre >= 0; // XXX not necessary, should underflow
+    require vTokenTokensPre > 0; // XXX not necessary
+    require exchangeRatePre * vTokenTokensPre == vTokenSupplyPre * 1000000000000000000; // XXX
 
     // XXX why does this have to be after require?
-    uint256 implicitExchangeRatePre = cTokenSupplyPre * 1000000000000000000 / cTokenTokensPre;
+    uint256 implicitExchangeRatePre = vTokenSupplyPre * 1000000000000000000 / vTokenTokensPre;
 
     require result == invoke mintFreshPub(e1, minter, mintAmount);
     bool mintFreshReverted = lastReverted;
 
     uint256 exchangeRatePost = sinvoke exchangeRateCurrent(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
-    uint256 cTokenTokensPost = sinvoke totalSupply(e2);
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
-    uint256 cTokenSupplyPost = cTokenCashPost + cTokenBorrowsPost - cTokenReservesPost;
+    uint256 vTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenTokensPost = sinvoke totalSupply(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenSupplyPost = vTokenCashPost + vTokenBorrowsPost - vTokenReservesPost;
 
-    require mintTokens == cTokenTokensPost - cTokenTokensPre;
+    require mintTokens == vTokenTokensPost - vTokenTokensPre;
     require exchangeRatePre * mintTokens == mintAmount * 1000000000000000000;  // XXX why would this need to be assumed? should be proven
 
-    uint256 implicitExchangeRatePost = cTokenSupplyPost * 1000000000000000000 / cTokenTokensPost;
+    uint256 implicitExchangeRatePost = vTokenSupplyPost * 1000000000000000000 / vTokenTokensPost;
 
     assert (!mintFreshReverted =>
             ((result != 0) => (exchangeRatePost == exchangeRatePre))), "Mismatch in failure case";

@@ -18,7 +18,7 @@ description "Break transferFrom" {
       - no effect on exchange rate
       - no more than approved
       |----------+--------+-----+-----+-------|
-      |          | CToken | Src | Dst | Other |
+      |          | VToken | Src | Dst | Other |
       |----------+--------+-----+-----+-------|
       | cash     |    0   |  0  |  0  |   0   |
       | borrows  |    0   |  0  |  0  |   0   |
@@ -31,22 +31,22 @@ description "Break transferFrom" {
 
     uint256 exchangeRatePre = sinvoke exchangeRateStored(e0);
 
-    uint256 cTokenCashPre = sinvoke getCash(e0);
+    uint256 vTokenCashPre = sinvoke getCash(e0);
     uint256 srcCashPre = sinvoke getCashOf(e0, src);
     uint256 dstCashPre = sinvoke getCashOf(e0, dst);
     uint256 otherCashPre = sinvoke getCashOf(e0, other);
 
-    uint256 cTokenBorrowsPre = sinvoke totalBorrows(e0);
+    uint256 vTokenBorrowsPre = sinvoke totalBorrows(e0);
     uint256 srcBorrowsPre = sinvoke borrowBalanceStored(e0, src);
     uint256 dstBorrowsPre = sinvoke borrowBalanceStored(e0, dst);
     uint256 otherBorrowsPre = sinvoke borrowBalanceStored(e0, other);
 
-    uint256 cTokenSupplyPre = sinvoke totalSupply(e0);
-    uint256 srcTokensPre = sinvoke balanceOf(e0, src);
+    uint256 vTokenSupplyPre = sinvoke totalSupply(e0);
+    uint256 srvTokensPre = sinvoke balanceOf(e0, src);
     uint256 dstTokensPre = sinvoke balanceOf(e0, dst);
     uint256 otherTokensPre = sinvoke balanceOf(e0, other);
 
-    uint256 cTokenReservesPre = sinvoke totalReserves(e0);
+    uint256 vTokenReservesPre = sinvoke totalReserves(e0);
 
     // Approve
     bool doApprove;
@@ -66,35 +66,35 @@ description "Break transferFrom" {
 
     uint256 exchangeRatePost = sinvoke exchangeRateStored(e2);
 
-    uint256 cTokenCashPost = sinvoke getCash(e2);
+    uint256 vTokenCashPost = sinvoke getCash(e2);
     uint256 srcCashPost = sinvoke getCashOf(e2, src);
     uint256 dstCashPost = sinvoke getCashOf(e2, dst);
     uint256 otherCashPost = sinvoke getCashOf(e2, other);
 
-    uint256 cTokenBorrowsPost = sinvoke totalBorrows(e2);
+    uint256 vTokenBorrowsPost = sinvoke totalBorrows(e2);
     uint256 srcBorrowsPost = sinvoke borrowBalanceStored(e2, src);
     uint256 dstBorrowsPost = sinvoke borrowBalanceStored(e2, dst);
     uint256 otherBorrowsPost = sinvoke borrowBalanceStored(e2, other);
 
-    uint256 cTokenSupplyPost = sinvoke totalSupply(e2);
-    uint256 srcTokensPost = sinvoke balanceOf(e2, src);
+    uint256 vTokenSupplyPost = sinvoke totalSupply(e2);
+    uint256 srvTokensPost = sinvoke balanceOf(e2, src);
     uint256 dstTokensPost = sinvoke balanceOf(e2, dst);
     uint256 otherTokensPost = sinvoke balanceOf(e2, other);
 
-    uint256 cTokenReservesPost = sinvoke totalReserves(e2);
+    uint256 vTokenReservesPost = sinvoke totalReserves(e2);
 
     uint256 allowancePost = sinvoke allowance(e2, src, e1b.msg.sender);
 
     // Measure
     bool staticBalance =
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenSupplyPost == cTokenSupplyPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenSupplyPost == vTokenSupplyPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (srcCashPost == srcCashPre) &&
         (srcBorrowsPost == srcBorrowsPre) &&
-        (srcTokensPost == srcTokensPre) &&
+        (srvTokensPost == srvTokensPre) &&
         (dstCashPost == dstCashPre) &&
         (dstBorrowsPost == dstBorrowsPre) &&
         (dstTokensPost == dstTokensPre) &&
@@ -105,13 +105,13 @@ description "Break transferFrom" {
     bool dynamicBalance =
         (amount != 0) &&
         (exchangeRatePost == exchangeRatePre) &&
-        (cTokenCashPost == cTokenCashPre) &&
-        (cTokenBorrowsPost == cTokenBorrowsPre) &&
-        (cTokenSupplyPost == cTokenSupplyPre) &&
-        (cTokenReservesPost == cTokenReservesPre) &&
+        (vTokenCashPost == vTokenCashPre) &&
+        (vTokenBorrowsPost == vTokenBorrowsPre) &&
+        (vTokenSupplyPost == vTokenSupplyPre) &&
+        (vTokenReservesPost == vTokenReservesPre) &&
         (srcCashPost == srcCashPre) &&
         (srcBorrowsPost == srcBorrowsPre) &&
-        (srcTokensPost == srcTokensPre - amount) &&
+        (srvTokensPost == srvTokensPre - amount) &&
         (dstCashPost == dstCashPre) &&
         (dstBorrowsPost == dstBorrowsPre) &&
         (dstTokensPost == dstTokensPre + amount) &&

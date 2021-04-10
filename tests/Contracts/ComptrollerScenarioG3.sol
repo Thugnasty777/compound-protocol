@@ -16,8 +16,8 @@ contract ComptrollerScenarioG3 is ComptrollerG3 {
         return vtxAddress;
     }
 
-    function membershipLength(CToken cToken) public view returns (uint) {
-        return accountAssets[address(cToken)].length;
+    function membershipLength(VToken vToken) public view returns (uint) {
+        return accountAssets[address(vToken)].length;
     }
 
     function fastForward(uint blocks) public returns (uint) {
@@ -53,7 +53,7 @@ contract ComptrollerScenarioG3 is ComptrollerG3 {
         return compMarkets;
     }
 
-    function unlist(CToken cToken) public {
-        markets[address(cToken)].isListed = false;
+    function unlist(VToken vToken) public {
+        markets[address(vToken)].isListed = false;
     }
 }

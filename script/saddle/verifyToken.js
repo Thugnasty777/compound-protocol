@@ -37,7 +37,7 @@ npx saddle -n rinkeby script token:verify 0x19B674715cD20626415C738400FDd0d32D68
     return printUsage();
   }
 
-  console.log(`Verifying cToken at ${address} with ${JSON.stringify(conf)}`);
+  console.log(`Verifying vToken at ${address} with ${JSON.stringify(conf)}`);
 
   let deployArgs = [conf.underlying, conf.comptroller, conf.interestRateModel, conf.initialExchangeRateMantissa.toString(), conf.name, conf.symbol, conf.decimals, conf.admin];
 

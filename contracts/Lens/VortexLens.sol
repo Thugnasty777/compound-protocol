@@ -2,7 +2,7 @@ pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
 import "../CErc20.sol";
-import "../CToken.sol";
+import "../VToken.sol";
 import "../PriceOracle.sol";
 import "../EIP20Interface.sol";
 import "../Governance/GovernorAlpha.sol";
@@ -12,14 +12,14 @@ interface ComptrollerLensInterface {
     function markets(address) external view returns (bool, uint);
     function oracle() external view returns (PriceOracle);
     function getAccountLiquidity(address) external view returns (uint, uint, uint);
-    function getAssetsIn(address) external view returns (CToken[] memory);
+    function getAssetsIn(address) external view returns (VToken[] memory);
     function claimVtx(address) external;
     function vtxAccrued(address) external view returns (uint);
 }
 
 contract VortexLens {
-    struct CTokenMetadata {
-        address cToken;
+    struct VTokenMetadata {
+        address vToken;
         uint exchangeRateCurrent;
         uint supplyRatePerBlock;
         uint borrowRatePerBlock;
@@ -31,55 +31,55 @@ contract VortexLens {
         bool isListed;
         uint collateralFactorMantissa;
         address underlyingAssetAddress;
-        uint cTokenDecimals;
+        uint vTokenDecimals;
         uint underlyingDecimals;
     }
 
-    function cTokenMetadata(CToken cToken) public returns (CTokenMetadata memory) {
-        uint exchangeRateCurrent = cToken.exchangeRateCurrent();
-        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cToken.comptroller()));
-        (bool isListed, uint collateralFactorMantissa) = comptroller.markets(address(cToken));
+    function vTokenMetadata(VToken vToken) public returns (VTokenMetadata memory) {
+        uint exchangeRateCurrent = vToken.exchangeRateCurrent();
+        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(vToken.comptroller()));
+        (bool isListed, uint collateralFactorMantissa) = comptroller.markets(address(vToken));
         address underlyingAssetAddress;
         uint underlyingDecimals;
 
-        if (compareStrings(cToken.symbol(), "cETH")) {
+        if (compareStrings(vToken.symbol(), "cETH")) {
             underlyingAssetAddress = address(0);
             underlyingDecimals = 18;
         } else {
-            CErc20 cErc20 = CErc20(address(cToken));
+            CErc20 cErc20 = CErc20(address(vToken));
             underlyingAssetAddress = cErc20.underlying();
             underlyingDecimals = EIP20Interface(cErc20.underlying()).decimals();
         }
 
-        return CTokenMetadata({
-            cToken: address(cToken),
+        return VTokenMetadata({
+            vToken: address(vToken),
             exchangeRateCurrent: exchangeRateCurrent,
-            supplyRatePerBlock: cToken.supplyRatePerBlock(),
-            borrowRatePerBlock: cToken.borrowRatePerBlock(),
-            reserveFactorMantissa: cToken.reserveFactorMantissa(),
-            totalBorrows: cToken.totalBorrows(),
-            totalReserves: cToken.totalReserves(),
-            totalSupply: cToken.totalSupply(),
-            totalCash: cToken.getCash(),
+            supplyRatePerBlock: vToken.supplyRatePerBlock(),
+            borrowRatePerBlock: vToken.borrowRatePerBlock(),
+            reserveFactorMantissa: vToken.reserveFactorMantissa(),
+            totalBorrows: vToken.totalBorrows(),
+            totalReserves: vToken.totalReserves(),
+            totalSupply: vToken.totalSupply(),
+            totalCash: vToken.getCash(),
             isListed: isListed,
             collateralFactorMantissa: collateralFactorMantissa,
             underlyingAssetAddress: underlyingAssetAddress,
-            cTokenDecimals: cToken.decimals(),
+            vTokenDecimals: vToken.decimals(),
             underlyingDecimals: underlyingDecimals
         });
     }
 
-    function cTokenMetadataAll(CToken[] calldata cTokens) external returns (CTokenMetadata[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenMetadata[] memory res = new CTokenMetadata[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenMetadata(cTokens[i]);
+    function vTokenMetadataAll(VToken[] calldata vTokens) external returns (VTokenMetadata[] memory) {
+        uint vTokenCount = vTokens.length;
+        VTokenMetadata[] memory res = new VTokenMetadata[](vTokenCount);
+        for (uint i = 0; i < vTokenCount; i++) {
+            res[i] = vTokenMetadata(vTokens[i]);
         }
         return res;
     }
 
-    struct CTokenBalances {
-        address cToken;
+    struct VTokenBalances {
+        address vToken;
         uint balanceOf;
         uint borrowBalanceCurrent;
         uint balanceOfUnderlying;
@@ -87,25 +87,25 @@ contract VortexLens {
         uint tokenAllowance;
     }
 
-    function cTokenBalances(CToken cToken, address payable account) public returns (CTokenBalances memory) {
-        uint balanceOf = cToken.balanceOf(account);
-        uint borrowBalanceCurrent = cToken.borrowBalanceCurrent(account);
-        uint balanceOfUnderlying = cToken.balanceOfUnderlying(account);
+    function vTokenBalances(VToken vToken, address payable account) public returns (VTokenBalances memory) {
+        uint balanceOf = vToken.balanceOf(account);
+        uint borrowBalanceCurrent = vToken.borrowBalanceCurrent(account);
+        uint balanceOfUnderlying = vToken.balanceOfUnderlying(account);
         uint tokenBalance;
         uint tokenAllowance;
 
-        if (compareStrings(cToken.symbol(), "cETH")) {
+        if (compareStrings(vToken.symbol(), "cETH")) {
             tokenBalance = account.balance;
             tokenAllowance = account.balance;
         } else {
-            CErc20 cErc20 = CErc20(address(cToken));
+            CErc20 cErc20 = CErc20(address(vToken));
             EIP20Interface underlying = EIP20Interface(cErc20.underlying());
             tokenBalance = underlying.balanceOf(account);
-            tokenAllowance = underlying.allowance(account, address(cToken));
+            tokenAllowance = underlying.allowance(account, address(vToken));
         }
 
-        return CTokenBalances({
-            cToken: address(cToken),
+        return VTokenBalances({
+            vToken: address(vToken),
             balanceOf: balanceOf,
             borrowBalanceCurrent: borrowBalanceCurrent,
             balanceOfUnderlying: balanceOfUnderlying,
@@ -114,41 +114,41 @@ contract VortexLens {
         });
     }
 
-    function cTokenBalancesAll(CToken[] calldata cTokens, address payable account) external returns (CTokenBalances[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenBalances[] memory res = new CTokenBalances[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenBalances(cTokens[i], account);
+    function vTokenBalancesAll(VToken[] calldata vTokens, address payable account) external returns (VTokenBalances[] memory) {
+        uint vTokenCount = vTokens.length;
+        VTokenBalances[] memory res = new VTokenBalances[](vTokenCount);
+        for (uint i = 0; i < vTokenCount; i++) {
+            res[i] = vTokenBalances(vTokens[i], account);
         }
         return res;
     }
 
-    struct CTokenUnderlyingPrice {
-        address cToken;
+    struct VTokenUnderlyingPrice {
+        address vToken;
         uint underlyingPrice;
     }
 
-    function cTokenUnderlyingPrice(CToken cToken) public returns (CTokenUnderlyingPrice memory) {
-        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(cToken.comptroller()));
+    function vTokenUnderlyingPrice(VToken vToken) public returns (VTokenUnderlyingPrice memory) {
+        ComptrollerLensInterface comptroller = ComptrollerLensInterface(address(vToken.comptroller()));
         PriceOracle priceOracle = comptroller.oracle();
 
-        return CTokenUnderlyingPrice({
-            cToken: address(cToken),
-            underlyingPrice: priceOracle.getUnderlyingPrice(cToken)
+        return VTokenUnderlyingPrice({
+            vToken: address(vToken),
+            underlyingPrice: priceOracle.getUnderlyingPrice(vToken)
         });
     }
 
-    function cTokenUnderlyingPriceAll(CToken[] calldata cTokens) external returns (CTokenUnderlyingPrice[] memory) {
-        uint cTokenCount = cTokens.length;
-        CTokenUnderlyingPrice[] memory res = new CTokenUnderlyingPrice[](cTokenCount);
-        for (uint i = 0; i < cTokenCount; i++) {
-            res[i] = cTokenUnderlyingPrice(cTokens[i]);
+    function vTokenUnderlyingPriceAll(VToken[] calldata vTokens) external returns (VTokenUnderlyingPrice[] memory) {
+        uint vTokenCount = vTokens.length;
+        VTokenUnderlyingPrice[] memory res = new VTokenUnderlyingPrice[](vTokenCount);
+        for (uint i = 0; i < vTokenCount; i++) {
+            res[i] = vTokenUnderlyingPrice(vTokens[i]);
         }
         return res;
     }
 
     struct AccountLimits {
-        CToken[] markets;
+        VToken[] markets;
         uint liquidity;
         uint shortfall;
     }

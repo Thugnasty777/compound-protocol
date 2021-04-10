@@ -1,6 +1,6 @@
 const {
   makeComptroller,
-  makeCToken,
+  makeVToken,
   balanceOf,
   fastForward,
   pretendBorrow,
@@ -33,7 +33,7 @@ describe('Flywheel upgrade', () => {
       let root = saddle.accounts[0];
       let unitroller = await makeComptroller({kind: 'unitroller-g2'});
       let compMarkets = await Promise.all([1, 2, 3].map(async _ => {
-        return makeCToken({comptroller: unitroller, supportMarket: true});
+        return makeVToken({comptroller: unitroller, supportMarket: true});
       }));
       compMarkets = compMarkets.map(c => c._address);
       unitroller = await makeComptroller({kind: 'unitroller-g3', unitroller, compMarkets});
@@ -44,7 +44,7 @@ describe('Flywheel upgrade', () => {
       let root = saddle.accounts[0];
       let unitroller = await makeComptroller({kind: 'unitroller-g2'});
       let allMarkets = await Promise.all([1, 2, 3].map(async _ => {
-        return makeCToken({comptroller: unitroller, supportMarket: true});
+        return makeVToken({comptroller: unitroller, supportMarket: true});
       }));
       allMarkets = allMarkets.map(c => c._address);
       unitroller = await makeComptroller({
@@ -62,7 +62,7 @@ describe('Flywheel upgrade', () => {
       let unitroller = await makeComptroller({kind: 'unitroller-g3'});
       let allMarkets = [];
       for (let _ of Array(10)) {
-        allMarkets.push(await makeCToken({comptroller: unitroller, supportMarket: true}));
+        allMarkets.push(await makeVToken({comptroller: unitroller, supportMarket: true}));
       }
       expect(await call(unitroller, 'getAllMarkets')).toEqual(allMarkets.map(c => c._address));
       expect(
@@ -83,10 +83,10 @@ describe('Flywheel', () => {
     let interestRateModelOpts = {borrowRate: 0.000001};
     [root, a1, a2, a3, ...accounts] = saddle.accounts;
     comptroller = await makeComptroller();
-    cLOW = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 1, interestRateModelOpts});
-    cREP = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
-    cZRX = await makeCToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
-    cEVIL = await makeCToken({comptroller, supportMarket: false, underlyingPrice: 3, interestRateModelOpts});
+    cLOW = await makeVToken({comptroller, supportMarket: true, underlyingPrice: 1, interestRateModelOpts});
+    cREP = await makeVToken({comptroller, supportMarket: true, underlyingPrice: 2, interestRateModelOpts});
+    cZRX = await makeVToken({comptroller, supportMarket: true, underlyingPrice: 3, interestRateModelOpts});
+    cEVIL = await makeVToken({comptroller, supportMarket: false, underlyingPrice: 3, interestRateModelOpts});
   });
 
   describe('_grantVtx()', () => {
@@ -150,7 +150,7 @@ describe('Flywheel', () => {
         [cREP, cZRX].map((c) => c._address)
       );
       expect(tx).toHaveLog('VtxSpeedUpdated', {
-        cToken: cLOW._address,
+        vToken: cLOW._address,
         newSpeed: 0
       });
     });
@@ -175,7 +175,7 @@ describe('Flywheel', () => {
     });
 
     it('should not add non-listed markets', async () => {
-      const cBAT = await makeCToken({ comptroller, supportMarket: false });
+      const cBAT = await makeVToken({ comptroller, supportMarket: false });
       await expect(
         send(comptroller, 'harnessAddVtxMarkets', [[cBAT._address]])
       ).rejects.toRevert('revert vtx market is not listed');
@@ -211,8 +211,8 @@ describe('Flywheel', () => {
       expect(block).toEqualNumber(100);
     });
 
-    it('should not revert or update vtxBorrowState index if cToken not in VTX markets', async () => {
-      const mkt = await makeCToken({
+    it('should not revert or update vtxBorrowState index if vToken not in VTX markets', async () => {
+      const mkt = await makeVToken({
         comptroller: comptroller,
         supportMarket: true,
         addVtxMarket: false,
@@ -279,7 +279,7 @@ describe('Flywheel', () => {
     });
 
     it('should not update index on non-VTX markets', async () => {
-      const mkt = await makeCToken({
+      const mkt = await makeVToken({
         comptroller: comptroller,
         supportMarket: true,
         addVtxMarket: false
@@ -390,7 +390,7 @@ describe('Flywheel', () => {
       expect(await vtxAccrued(comptroller, a1)).toEqualNumber(25e18);
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
       expect(tx).toHaveLog('DistributedBorrowerVtx', {
-        cToken: mkt._address,
+        vToken: mkt._address,
         borrower: a1,
         compDelta: etherUnsigned(25e18).toFixed(),
         compBorrowIndex: etherDouble(6).toFixed()
@@ -418,7 +418,7 @@ describe('Flywheel', () => {
     });
 
     it('should not revert or distribute when called with non-VTX market', async () => {
-      const mkt = await makeCToken({
+      const mkt = await makeVToken({
         comptroller: comptroller,
         supportMarket: true,
         addVtxMarket: false,
@@ -452,7 +452,7 @@ describe('Flywheel', () => {
       expect(await vtxAccrued(comptroller, a1)).toEqualNumber(0);
       expect(await compBalance(comptroller, a1)).toEqualNumber(25e18);
       expect(tx).toHaveLog('DistributedSupplierVtx', {
-        cToken: mkt._address,
+        vToken: mkt._address,
         supplier: a1,
         compDelta: etherUnsigned(25e18).toFixed(),
         compSupplyIndex: etherDouble(6).toFixed()
@@ -499,7 +499,7 @@ describe('Flywheel', () => {
     });
 
     it('should not revert or distribute when called with non-VTX market', async () => {
-      const mkt = await makeCToken({
+      const mkt = await makeVToken({
         comptroller: comptroller,
         supportMarket: true,
         addVtxMarket: false,
@@ -606,7 +606,7 @@ describe('Flywheel', () => {
     });
 
     it('should revert when a market is not listed', async () => {
-      const cNOT = await makeCToken({comptroller});
+      const cNOT = await makeVToken({comptroller});
       await expect(
         send(comptroller, 'claimVtx', [a1, [cNOT._address]])
       ).rejects.toRevert('revert market must be listed');
@@ -701,7 +701,7 @@ describe('Flywheel', () => {
     });
 
     it('should revert when a market is not listed', async () => {
-      const cNOT = await makeCToken({comptroller});
+      const cNOT = await makeVToken({comptroller});
       await expect(
         send(comptroller, 'claimVtx', [[a1, a2], [cNOT._address], true, true])
       ).rejects.toRevert('revert market must be listed');
@@ -722,7 +722,7 @@ describe('Flywheel', () => {
       const speed = await call(comptroller, 'vtxSpeeds', [cLOW._address]);
       expect(speed).toEqualNumber(vtxRate);
       expect(tx).toHaveLog(['VtxSpeedUpdated', 0], {
-        cToken: cLOW._address,
+        vToken: cLOW._address,
         newSpeed: speed
       });
     });
@@ -743,13 +743,13 @@ describe('Flywheel', () => {
 
   describe('harnessAddVtxMarkets', () => {
     it('should correctly add a vtx market if called by admin', async () => {
-      const cBAT = await makeCToken({comptroller, supportMarket: true});
+      const cBAT = await makeVToken({comptroller, supportMarket: true});
       const tx1 = await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address, cREP._address, cZRX._address]]);
       const tx2 = await send(comptroller, 'harnessAddVtxMarkets', [[cBAT._address]]);
       const markets = await call(comptroller, 'getVtxMarkets');
       expect(markets).toEqual([cLOW, cREP, cZRX, cBAT].map((c) => c._address));
       expect(tx2).toHaveLog('VtxSpeedUpdated', {
-        cToken: cBAT._address,
+        vToken: cBAT._address,
         newSpeed: 1
       });
     });

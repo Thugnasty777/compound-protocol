@@ -2,7 +2,7 @@ import { Contract } from '../Contract';
 import { Callable, Sendable } from '../Invokation';
 import { encodedNumber } from '../Encoding';
 
-export interface CTokenMethods {
+export interface VTokenMethods {
   _resignImplementation(): Sendable<void>;
   balanceOfUnderlying(address: string): Callable<number>;
   borrowBalanceCurrent(address: string): Callable<string>;
@@ -25,8 +25,8 @@ export interface CTokenMethods {
   repayBorrow(amount: encodedNumber): Sendable<number>;
   repayBorrowBehalf(amount: string): Sendable<number>;
   repayBorrowBehalf(address: string, amount: encodedNumber): Sendable<number>;
-  liquidateBorrow(borrower: string, cTokenCollateral: string): Sendable<number>;
-  liquidateBorrow(borrower: string, repayAmount: encodedNumber, cTokenCollateral: string): Sendable<number>;
+  liquidateBorrow(borrower: string, vTokenCollateral: string): Sendable<number>;
+  liquidateBorrow(borrower: string, repayAmount: encodedNumber, vTokenCollateral: string): Sendable<number>;
   seize(liquidator: string, borrower: string, seizeTokens: encodedNumber): Sendable<number>;
   evilSeize(
     treasure: string,
@@ -50,17 +50,17 @@ export interface CTokenMethods {
   sweepToken(token: string): Sendable<void>;
 }
 
-export interface CTokenScenarioMethods extends CTokenMethods {
+export interface VTokenScenarioMethods extends VTokenMethods {
   setTotalBorrows(amount: encodedNumber): Sendable<void>;
   setTotalReserves(amount: encodedNumber): Sendable<void>;
 }
 
-export interface CToken extends Contract {
-  methods: CTokenMethods;
+export interface VToken extends Contract {
+  methods: VTokenMethods;
   name: string;
 }
 
-export interface CTokenScenario extends Contract {
-  methods: CTokenScenarioMethods;
+export interface VTokenScenario extends Contract {
+  methods: VTokenScenarioMethods;
   name: string;
 }
