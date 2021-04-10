@@ -65,7 +65,7 @@ async function repayBorrowBehalf(vToken, payer, borrower, repayAmount) {
   return send(vToken, 'repayBorrowBehalf', [borrower], {from: payer, value: repayAmount});
 }
 
-describe('CEther', function () {
+describe('VEther', function () {
   let vToken, root, borrower, benefactor, accounts;
   beforeEach(async () => {
     [root, borrower, benefactor, ...accounts] = saddle.accounts;

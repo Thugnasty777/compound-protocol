@@ -54,7 +54,7 @@ async function redeemUnderlying(vToken, redeemer, redeemTokens, redeemAmount) {
   return send(vToken, 'redeemUnderlying', [redeemAmount], {from: redeemer});
 }
 
-describe('CEther', () => {
+describe('VEther', () => {
   let root, minter, redeemer, accounts;
   let vToken;
 

@@ -6,7 +6,7 @@ const {
 
 const exchangeRate = 5;
 
-describe('CEther', function () {
+describe('VEther', function () {
   let root, nonRoot, accounts;
   let vToken;
   beforeEach(async () => {
@@ -15,7 +15,7 @@ describe('CEther', function () {
   });
 
   describe("getCashPrior", () => {
-    it("returns the amount of ether held by the cEther contract before the current message", async () => {
+    it("returns the amount of ether held by the vEther contract before the current message", async () => {
       expect(await call(vToken, 'harnessGetCashPrior', [], {value: 100})).toEqualNumber(0);
     });
   });

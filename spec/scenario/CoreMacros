@@ -11,7 +11,7 @@ Macro PricedComptroller closeFactor=0.1 maxAssets=20
     PriceOracle Deploy Simple
     ComptrollerImpl Deploy ScenarioG1 ScenComptrollerG1
     Unitroller SetPendingImpl ScenComptrollerG1
-    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing cEther use ListedEtherToken to replace proxy
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing vEther use ListedEtherToken to replace proxy
     ComptrollerImpl ScenComptrollerG1 BecomeG1 (PriceOracleProxy Address) closeFactor maxAssets
     ComptrollerImpl Deploy Scenario ScenComptroller
     Unitroller SetPendingImpl ScenComptroller
@@ -23,7 +23,7 @@ Macro NewComptroller price=1.0 closeFactor=0.1 maxAssets=20
     PriceOracle Deploy Fixed price
     ComptrollerImpl Deploy ScenarioG1 ScenComptrollerG1
     Unitroller SetPendingImpl ScenComptrollerG1
-    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing cEther use ListedEtherToken to replace proxy
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing vEther use ListedEtherToken to replace proxy
     ComptrollerImpl ScenComptrollerG1 BecomeG1 (PriceOracleProxy Address) closeFactor maxAssets
     --g2
     ComptrollerImpl Deploy StandardG2 ComptrollerG2
@@ -69,7 +69,7 @@ Macro NewVTokenImmutable erc20 vToken borrowRate=0.000005 initialExchangeRate=2e
 
 Macro NewEtherToken vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 admin=Admin
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
-    VToken Deploy CEtherScenario vToken vToken (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
+    VToken Deploy VEtherScenario vToken vToken (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
 
 Macro ListedVToken erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=CErc20DelegatorScenario vTokenType=CErc20DelegateScenario admin=Admin
     NewVToken erc20 vToken borrowRate initialExchangeRate decimals tokenType delegatorType vTokenType admin
@@ -233,23 +233,23 @@ Macro BorrowAndRepayWithInterest erc20 vToken amount interestAmount interestRate
 
 -- Macro for performing a borrow with the sole
 -- purpose of adding interest to the ether market
-Macro BorrowAndRepayEthWithInterest cEther amount interestAmount interestRate blocks reserveRate=0
+Macro BorrowAndRepayEthWithInterest vEther amount interestAmount interestRate blocks reserveRate=0
     -- TODO: Make invariant success for these?
     -- TODO: Named args as macros
     InterestRateModel Deploy Fixed Std interestRate
-    VToken cEther SetInterestRateModel (InterestRateModel Std Address)
-    VToken cEther SetReserveFactor reserveRate
+    VToken vEther SetInterestRateModel (InterestRateModel Std Address)
+    VToken vEther SetReserveFactor reserveRate
     ListedVToken COLLAT cCOLLAT
     Comptroller SetCollateralFactor cCOLLAT 0.9
     Prep Torrey 1e30 COLLAT cCOLLAT
     Mint Torrey 1e30 cCOLLAT
-    EnterMarkets Torrey cCOLLAT cEther
+    EnterMarkets Torrey cCOLLAT vEther
     Assert True (Comptroller CheckMembership Torrey cCOLLAT)
-    Assert True (Comptroller CheckMembership Torrey cEther)
-    Borrow Torrey amount cEther
+    Assert True (Comptroller CheckMembership Torrey vEther)
+    Borrow Torrey amount vEther
     -- Cool, we've borrowed, now let's accrue interest then repay all
     FastForward blocks Blocks
-    -- RepayBorrow Torrey (VToken BorrowBalance Torrey) cEther
-    RepayBorrowEth Torrey amount cEther
-    RepayBorrowEth Torrey interestAmount cEther
-    Assert Equal (VToken cEther BorrowBalance Torrey) Zero
+    -- RepayBorrow Torrey (VToken BorrowBalance Torrey) vEther
+    RepayBorrowEth Torrey amount vEther
+    RepayBorrowEth Torrey interestAmount vEther
+    Assert Equal (VToken vEther BorrowBalance Torrey) Zero

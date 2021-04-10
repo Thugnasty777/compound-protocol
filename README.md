@@ -25,8 +25,8 @@ Contracts
 We detail a few of the core contracts in the Vortex protocol.
 
 <dl>
-  <dt>VToken, CErc20 and CEther</dt>
-  <dd>The Vortex vTokens, which are self-contained borrowing and lending contracts. VToken contains the core logic and CErc20 and CEther add public interfaces for Erc20 tokens and ether, respectively. Each VToken is assigned an interest rate and risk model (see InterestRateModel and Comptroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each VToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
+  <dt>VToken, CErc20 and VEther</dt>
+  <dd>The Vortex vTokens, which are self-contained borrowing and lending contracts. VToken contains the core logic and CErc20 and VEther add public interfaces for Erc20 tokens and ether, respectively. Each VToken is assigned an interest rate and risk model (see InterestRateModel and Comptroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each VToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
 </dl>
 
 <dl>

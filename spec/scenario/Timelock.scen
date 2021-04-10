@@ -140,7 +140,7 @@ Test "Reduce reserves for CErc20 from Timelock and send reserves to external add
     Assert Equal (Erc20 ZRX TokenBalance (Timelock Address)) (Exactly 0e18)
     Assert Equal (Erc20 ZRX TokenBalance "0x0000000000000000000000000000000000000001") (Exactly 1e18)
 
-Test "Reduce reserves for CEther from Timelock and send reserves to external address"
+Test "Reduce reserves for VEther from Timelock and send reserves to external address"
     NewComptroller
     ListedEtherToken cETH initialExchangeRate:1e9
     CallMintEth Geoff 50e18 cETH
@@ -189,7 +189,7 @@ Test "Set Pending Comptroller implementation on Unitroller from Timelock"
     ComptrollerImpl Deploy ScenarioG1 ScenComptrollerG1
     Unitroller SetPendingImpl ScenComptrollerG1
     Assert Equal (Unitroller PendingImplementation) (ComptrollerImpl ScenComptrollerG1 Address)
-    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing cEther use ListedEtherToken to replace proxy
+    PriceOracleProxy Deploy Admin (PriceOracle Address) (Address Zero) (Address Zero) (Address Zero) (Address Zero) (Address Zero) -- if listing vEther use ListedEtherToken to replace proxy
     ComptrollerImpl ScenComptrollerG1 BecomeG1 (PriceOracleProxy Address) 0.1 20
     Assert Equal (Unitroller PendingImplementation) (Address Zero)
     Assert Equal (Unitroller Implementation) (Address ScenComptrollerG1)

@@ -3,13 +3,13 @@ pragma solidity ^0.5.16;
 import "./VToken.sol";
 
 /**
- * @title Vortex CEther Contract
+ * @title Vortex VEther Contract
  * @notice VToken which wraps Ether
  * @author Vortex
  */
-contract CEther is VToken {
+contract VEther is VToken {
     /**
-     * @notice Construct a new CEther money market
+     * @notice Construct a new VEther money market
      * @param comptroller_ The address of the Comptroller
      * @param interestRateModel_ The address of the interest rate model
      * @param initialExchangeRateMantissa_ The initial exchange rate, scaled by 1e18
@@ -107,7 +107,7 @@ contract CEther is VToken {
     }
 
     /**
-     * @notice Send Ether to CEther to mint
+     * @notice Send Ether to VEther to mint
      */
     function () external payable {
         (uint err,) = mintInternal(msg.value);

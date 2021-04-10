@@ -2183,8 +2183,8 @@
         {
             "inputs": [
                 {
-                    "internalType": "contract CEther",
-                    "name": "cEther_",
+                    "internalType": "contract VEther",
+                    "name": "vEther_",
                     "type": "address"
                 }
             ],
@@ -2196,10 +2196,10 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "cEther",
+            "name": "vEther",
             "outputs": [
                 {
-                    "internalType": "contract CEther",
+                    "internalType": "contract VEther",
                     "name": "",
                     "type": "address"
                 }
@@ -2234,8 +2234,8 @@
                     "type": "address"
                 },
                 {
-                    "internalType": "contract CEther",
-                    "name": "cEther_",
+                    "internalType": "contract VEther",
+                    "name": "vEther_",
                     "type": "address"
                 }
             ],

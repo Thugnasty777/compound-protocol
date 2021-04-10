@@ -123,9 +123,9 @@ spec/certora/CErc20Delegator/%.cvl:
 spec/certora/Maximillion/%.cvl:
 	$(CERTORA_RUN) \
 	 spec/certora/contracts/MaximillionCertora.sol \
-	 spec/certora/contracts/CEtherCertora.sol \
+	 spec/certora/contracts/VEtherCertora.sol \
 	--link \
-	 MaximillionCertora:cEther=CEtherCertora \
+	 MaximillionCertora:vEther=VEtherCertora \
 	--verify \
 	 MaximillionCertora:$@
 

@@ -138,7 +138,7 @@ async function makeVToken(opts = {}) {
 
   switch (kind) {
     case 'cether':
-      vToken = await deploy('CEtherHarness',
+      vToken = await deploy('VEtherHarness',
         [
           comptroller._address,
           interestRateModel._address,
@@ -324,11 +324,11 @@ async function setBalance(vToken, account, balance) {
   return await send(vToken, 'harnessSetBalance', [account, balance]);
 }
 
-async function setEtherBalance(cEther, balance) {
-  const current = await etherBalance(cEther._address);
+async function setEtherBalance(vEther, balance) {
+  const current = await etherBalance(vEther._address);
   const root = saddle.account;
-  expect(await send(cEther, 'harnessDoTransferOut', [root, current])).toSucceed();
-  expect(await send(cEther, 'harnessDoTransferIn', [root, balance], { value: balance })).toSucceed();
+  expect(await send(vEther, 'harnessDoTransferOut', [root, current])).toSucceed();
+  expect(await send(vEther, 'harnessDoTransferIn', [root, balance], { value: balance })).toSucceed();
 }
 
 async function getBalances(vTokens, accounts) {

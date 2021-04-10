@@ -18,7 +18,7 @@ contract PriceOracleProxy is PriceOracle {
     /// @notice Address of the guardian, which may set the SAI price once
     address public guardian;
 
-    /// @notice Address of the cEther contract, which has a constant price
+    /// @notice Address of the vEther contract, which has a constant price
     address public cEthAddress;
 
     /// @notice Address of the cUSDC contract, which we hand pick a key for

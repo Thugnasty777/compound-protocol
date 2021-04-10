@@ -78,7 +78,7 @@ describe('VortexLens', () => {
   });
 
   describe('vTokenMetadataAll', () => {
-    it('is correct for a cErc20 and cEther', async () => {
+    it('is correct for a cErc20 and vEther', async () => {
       let cErc20 = await makeVToken();
       let cEth = await makeVToken({kind: 'cether'});
       expect(

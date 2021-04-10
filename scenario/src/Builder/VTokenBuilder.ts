@@ -12,9 +12,9 @@ import { getContract, getTestContract } from '../Contract';
 const CErc20Contract = getContract('CErc20Immutable');
 const CErc20Delegator = getContract('CErc20Delegator');
 const CErc20DelegatorScenario = getTestContract('CErc20DelegatorScenario');
-const CEtherContract = getContract('CEther');
+const VEtherContract = getContract('VEther');
 const CErc20ScenarioContract = getTestContract('CErc20Scenario');
-const CEtherScenarioContract = getTestContract('CEtherScenario');
+const VEtherScenarioContract = getTestContract('VEtherScenario');
 const CEvilContract = getTestContract('CEvil');
 
 export interface TokenData {
@@ -213,12 +213,12 @@ export async function buildVToken(
     ),
 
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
-        #### CEtherScenario
+        #### VEtherScenario
 
-        * "CEtherScenario symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
-          * E.g. "VToken Deploy CEtherScenario cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "VEtherScenario symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
+          * E.g. "VToken Deploy VEtherScenario cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
-      "CEtherScenario",
+      "VEtherScenario",
       [
         new Arg("symbol", getStringV),
         new Arg("name", getStringV),
@@ -230,12 +230,12 @@ export async function buildVToken(
       ],
       async (world, {symbol, name, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CEtherScenarioContract.deploy<VToken>(world, from, [name.val, symbol.val, decimals.val, admin.val, comptroller.val, interestRateModel.val, initialExchangeRate.val]),
+          invokation: await VEtherScenarioContract.deploy<VToken>(world, from, [name.val, symbol.val, decimals.val, admin.val, comptroller.val, interestRateModel.val, initialExchangeRate.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: "",
-          contract: 'CEtherScenario',
+          contract: 'VEtherScenario',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
@@ -243,12 +243,12 @@ export async function buildVToken(
     ),
 
     new Fetcher<{symbol: StringV, name: StringV, decimals: NumberV, admin: AddressV, comptroller: AddressV, interestRateModel: AddressV, initialExchangeRate: NumberV}, TokenData>(`
-        #### CEther
+        #### VEther
 
-        * "CEther symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
-          * E.g. "VToken Deploy CEther cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+        * "VEther symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A VToken Scenario for local testing
+          * E.g. "VToken Deploy VEther cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
-      "CEther",
+      "VEther",
       [
         new Arg("symbol", getStringV),
         new Arg("name", getStringV),
@@ -260,12 +260,12 @@ export async function buildVToken(
       ],
       async (world, {symbol, name, comptroller, interestRateModel, initialExchangeRate, decimals, admin}) => {
         return {
-          invokation: await CEtherContract.deploy<VToken>(world, from, [comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
+          invokation: await VEtherContract.deploy<VToken>(world, from, [comptroller.val, interestRateModel.val, initialExchangeRate.val, name.val, symbol.val, decimals.val, admin.val]),
           name: name.val,
           symbol: symbol.val,
           decimals: decimals.toNumber(),
           underlying: "",
-          contract: 'CEther',
+          contract: 'VEther',
           initial_exchange_rate_mantissa: initialExchangeRate.encode().toString(),
           admin: admin.val
         };
