@@ -3,7 +3,7 @@ const {
   makeComptroller,
   makeCToken,
   setOraclePrice
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 const borrowedPrice = 2e10;
 const collateralPrice = 1e18;

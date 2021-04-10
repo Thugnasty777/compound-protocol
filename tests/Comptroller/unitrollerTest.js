@@ -6,7 +6,7 @@ const {
 const {
   makeComptroller,
   makePriceOracle
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 describe('Unitroller', () => {
   let root, accounts;

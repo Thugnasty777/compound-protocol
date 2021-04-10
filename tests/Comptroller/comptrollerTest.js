@@ -8,7 +8,7 @@ const {
   makePriceOracle,
   makeCToken,
   makeToken
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 describe('Comptroller', () => {
   let root, accounts;

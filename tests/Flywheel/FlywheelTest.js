@@ -5,7 +5,7 @@ const {
   fastForward,
   pretendBorrow,
   quickMint
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 const {
   etherExp,
   etherDouble,
@@ -20,7 +20,7 @@ async function vtxAccrued(comptroller, user) {
 }
 
 async function compBalance(comptroller, user) {
-  return etherUnsigned(await call(comptroller.comp, 'balanceOf', [user]))
+  return etherUnsigned(await call(comptroller.vtx, 'balanceOf', [user]))
 }
 
 async function totalVtxAccrued(comptroller, user) {
@@ -29,7 +29,7 @@ async function totalVtxAccrued(comptroller, user) {
 
 describe('Flywheel upgrade', () => {
   describe('becomes the comptroller', () => {
-    it('adds the comp markets', async () => {
+    it('adds the vtx markets', async () => {
       let root = saddle.accounts[0];
       let unitroller = await makeComptroller({kind: 'unitroller-g2'});
       let compMarkets = await Promise.all([1, 2, 3].map(async _ => {
@@ -91,7 +91,7 @@ describe('Flywheel', () => {
 
   describe('_grantVtx()', () => {
     beforeEach(async () => {
-      await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
     });
 
     it('should award vtx if called by admin', async () => {
@@ -108,7 +108,7 @@ describe('Flywheel', () => {
       ).rejects.toRevert('revert only admin can grant vtx');
     });
 
-    it('should revert if insufficient comp', async () => {
+    it('should revert if insufficient vtx', async () => {
       await expect(
         send(comptroller, '_grantVtx', [a1, etherUnsigned(1e20)])
       ).rejects.toRevert('revert insufficient vtx for grant');
@@ -116,7 +116,7 @@ describe('Flywheel', () => {
   });
 
   describe('getVtxMarkets()', () => {
-    it('should return the comp markets', async () => {
+    it('should return the vtx markets', async () => {
       for (let mkt of [cLOW, cREP, cZRX]) {
         await send(comptroller, '_setVtxSpeed', [mkt._address, etherExp(0.5)]);
       }
@@ -141,7 +141,7 @@ describe('Flywheel', () => {
       expect(block).toEqualNumber(20);
     });
 
-    it('should correctly drop a comp market if called by admin', async () => {
+    it('should correctly drop a vtx market if called by admin', async () => {
       for (let mkt of [cLOW, cREP, cZRX]) {
         await send(comptroller, '_setVtxSpeed', [mkt._address, etherExp(0.5)]);
       }
@@ -155,7 +155,7 @@ describe('Flywheel', () => {
       });
     });
 
-    it('should correctly drop a comp market from middle of array', async () => {
+    it('should correctly drop a vtx market from middle of array', async () => {
       for (let mkt of [cLOW, cREP, cZRX]) {
         await send(comptroller, '_setVtxSpeed', [mkt._address, etherExp(0.5)]);
       }
@@ -165,7 +165,7 @@ describe('Flywheel', () => {
       );
     });
 
-    it('should not drop a comp market unless called by admin', async () => {
+    it('should not drop a vtx market unless called by admin', async () => {
       for (let mkt of [cLOW, cREP, cZRX]) {
         await send(comptroller, '_setVtxSpeed', [mkt._address, etherExp(0.5)]);
       }
@@ -177,7 +177,7 @@ describe('Flywheel', () => {
     it('should not add non-listed markets', async () => {
       const cBAT = await makeCToken({ comptroller, supportMarket: false });
       await expect(
-        send(comptroller, 'harnessAddCompMarkets', [[cBAT._address]])
+        send(comptroller, 'harnessAddVtxMarkets', [[cBAT._address]])
       ).rejects.toRevert('revert vtx market is not listed');
 
       const markets = await call(comptroller, 'getVtxMarkets');
@@ -215,7 +215,7 @@ describe('Flywheel', () => {
       const mkt = await makeCToken({
         comptroller: comptroller,
         supportMarket: true,
-        addCompMarket: false,
+        addVtxMarket: false,
       });
       await send(comptroller, 'setBlockNumber', [100]);
       await send(comptroller, 'harnessUpdateVtxBorrowIndex', [
@@ -278,11 +278,11 @@ describe('Flywheel', () => {
       expect(block).toEqualNumber(100);
     });
 
-    it('should not update index on non-COMP markets', async () => {
+    it('should not update index on non-VTX markets', async () => {
       const mkt = await makeCToken({
         comptroller: comptroller,
         supportMarket: true,
-        addCompMarket: false
+        addVtxMarket: false
       });
       await send(comptroller, 'setBlockNumber', [100]);
       await send(comptroller, 'harnessUpdateVtxSupplyIndex', [
@@ -294,7 +294,7 @@ describe('Flywheel', () => {
       expect(block).toEqualNumber(100);
       const speed = await call(comptroller, 'vtxSpeeds', [mkt._address]);
       expect(speed).toEqualNumber(0);
-      // ctoken could have no comp speed or comp supplier state if not in comp markets
+      // ctoken could have no vtx speed or vtx supplier state if not in vtx markets
       // this logic could also possibly be implemented in the allowed hook
     });
 
@@ -312,8 +312,8 @@ describe('Flywheel', () => {
 
     it('should not matter if the index is updated multiple times', async () => {
       const compRemaining = vtxRate.multipliedBy(100)
-      await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address]]);
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address]]);
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       await pretendBorrow(cLOW, a1, 1, 1, 100);
       await send(comptroller, 'harnessRefreshVtxSpeeds');
 
@@ -369,16 +369,16 @@ describe('Flywheel', () => {
       expect(await call(comptroller, "vtxBorrowerIndex", [ mkt._address, root])).toEqualNumber(6e36);
     });
 
-    it('should transfer comp and update borrow index checkpoint correctly for repeat time user', async () => {
+    it('should transfer vtx and update borrow index checkpoint correctly for repeat time user', async () => {
       const mkt = cREP;
-      await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
       await send(mkt, "harnessSetAccountBorrows", [a1, etherUnsigned(5.5e18), etherExp(1)]);
       await send(comptroller, "setVtxBorrowState", [mkt._address, etherDouble(6), 10]);
       await send(comptroller, "setVtxBorrowerIndex", [mkt._address, a1, etherDouble(1)]);
 
       /*
       * 100 delta blocks, 10e18 origin total borrows, 0.5e18 borrowSpeed => 6e18 compBorrowIndex
-      * this tests that an acct with half the total borrows over that time gets 25e18 COMP
+      * this tests that an acct with half the total borrows over that time gets 25e18 VTX
         borrowerAmount = borrowBalance * 1e18 / borrow idx
                        = 5.5e18 * 1e18 / 1.1e18 = 5e18
         deltaIndex     = marketStoredIndex - userStoredIndex
@@ -397,9 +397,9 @@ describe('Flywheel', () => {
       });
     });
 
-    it('should not transfer comp automatically', async () => {
+    it('should not transfer vtx automatically', async () => {
       const mkt = cREP;
-      await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
       await send(mkt, "harnessSetAccountBorrows", [a1, etherUnsigned(5.5e17), etherExp(1)]);
       await send(comptroller, "setVtxBorrowState", [mkt._address, etherDouble(1.0019), 10]);
       await send(comptroller, "setVtxBorrowerIndex", [mkt._address, a1, etherDouble(1)]);
@@ -417,11 +417,11 @@ describe('Flywheel', () => {
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
     });
 
-    it('should not revert or distribute when called with non-COMP market', async () => {
+    it('should not revert or distribute when called with non-VTX market', async () => {
       const mkt = await makeCToken({
         comptroller: comptroller,
         supportMarket: true,
-        addCompMarket: false,
+        addVtxMarket: false,
       });
 
       await send(comptroller, "harnessDistributeBorrowerVtx", [mkt._address, a1, etherExp(1.1)]);
@@ -434,13 +434,13 @@ describe('Flywheel', () => {
   describe('distributeSupplierVtx()', () => {
     it('should transfer vtx and update supply index correctly for first time user', async () => {
       const mkt = cREP;
-      await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
 
       await send(mkt, "harnessSetBalance", [a1, etherUnsigned(5e18)]);
       await send(comptroller, "setVtxSupplyState", [mkt._address, etherDouble(6), 10]);
       /*
       * 100 delta blocks, 10e18 total supply, 0.5e18 supplySpeed => 6e18 compSupplyIndex
-      * confirming an acct with half the total supply over that time gets 25e18 COMP:
+      * confirming an acct with half the total supply over that time gets 25e18 VTX:
         supplierAmount  = 5e18
         deltaIndex      = marketStoredIndex - userStoredIndex
                         = 6e36 - 1e36 = 5e36
@@ -459,9 +459,9 @@ describe('Flywheel', () => {
       });
     });
 
-    it('should update comp accrued and supply index for repeat user', async () => {
+    it('should update vtx accrued and supply index for repeat user', async () => {
       const mkt = cREP;
-      await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
 
       await send(mkt, "harnessSetBalance", [a1, etherUnsigned(5e18)]);
       await send(comptroller, "setVtxSupplyState", [mkt._address, etherDouble(6), 10]);
@@ -481,7 +481,7 @@ describe('Flywheel', () => {
 
     it('should not transfer when vtxAccrued below threshold', async () => {
       const mkt = cREP;
-      await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
 
       await send(mkt, "harnessSetBalance", [a1, etherUnsigned(5e17)]);
       await send(comptroller, "setVtxSupplyState", [mkt._address, etherDouble(1.0019), 10]);
@@ -498,11 +498,11 @@ describe('Flywheel', () => {
       expect(await compBalance(comptroller, a1)).toEqualNumber(0);
     });
 
-    it('should not revert or distribute when called with non-COMP market', async () => {
+    it('should not revert or distribute when called with non-VTX market', async () => {
       const mkt = await makeCToken({
         comptroller: comptroller,
         supportMarket: true,
-        addCompMarket: false,
+        addVtxMarket: false,
       });
 
       await send(comptroller, "harnessDistributeSupplierVtx", [mkt._address, a1]);
@@ -517,7 +517,7 @@ describe('Flywheel', () => {
     it('should transfer vtx accrued when amount is above threshold', async () => {
       const compRemaining = 1000, a1AccruedPre = 100, threshold = 1;
       const compBalancePre = await compBalance(comptroller, a1);
-      const tx0 = await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      const tx0 = await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       const tx1 = await send(comptroller, 'setVtxAccrued', [a1, a1AccruedPre]);
       const tx2 = await send(comptroller, 'harnessTransferVtx', [a1, a1AccruedPre, threshold]);
       const a1AccruedPost = await vtxAccrued(comptroller, a1);
@@ -528,8 +528,8 @@ describe('Flywheel', () => {
 
     it('should not transfer when vtx accrued is below threshold', async () => {
       const compRemaining = 1000, a1AccruedPre = 100, threshold = 101;
-      const compBalancePre = await call(comptroller.comp, 'balanceOf', [a1]);
-      const tx0 = await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      const compBalancePre = await call(comptroller.vtx, 'balanceOf', [a1]);
+      const tx0 = await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       const tx1 = await send(comptroller, 'setVtxAccrued', [a1, a1AccruedPre]);
       const tx2 = await send(comptroller, 'harnessTransferVtx', [a1, a1AccruedPre, threshold]);
       const a1AccruedPost = await vtxAccrued(comptroller, a1);
@@ -538,10 +538,10 @@ describe('Flywheel', () => {
       expect(compBalancePost).toEqualNumber(0);
     });
 
-    it('should not transfer comp if vtx accrued is greater than vtx remaining', async () => {
+    it('should not transfer vtx if vtx accrued is greater than vtx remaining', async () => {
       const compRemaining = 99, a1AccruedPre = 100, threshold = 1;
       const compBalancePre = await compBalance(comptroller, a1);
-      const tx0 = await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      const tx0 = await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       const tx1 = await send(comptroller, 'setVtxAccrued', [a1, a1AccruedPre]);
       const tx2 = await send(comptroller, 'harnessTransferVtx', [a1, a1AccruedPre, threshold]);
       const a1AccruedPost = await vtxAccrued(comptroller, a1);
@@ -554,7 +554,7 @@ describe('Flywheel', () => {
   describe('claimVtx', () => {
     it('should accrue vtx and then transfer vtx accrued', async () => {
       const compRemaining = vtxRate.multipliedBy(100), mintAmount = etherUnsigned(12e18), deltaBlocks = 10;
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       await pretendBorrow(cLOW, a1, 1, 1, 100);
       await send(comptroller, '_setVtxSpeed', [cLOW._address, etherExp(0.5)]);
       await send(comptroller, 'harnessRefreshVtxSpeeds');
@@ -576,9 +576,9 @@ describe('Flywheel', () => {
 
     it('should accrue vtx and then transfer vtx accrued in a single market', async () => {
       const compRemaining = vtxRate.multipliedBy(100), mintAmount = etherUnsigned(12e18), deltaBlocks = 10;
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       await pretendBorrow(cLOW, a1, 1, 1, 100);
-      await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address]]);
+      await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address]]);
       await send(comptroller, 'harnessRefreshVtxSpeeds');
       const speed = await call(comptroller, 'vtxSpeeds', [cLOW._address]);
       const a2AccruedPre = await vtxAccrued(comptroller, a2);
@@ -598,7 +598,7 @@ describe('Flywheel', () => {
 
     it('should claim when vtx accrued is below threshold', async () => {
       const compRemaining = etherExp(1), accruedAmt = etherUnsigned(0.0009e18)
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       await send(comptroller, 'setVtxAccrued', [a1, accruedAmt]);
       await send(comptroller, 'claimVtx', [a1, [cLOW._address]]);
       expect(await vtxAccrued(comptroller, a1)).toEqualNumber(0);
@@ -616,7 +616,7 @@ describe('Flywheel', () => {
   describe('claimVtx batch', () => {
     it('should revert when claiming vtx from non-listed market', async () => {
       const compRemaining = vtxRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_, __, ...claimAccts] = saddle.accounts;
 
       for(let from of claimAccts) {
@@ -635,7 +635,7 @@ describe('Flywheel', () => {
 
     it('should claim the expected amount when holders and ctokens arg is duplicated', async () => {
       const compRemaining = vtxRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_, __, ...claimAccts] = saddle.accounts;
       for(let from of claimAccts) {
         expect(await send(cLOW.underlying, 'harnessSetBalance', [from, mintAmount], { from })).toSucceed();
@@ -643,13 +643,13 @@ describe('Flywheel', () => {
         send(cLOW, 'mint', [mintAmount], { from });
       }
       await pretendBorrow(cLOW, root, 1, 1, etherExp(10));
-      await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address]]);
+      await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address]]);
       await send(comptroller, 'harnessRefreshVtxSpeeds');
 
       await fastForward(comptroller, deltaBlocks);
 
       const tx = await send(comptroller, 'claimVtx', [[...claimAccts, ...claimAccts], [cLOW._address, cLOW._address], false, true]);
-      // comp distributed => 10e18
+      // vtx distributed => 10e18
       for(let acct of claimAccts) {
         expect(await call(comptroller, 'vtxSupplierIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(1.125));
         expect(await compBalance(comptroller, acct)).toEqualNumber(etherExp(1.25));
@@ -658,7 +658,7 @@ describe('Flywheel', () => {
 
     it('claims vtx for multiple suppliers only', async () => {
       const compRemaining = vtxRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10);
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_, __, ...claimAccts] = saddle.accounts;
       for(let from of claimAccts) {
         expect(await send(cLOW.underlying, 'harnessSetBalance', [from, mintAmount], { from })).toSucceed();
@@ -666,13 +666,13 @@ describe('Flywheel', () => {
         send(cLOW, 'mint', [mintAmount], { from });
       }
       await pretendBorrow(cLOW, root, 1, 1, etherExp(10));
-      await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address]]);
+      await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address]]);
       await send(comptroller, 'harnessRefreshVtxSpeeds');
 
       await fastForward(comptroller, deltaBlocks);
 
       const tx = await send(comptroller, 'claimVtx', [claimAccts, [cLOW._address], false, true]);
-      // comp distributed => 10e18
+      // vtx distributed => 10e18
       for(let acct of claimAccts) {
         expect(await call(comptroller, 'vtxSupplierIndex', [cLOW._address, acct])).toEqualNumber(etherDouble(1.125));
         expect(await compBalance(comptroller, acct)).toEqualNumber(etherExp(1.25));
@@ -681,14 +681,14 @@ describe('Flywheel', () => {
 
     it('claims vtx for multiple borrowers only, primes uninitiated', async () => {
       const compRemaining = vtxRate.multipliedBy(100), deltaBlocks = 10, mintAmount = etherExp(10), borrowAmt = etherExp(1), borrowIdx = etherExp(1)
-      await send(comptroller.comp, 'transfer', [comptroller._address, compRemaining], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, compRemaining], {from: root});
       let [_,__, ...claimAccts] = saddle.accounts;
 
       for(let acct of claimAccts) {
         await send(cLOW, 'harnessIncrementTotalBorrows', [borrowAmt]);
         await send(cLOW, 'harnessSetAccountBorrows', [acct, borrowAmt, borrowIdx]);
       }
-      await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address]]);
+      await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address]]);
       await send(comptroller, 'harnessRefreshVtxSpeeds');
 
       await send(comptroller, 'harnessFastForward', [10]);
@@ -717,7 +717,7 @@ describe('Flywheel', () => {
 
     it('should get correct speeds with borrows', async () => {
       await pretendBorrow(cLOW, a1, 1, 1, 100);
-      await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address]]);
+      await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address]]);
       const tx = await send(comptroller, 'harnessRefreshVtxSpeeds');
       const speed = await call(comptroller, 'vtxSpeeds', [cLOW._address]);
       expect(speed).toEqualNumber(vtxRate);
@@ -730,7 +730,7 @@ describe('Flywheel', () => {
     it('should get correct speeds for 2 assets', async () => {
       await pretendBorrow(cLOW, a1, 1, 1, 100);
       await pretendBorrow(cZRX, a1, 1, 1, 100);
-      await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address, cZRX._address]]);
+      await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address, cZRX._address]]);
       await send(comptroller, 'harnessRefreshVtxSpeeds');
       const speed1 = await call(comptroller, 'vtxSpeeds', [cLOW._address]);
       const speed2 = await call(comptroller, 'vtxSpeeds', [cREP._address]);
@@ -741,11 +741,11 @@ describe('Flywheel', () => {
     });
   });
 
-  describe('harnessAddCompMarkets', () => {
-    it('should correctly add a comp market if called by admin', async () => {
+  describe('harnessAddVtxMarkets', () => {
+    it('should correctly add a vtx market if called by admin', async () => {
       const cBAT = await makeCToken({comptroller, supportMarket: true});
-      const tx1 = await send(comptroller, 'harnessAddCompMarkets', [[cLOW._address, cREP._address, cZRX._address]]);
-      const tx2 = await send(comptroller, 'harnessAddCompMarkets', [[cBAT._address]]);
+      const tx1 = await send(comptroller, 'harnessAddVtxMarkets', [[cLOW._address, cREP._address, cZRX._address]]);
+      const tx2 = await send(comptroller, 'harnessAddVtxMarkets', [[cBAT._address]]);
       const markets = await call(comptroller, 'getVtxMarkets');
       expect(markets).toEqual([cLOW, cREP, cZRX, cBAT].map((c) => c._address));
       expect(tx2).toHaveLog('VtxSpeedUpdated', {
@@ -759,12 +759,12 @@ describe('Flywheel', () => {
       const bn0 = 10, bn1 = 20;
       const idx = etherUnsigned(1.5e36);
 
-      await send(comptroller, "harnessAddCompMarkets", [[mkt]]);
+      await send(comptroller, "harnessAddVtxMarkets", [[mkt]]);
       await send(comptroller, "setVtxSupplyState", [mkt, idx, bn0]);
       await send(comptroller, "setVtxBorrowState", [mkt, idx, bn0]);
       await send(comptroller, "setBlockNumber", [bn1]);
       await send(comptroller, "_setVtxSpeed", [mkt, 0]);
-      await send(comptroller, "harnessAddCompMarkets", [[mkt]]);
+      await send(comptroller, "harnessAddVtxMarkets", [[mkt]]);
 
       const supplyState = await call(comptroller, 'vtxSupplyState', [mkt]);
       expect(supplyState.block).toEqual(bn1.toString());

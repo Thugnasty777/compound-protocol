@@ -1,4 +1,4 @@
--- NewComptroller, but with markets listed so that we can make them comp markets in constructor
+-- NewComptroller, but with markets listed so that we can make them vtx markets in constructor
 Macro FlywheelComptroller price=1.0 borrowRate=0.000005 compInitAmount=5000000e18
     Unitroller Deploy
     PriceOracle Deploy Fixed price
@@ -20,9 +20,9 @@ Macro FlywheelComptroller price=1.0 borrowRate=0.000005 compInitAmount=5000000e1
     ComptrollerImpl Deploy ScenarioG3 ComptrollerScen
     Unitroller SetPendingImpl ComptrollerScen
     ComptrollerImpl ComptrollerScen BecomeG3 1e18 [cZRX cBAT]
-    Erc20 Deploy Standard COMP "COMP Token" 18
-    Give (Address Comptroller) compInitAmount COMP
-    Comptroller Send "setVtxAddress(address)" (Address COMP)
+    Erc20 Deploy Standard VTX "VTX Token" 18
+    Give (Address Comptroller) compInitAmount VTX
+    Comptroller Send "setVtxAddress(address)" (Address Vtx)
 
 Macro InitSpeeds
     Prep Geoff 100e18 ZRX cZRX
@@ -33,7 +33,7 @@ Macro InitSpeeds
     Borrow Coburn 1e18 cZRX
     Comptroller RefreshVtxSpeeds
 
-Test "Accrue COMP during a mint"
+Test "Accrue VTX during a mint"
     FlywheelComptroller
     InitSpeeds
     FastForward 300000 Blocks
@@ -44,10 +44,10 @@ Test "Accrue COMP during a mint"
     Assert Equal (Comptroller VtxAccrued Geoff) 0
     Assert Equal (Comptroller VtxSupplyState cZRX "index") 1.2000000000001e49
     Assert Equal (Comptroller VtxSupplyState cZRX "block") 300000
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 300000e18
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 300000e18
     Assert Equal (Comptroller VtxSupplierIndex cZRX Geoff) 1.2000000000001e49
 
-Test "Accrue COMP during a borrow"
+Test "Accrue VTX during a borrow"
     FlywheelComptroller
     InitSpeeds
     Comptroller FastForward 300000 Blocks
@@ -58,10 +58,10 @@ Test "Accrue COMP during a borrow"
     Assert Equal (Comptroller VtxAccrued Coburn) 0
     Assert Equal (Comptroller VtxBorrowState cZRX "index") 3.00001e41
     Assert Equal (Comptroller VtxBorrowState cZRX "block") 300000
-    Assert Equal (Erc20 COMP TokenBalance Coburn) 300000e18
+    Assert Equal (Erc20 VTX TokenBalance Coburn) 300000e18
     Assert Equal (Comptroller VtxBorrowerIndex cZRX Coburn) 3.00001e41
 
-Test "Accrue COMP during a redeem"
+Test "Accrue VTX during a redeem"
     FlywheelComptroller
     InitSpeeds
     FastForward 300000 Blocks
@@ -72,10 +72,10 @@ Test "Accrue COMP during a redeem"
     Assert Equal (Comptroller VtxAccrued Geoff) 0
     Assert Equal (Comptroller VtxSupplyState cZRX "index") 1.2000000000001e49
     Assert Equal (Comptroller VtxSupplyState cZRX "block") 300000
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 300000e18
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 300000e18
     Assert Equal (Comptroller VtxSupplierIndex cZRX Geoff) 1.2000000000001e49
 
-Test "Accrue COMP during a repayBorrow"
+Test "Accrue VTX during a repayBorrow"
     FlywheelComptroller
     InitSpeeds
     FastForward 300000 Blocks
@@ -87,10 +87,10 @@ Test "Accrue COMP during a repayBorrow"
     Assert Equal (Comptroller VtxAccrued Coburn) 0
     Assert Equal (Comptroller VtxBorrowState cZRX "index") 3.00001e41
     Assert Equal (Comptroller VtxBorrowState cZRX "block") 300000
-    Assert Equal (Erc20 COMP TokenBalance Coburn) 300000e18
+    Assert Equal (Erc20 VTX TokenBalance Coburn) 300000e18
     Assert Equal (Comptroller VtxBorrowerIndex cZRX Coburn) 3.00001e41
 
-Test "Accrue COMP during a repayBorrowBehalf of 0"
+Test "Accrue VTX during a repayBorrowBehalf of 0"
     FlywheelComptroller
     InitSpeeds
     FastForward 300000 Blocks
@@ -102,10 +102,10 @@ Test "Accrue COMP during a repayBorrowBehalf of 0"
     Assert Equal (Comptroller VtxAccrued Coburn) 0
     Assert Equal (Comptroller VtxBorrowState cZRX "index") 3.00001e41
     Assert Equal (Comptroller VtxBorrowState cZRX "block") 300000
-    Assert Equal (Erc20 COMP TokenBalance Coburn) 300000e18
+    Assert Equal (Erc20 VTX TokenBalance Coburn) 300000e18
     Assert Equal (Comptroller VtxBorrowerIndex cZRX Coburn) 3.00001e41
 
-Test "Accrue COMP during a liquidation"
+Test "Accrue VTX during a liquidation"
     FlywheelComptroller
     InitSpeeds
     Assert Equal (Comptroller VtxSpeed cZRX) 1e18
@@ -114,16 +114,16 @@ Test "Accrue COMP during a liquidation"
     FastForward 600000 Blocks--1e18 borrow * (1 + 600000 * 0.000005) = 3.5e18 borrow > 6e18 collateral * 0.5 CF
     Prep Geoff Some ZRX cZRX
     From Geoff (CToken cZRX Liquidate Coburn cBAT 0.5e18)
-    -- zrx borrow index is updated and comp distributed
+    -- zrx borrow index is updated and vtx distributed
     -- * new index = initVal + deltaBlocks * borrowSpeed * 1e36 / totalBorrows
     -- * new index = 1e36 + 600000 * 1e18 * 1e36 / 1e18 = 6.00001E41
     Assert Equal (Comptroller VtxBorrowState cZRX "index") 6.00001e41
     Assert Equal (Comptroller VtxBorrowState cZRX "block") 600000
-    -- zrx supply index isnt updated and comp isnt distributed for zrx supply
+    -- zrx supply index isnt updated and vtx isnt distributed for zrx supply
     Assert Equal (Comptroller VtxSupplyState cZRX "index") 1e36
     Assert Equal (Comptroller VtxSupplyState cZRX "block") 0
     Assert Equal (Comptroller VtxSupplierIndex cZRX Geoff) 1e36--no change, minted in init
-    -- bat supply/borrow index is not updated, since there is no comp speed
+    -- bat supply/borrow index is not updated, since there is no vtx speed
     Assert Equal (Comptroller VtxSupplyState cBAT "index") 1e36
     Assert Equal (Comptroller VtxSupplyState cBAT "block") 600000
     -- neither is borrow state. block is 0 because update fn is never even called
@@ -132,23 +132,23 @@ Test "Accrue COMP during a liquidation"
     --
     Assert Equal (Comptroller VtxSupplierIndex cBAT Coburn) 1e36
     Assert Equal (Comptroller VtxBorrowerIndex cZRX Coburn) 6.00001e41
-    Assert Equal (Erc20 COMP TokenBalance Coburn) 600000e18
+    Assert Equal (Erc20 VTX TokenBalance Coburn) 600000e18
     Assert Equal (Comptroller VtxAccrued Coburn) 0
     --
     Assert Equal (Comptroller VtxSupplierIndex cBAT Geoff) 1e36
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 0
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 0
     Assert Equal (Comptroller VtxAccrued Geoff) 0
 
-Test "Accrue COMP during a transfer"
+Test "Accrue VTX during a transfer"
     FlywheelComptroller
     InitSpeeds
     FastForward 300000 Blocks
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 0
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 0
     Assert Equal (Comptroller VtxSupplierIndex cZRX Geoff) 1e36
     Transfer Geoff Jared 2.5e10 cZRX
     -- new index = initVal + deltaBlocks * supplySpeed * 1e36 / totalSupply
     -- new index = 1e36 + 300000 * 1e18 * 1e36 / 2.5e10 = 1.2000000000001e49
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 300000e18
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 300000e18
     Assert Equal (Comptroller VtxAccrued Geoff) 0
     Assert Equal (Comptroller VtxSupplyState cZRX "index") 1.2000000000001e49
     Assert Equal (Comptroller VtxSupplyState cZRX "block") 300000
@@ -165,7 +165,7 @@ Test "Accrues correctly when market is added, deactivated, and activated again"
     NewCToken DAI cDAI
     --
     Support cDAI collateralFactor:0.5
-    Comptroller AddCompMarkets cDAI
+    Comptroller AddVtxMarkets cDAI
     Assert Equal (Comptroller GetVtxMarkets) [(Address cZRX) (Address cBAT) (Address cDAI)]
     Prep Jared Some DAI cDAI
     Mint Jared 6e18 cDAI
@@ -179,20 +179,20 @@ Test "Accrues correctly when market is added, deactivated, and activated again"
     FastForward 100 Blocks
     Comptroller DropVtxMarket cDAI
     Comptroller ClaimVtx Geoff
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 75e18--half of cdai, all of zrx(.25e18 + .5e18) * 100
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 75e18--half of cdai, all of zrx(.25e18 + .5e18) * 100
     Assert Equal (Comptroller GetVtxMarkets) [(Address cZRX) (Address cBAT)]
     Assert Equal (Comptroller VtxSpeed cZRX) 1e18
     Assert Equal (Comptroller VtxSpeed cDAI) 0
     --
     FastForward 100 Blocks
     Comptroller ClaimVtx Geoff
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 175e18-- += 1e18 * 100
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 175e18-- += 1e18 * 100
     Assert Equal (Comptroller VtxAccrued Geoff) 0
     --
-    Comptroller AddCompMarkets cDAI
+    Comptroller AddVtxMarkets cDAI
     FastForward 100 Blocks
     Comptroller ClaimVtx Geoff
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 250e18--half of cdai, all of zrx. += (.25 + .5) * 100
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 250e18--half of cdai, all of zrx. += (.25 + .5) * 100
     Assert Equal (Comptroller VtxAccrued Geoff) 0
 
 Test "TransferVtx handles running out of VTX in Comptroller correctly"
@@ -201,13 +201,13 @@ Test "TransferVtx handles running out of VTX in Comptroller correctly"
     FastForward 2 Blocks
     Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller VtxAccrued Geoff) 2e18
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 0
-    Give (Address Comptroller) 1e18 COMP
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 0
+    Give (Address Comptroller) 1e18 VTX
     Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller VtxAccrued Geoff) 0
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 2e18
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 2e18
 
-Test "Changing COMP rate continues to distribute at the correct speed"
+Test "Changing VTX rate continues to distribute at the correct speed"
     FlywheelComptroller
     InitSpeeds
     --
@@ -218,4 +218,4 @@ Test "Changing COMP rate continues to distribute at the correct speed"
     FastForward 10 Blocks
     Comptroller ClaimVtx Geoff
     Assert Equal (Comptroller VtxAccrued Geoff) 0
-    Assert Equal (Erc20 COMP TokenBalance Geoff) 30e18
+    Assert Equal (Erc20 VTX TokenBalance Geoff) 30e18

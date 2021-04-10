@@ -13,7 +13,7 @@ const {
   setEtherBalance,
   getBalances,
   adjustBalances,
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 const exchangeRate = 5;
 const mintAmount = etherUnsigned(1e5);

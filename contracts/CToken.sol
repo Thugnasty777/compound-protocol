@@ -8,9 +8,9 @@ import "./EIP20Interface.sol";
 import "./InterestRateModel.sol";
 
 /**
- * @title Compound's CToken Contract
+ * @title Vortex CToken Contract
  * @notice Abstract base for CTokens
- * @author Compound
+ * @author Vortex
  */
 contract CToken is CTokenInterface, Exponential, TokenErrorReporter {
     /**

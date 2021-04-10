@@ -31,7 +31,7 @@ import { getPriceOracleProxyValue, priceOracleProxyFetchers } from './Value/Pric
 import { getAnchoredViewValue, anchoredViewFetchers } from './Value/AnchoredViewValue';
 import { getTimelockValue, timelockFetchers, getTimelockAddress } from './Value/TimelockValue';
 import { getMaximillionValue, maximillionFetchers } from './Value/MaximillionValue';
-import { getVtxValue, vtxFetchers } from './Value/CompValue';
+import { getVtxValue, vtxFetchers } from './Value/VtxValue';
 import { getGovernorValue, governorFetchers } from './Value/GovernorValue';
 import { getAddress } from './ContractLookup';
 import { getCurrentBlockNumber, getCurrentTimestamp, mustArray, sendRPC } from './Utils';
@@ -981,7 +981,7 @@ const fetchers = [
 
 let contractFetchers = [
   { contract: "Counter", implicit: false },
-  { contract: "CompoundLens", implicit: false },
+  { contract: "VortexLens", implicit: false },
   { contract: "Reservoir", implicit: true }
 ];
 

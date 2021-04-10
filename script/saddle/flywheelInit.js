@@ -8,7 +8,7 @@ function printUsage() {
 	console.log(`
 usage:
 	npx saddle script -n {network} flywheel:init {
-		batch: number || null, // how many borrowrs to claim comp for at once. default 100 (~2.3M gas)
+		batch: number || null, // how many borrowrs to claim vtx for at once. default 100 (~2.3M gas)
 		stage: bool || null // use stage API? default false
 		cTokens: string[] || null, // which borrowers to get. defaults to all cTokens
 		readFixture: bool || null, // save api response? default false

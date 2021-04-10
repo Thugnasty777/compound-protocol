@@ -1,5 +1,5 @@
 const {address} = require('../Utils/Ethereum');
-const {makeCToken} = require('../Utils/Compound');
+const {makeCToken} = require('../Utils/Vortex');
 
 describe('admin / _setPendingAdmin / _acceptAdmin', () => {
   let cToken, root, accounts;

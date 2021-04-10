@@ -54,7 +54,7 @@ export async function buildCToken(
       #### CErc20Delegator
 
       * "CErc20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal CToken
-        * E.g. "CToken Deploy CErc20Delegator cDAI \"Compound DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (CToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+        * E.g. "CToken Deploy CErc20Delegator cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (CToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
       'CErc20Delegator',
       [
@@ -127,7 +127,7 @@ export async function buildCToken(
       #### CErc20DelegatorScenario
 
       * "CErc20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A CToken Scenario for local testing
-        * E.g. "CToken Deploy CErc20DelegatorScenario cDAI \"Compound DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (CToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+        * E.g. "CToken Deploy CErc20DelegatorScenario cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (CToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
       'CErc20DelegatorScenario',
       [
@@ -185,7 +185,7 @@ export async function buildCToken(
         #### Scenario
 
         * "Scenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A CToken Scenario for local testing
-          * E.g. "CToken Deploy Scenario cZRX \"Compound ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+          * E.g. "CToken Deploy Scenario cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "Scenario",
       [
@@ -216,7 +216,7 @@ export async function buildCToken(
         #### CEtherScenario
 
         * "CEtherScenario symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A CToken Scenario for local testing
-          * E.g. "CToken Deploy CEtherScenario cETH \"Compound Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+          * E.g. "CToken Deploy CEtherScenario cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CEtherScenario",
       [
@@ -246,7 +246,7 @@ export async function buildCToken(
         #### CEther
 
         * "CEther symbol:<String> name:<String> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A CToken Scenario for local testing
-          * E.g. "CToken Deploy CEther cETH \"Compound Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
+          * E.g. "CToken Deploy CEther cETH \"Vortex Ether\" (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CEther",
       [
@@ -276,7 +276,7 @@ export async function buildCToken(
         #### CErc20
 
         * "CErc20 symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official CToken contract
-          * E.g. "CToken Deploy CErc20 cZRX \"Compound ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+          * E.g. "CToken Deploy CErc20 cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CErc20",
       [
@@ -308,7 +308,7 @@ export async function buildCToken(
         #### CEvil
 
         * "CEvil symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A malicious CToken contract
-          * E.g. "CToken Deploy CEvil cEVL \"Compound EVL\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+          * E.g. "CToken Deploy CEvil cEVL \"Vortex EVL\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "CEvil",
       [
@@ -339,7 +339,7 @@ export async function buildCToken(
         #### Standard
 
         * "symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address>" - A official CToken contract
-          * E.g. "CToken Deploy Standard cZRX \"Compound ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
+          * E.g. "CToken Deploy Standard cZRX \"Vortex ZRX\" (Erc20 ZRX Address) (Comptroller Address) (InterestRateModel Address) 1.0 8"
       `,
       "Standard",
       [

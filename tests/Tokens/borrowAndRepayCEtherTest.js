@@ -17,7 +17,7 @@ const {
   setEtherBalance,
   getBalances,
   adjustBalances
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 const BigNumber = require('bignumber.js');
 

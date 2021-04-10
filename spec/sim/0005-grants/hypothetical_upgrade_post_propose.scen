@@ -11,7 +11,7 @@ Alias Tarun "0x6626593c237f530d15ae9980a95ef938ac15c35c"
 Web3Fork "https://mainnet-eth.compound.finance/@11395519" (CompHolder USDCWhale Tarun CompVoter1 CompVoter2)
 UseConfigs mainnet
 
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (2e18)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (2e18)
 
 -- Vote for, queue, and execute the proposal
 
@@ -26,6 +26,6 @@ Governor GovernorAlpha Proposal LastProposal Execute
 ComptrollerImpl ComptrollerG6 MergeABI
 
 -- Check grant amount was apportioned
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (1002e18)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (1002e18)
 
 Print "Upgrade OK!"

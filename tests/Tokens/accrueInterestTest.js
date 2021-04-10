@@ -6,7 +6,7 @@ const {
 const {
   makeCToken,
   setBorrowRate
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 const blockNumber = 2e7;
 const borrowIndex = 1e18;

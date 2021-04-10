@@ -9,8 +9,8 @@ import "./Unitroller.sol";
 import "./Governance/Vtx.sol";
 
 /**
- * @title Compound's Comptroller Contract
- * @author Compound
+ * @title Vortex Comptroller Contract
+ * @author Vortex
  */
 contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerErrorReporter, ExponentialNoError {
     /// @notice Emitted when an admin supports a market
@@ -46,13 +46,13 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     /// @notice Emitted when a new VTX speed is calculated for a market
     event VtxSpeedUpdated(CToken indexed cToken, uint newSpeed);
 
-    /// @notice Emitted when a new COMP speed is set for a contributor
+    /// @notice Emitted when a new VTX speed is set for a contributor
     event ContributorVtxSpeedUpdated(address indexed contributor, uint newSpeed);
 
-    /// @notice Emitted when COMP is distributed to a supplier
+    /// @notice Emitted when VTX is distributed to a supplier
     event DistributedSupplierVtx(CToken indexed cToken, address indexed supplier, uint compDelta, uint compSupplyIndex);
 
-    /// @notice Emitted when COMP is distributed to a borrower
+    /// @notice Emitted when VTX is distributed to a borrower
     event DistributedBorrowerVtx(CToken indexed cToken, address indexed borrower, uint compDelta, uint compBorrowIndex);
 
     /// @notice Emitted when borrow cap for a cToken is changed
@@ -64,7 +64,7 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
     /// @notice Emitted when VTX is granted by admin
     event VtxGranted(address recipient, uint amount);
 
-    /// @notice The initial COMP index for a market
+    /// @notice The initial VTX index for a market
     uint224 public constant compInitialIndex = 1e36;
 
     // closeFactorMantissa must be strictly greater than this value
@@ -1066,7 +1066,7 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
             updateVtxSupplyIndex(address(cToken));
             updateVtxBorrowIndex(address(cToken), borrowIndex);
         } else if (vtxSpeed != 0) {
-            // Add the COMP market
+            // Add the VTX market
             Market storage market = markets[address(cToken)];
             require(market.isListed == true, "vtx market is not listed");
 

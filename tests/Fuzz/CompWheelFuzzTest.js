@@ -43,7 +43,7 @@ expect.extend({
 describe.skip('CompWheelFuzzTest', () => {
   // This whole test is fake, but we're testing to see if our equations match reality.
 
-  // First, we're going to build a simple simulator of the Compound protocol
+  // First, we're going to build a simple simulator of the Vortex protocol
 
   let randAccount = globals => {
     return globals.accounts[rand(globals.accounts.length)];
@@ -107,7 +107,7 @@ describe.skip('CompWheelFuzzTest', () => {
       vtxAccruedWithCrank: {}, // naive method, accruing all accounts every block
       vtxAccruedWithIndex: {}, // with indices
 
-      activeBorrowBlocks: new bn(0), // # blocks with an active borrow, for which we expect to see comp distributed. just for fuzz testing.
+      activeBorrowBlocks: new bn(0), // # blocks with an active borrow, for which we expect to see vtx distributed. just for fuzz testing.
       activeSupplyBlocks: new bn(0)
     };
   };
@@ -159,7 +159,7 @@ describe.skip('CompWheelFuzzTest', () => {
     return state;
   };
 
-  // manual flywheel loops through every account and updates comp accrued mapping
+  // manual flywheel loops through every account and updates vtx accrued mapping
   // cranked within accrue interest (borrowBalance not updated, totalBorrows should be)
   let flywheelByCrank = (
     state,
@@ -213,7 +213,7 @@ describe.skip('CompWheelFuzzTest', () => {
     };
   };
 
-  // real deal comp index flywheel™️
+  // real deal vtx index flywheel™️
   let borrowerFlywheelByIndex = (globals, state, account) => {
     let {
       compBorrowSpeed,
@@ -264,7 +264,7 @@ describe.skip('CompWheelFuzzTest', () => {
     };
   };
 
-  // real deal comp index flywheel™️
+  // real deal vtx index flywheel™️
   let supplierFlywheelByIndex = (globals, state, account) => {
     let {
       balances,
@@ -286,7 +286,7 @@ describe.skip('CompWheelFuzzTest', () => {
 
     let indexSnapshot = compSupplyIndexSnapshots[account];
     if (indexSnapshot !== undefined) {
-      // if had prev snapshot,  accrue some comp
+      // if had prev snapshot,  accrue some vtx
       vtxAccruedWithIndex[account] = get(vtxAccruedWithIndex[account]).plus(
         balances[account].times(compSupplyIndex.minus(indexSnapshot))
       );
@@ -579,7 +579,7 @@ describe.skip('CompWheelFuzzTest', () => {
     };
   };
 
-  // assert amount distributed by the crank is expected, that it equals # blocks with a supply * comp speed
+  // assert amount distributed by the crank is expected, that it equals # blocks with a supply * vtx speed
   let crankCorrectnessInvariant = (globals, state, events, invariantFn) => {
     let expected = state.activeSupplyBlocks
       .times(state.compSupplySpeed)
@@ -593,11 +593,11 @@ describe.skip('CompWheelFuzzTest', () => {
       almostEqual,
       expected,
       actual,
-      `crank method distributed comp inaccurately`
+      `crank method distributed vtx inaccurately`
     );
   };
 
-  // assert comp distributed by index is the same as amount distributed by crank
+  // assert vtx distributed by index is the same as amount distributed by crank
   let indexCorrectnessInvariant = (globals, state, events, invariantFn) => {
     let expected = state.vtxAccruedWithCrank;
     let actual = state.vtxAccruedWithIndex;

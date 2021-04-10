@@ -1,5 +1,5 @@
 const { address, both, etherMantissa } = require('../Utils/Ethereum');
-const { makeComptroller, makeCToken } = require('../Utils/Compound');
+const { makeComptroller, makeCToken } = require('../Utils/Vortex');
 
 describe('Comptroller', () => {
   let comptroller, cToken;

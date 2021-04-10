@@ -200,7 +200,7 @@ async function sendAny(world: World, from:string, comptroller: Comptroller, sign
   return world;
 }
 
-async function addCompMarkets(world: World, from: string, comptroller: Comptroller, cTokens: CToken[]): Promise<World> {
+async function addVtxMarkets(world: World, from: string, comptroller: Comptroller, cTokens: CToken[]): Promise<World> {
   let invokation = await invoke(world, comptroller.methods._addVtxMarkets(cTokens.map(c => c._address)), from, ComptrollerErrorReporter);
 
   world = addAction(
@@ -217,7 +217,7 @@ async function dropVtxMarket(world: World, from: string, comptroller: Comptrolle
 
   world = addAction(
     world,
-    `Drop COMP market ${cToken.name}`,
+    `Drop VTX market ${cToken.name}`,
     invokation
   );
 
@@ -241,7 +241,7 @@ async function claimVtx(world: World, from: string, comptroller: Comptroller, ho
 
   world = addAction(
     world,
-    `Comp claimed by ${holder}`,
+    `Vtx claimed by ${holder}`,
     invokation
   );
 
@@ -686,7 +686,7 @@ export function comptrollerCommands() {
     new Command<{comptroller: Comptroller, signature: StringV, callArgs: StringV[]}>(`
       #### Send
       * Comptroller Send functionSignature:<String> callArgs[] - Sends any transaction to comptroller
-      * E.g: Comptroller Send "setVtxAddress(address)" (Address VTX)
+      * E.g: Comptroller Send "setVtxAddress(address)" (Address Vtx)
       `,
       "Send",
       [
@@ -697,17 +697,17 @@ export function comptrollerCommands() {
       (world, from, {comptroller, signature, callArgs}) => sendAny(world, from, comptroller, signature.val, rawValues(callArgs))
     ),
     new Command<{comptroller: Comptroller, cTokens: CToken[]}>(`
-      #### AddCompMarkets
+      #### AddVtxMarkets
 
-      * "Comptroller AddCompMarkets (<Address> ...)" - Makes a market COMP-enabled
-      * E.g. "Comptroller AddCompMarkets (cZRX cBAT)
+      * "Comptroller AddVtxMarkets (<Address> ...)" - Makes a market VTX-enabled
+      * E.g. "Comptroller AddVtxMarkets (cZRX cBAT)
       `,
-      "AddCompMarkets",
+      "AddVtxMarkets",
       [
         new Arg("comptroller", getComptroller, {implicit: true}),
         new Arg("cTokens", getCTokenV, {mapped: true})
       ],
-      (world, from, {comptroller, cTokens}) => addCompMarkets(world, from, comptroller, cTokens)
+      (world, from, {comptroller, cTokens}) => addVtxMarkets(world, from, comptroller, cTokens)
      ),
     new Command<{comptroller: Comptroller, cToken: CToken}>(`
       #### DropVtxMarket

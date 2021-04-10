@@ -128,7 +128,7 @@ contract ComptrollerHarness is Comptroller {
         return userAccrued;
     }
 
-    function harnessAddCompMarkets(address[] memory cTokens) public {
+    function harnessAddVtxMarkets(address[] memory cTokens) public {
         for (uint i = 0; i < cTokens.length; i++) {
             // temporarily set compSpeed to 1 (will be fixed by `harnessRefreshVtxSpeeds`)
             setVtxSpeedInternal(CToken(cTokens[i]), 1);

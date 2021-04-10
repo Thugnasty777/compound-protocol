@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World, addAction } from '../World';
-import { Vtx, VtxScenario } from '../Contract/Comp';
+import { Vtx, VtxScenario } from '../Contract/Vtx';
 import { Invokation } from '../Invokation';
 import { getAddressV } from '../CoreValue';
 import { StringV, AddressV } from '../Value';
@@ -8,8 +8,9 @@ import { Arg, Fetcher, getFetcherValue } from '../Command';
 import { storeAndSaveContract } from '../Networks';
 import { getContract } from '../Contract';
 
-const CompContract = getContract('Comp');
-const CompScenarioContract = getContract('CompScenario');
+// looks for contracts in .build
+const CompContract = getContract('Vtx');
+const CompScenarioContract = getContract('VtxScenario');
 
 export interface TokenData {
   invokation: Invokation<Vtx>;
@@ -20,18 +21,18 @@ export interface TokenData {
   decimals?: number;
 }
 
-export async function buildComp(
+export async function buildVtx(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; comp: Vtx; tokenData: TokenData }> {
+): Promise<{ world: World; vtx: Vtx; tokenData: TokenData }> {
   const fetchers = [
     new Fetcher<{ account: AddressV }, TokenData>(
       `
       #### Scenario
 
-      * "Comp Deploy Scenario account:<Address>" - Deploys Scenario Comp Token
-        * E.g. "Comp Deploy Scenario Geoff"
+      * "Vtx Deploy Scenario account:<Address>" - Deploys Scenario Vtx Token
+        * E.g. "Vtx Deploy Scenario Geoff"
     `,
       'Scenario',
       [
@@ -40,9 +41,9 @@ export async function buildComp(
       async (world, { account }) => {
         return {
           invokation: await CompScenarioContract.deploy<VtxScenario>(world, from, [account.val]),
-          contract: 'CompScenario',
-          symbol: 'COMP',
-          name: 'Compound Governance Token',
+          contract: 'VtxScenario',
+          symbol: 'VTX',
+          name: 'Vortex Governance Token',
           decimals: 18
         };
       }
@@ -50,12 +51,12 @@ export async function buildComp(
 
     new Fetcher<{ account: AddressV }, TokenData>(
       `
-      #### Comp
+      #### Vtx
 
-      * "Comp Deploy account:<Address>" - Deploys Comp Token
-        * E.g. "Comp Deploy Geoff"
+      * "Vtx Deploy account:<Address>" - Deploys Vtx Token
+        * E.g. "Vtx Deploy Geoff"
     `,
-      'Comp',
+      'Vtx',
       [
         new Arg("account", getAddressV),
       ],
@@ -63,17 +64,17 @@ export async function buildComp(
         if (world.isLocalNetwork()) {
           return {
             invokation: await CompScenarioContract.deploy<VtxScenario>(world, from, [account.val]),
-            contract: 'CompScenario',
-            symbol: 'COMP',
-            name: 'Compound Governance Token',
+            contract: 'VtxScenario',
+            symbol: 'VTX',
+            name: 'Vortex Governance Token',
             decimals: 18
           };
         } else {
           return {
             invokation: await CompContract.deploy<Vtx>(world, from, [account.val]),
-            contract: 'Comp',
-            symbol: 'COMP',
-            name: 'Compound Governance Token',
+            contract: 'Vtx',
+            symbol: 'VTX',
+            name: 'Vortex Governance Token',
             decimals: 18
           };
         }
@@ -90,21 +91,21 @@ export async function buildComp(
     throw invokation.error;
   }
 
-  const comp = invokation.value!;
-  tokenData.address = comp._address;
+  const vtx = invokation.value!;
+  tokenData.address = vtx._address;
 
   world = await storeAndSaveContract(
     world,
-    comp,
-    'Comp',
+    vtx,
+    'Vtx',
     invokation,
     [
-      { index: ['Comp'], data: tokenData },
+      { index: ['Vtx'], data: tokenData },
       { index: ['Tokens', tokenData.symbol], data: tokenData }
     ]
   );
 
   tokenData.invokation = invokation;
 
-  return { world, comp, tokenData };
+  return { world, vtx, tokenData };
 }

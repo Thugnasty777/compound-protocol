@@ -10,8 +10,8 @@ import "./Unitroller.sol";
 import "./Governance/Vtx.sol";
 
 /**
- * @title Compound's Comptroller Contract
- * @author Compound
+ * @title Vortex's Comptroller Contract
+ * @author Vortex
  */
 contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, ComptrollerErrorReporter, Exponential {
     /// @notice Emitted when an admin supports a market
@@ -56,16 +56,16 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
     /// @notice Emitted when a new VTX speed is calculated for a market
     event VtxSpeedUpdated(CToken indexed cToken, uint newSpeed);
 
-    /// @notice Emitted when COMP is distributed to a supplier
+    /// @notice Emitted when VTX is distributed to a supplier
     event DistributedSupplierVtx(CToken indexed cToken, address indexed supplier, uint compDelta, uint compSupplyIndex);
 
-    /// @notice Emitted when COMP is distributed to a borrower
+    /// @notice Emitted when VTX is distributed to a borrower
     event DistributedBorrowerVtx(CToken indexed cToken, address indexed borrower, uint compDelta, uint compBorrowIndex);
 
-    /// @notice The threshold above which the flywheel transfers COMP, in wei
+    /// @notice The threshold above which the flywheel transfers VTX, in wei
     uint public constant compClaimThreshold = 0.001e18;
 
-    /// @notice The initial COMP index for a market
+    /// @notice The initial VTX index for a market
     uint224 public constant compInitialIndex = 1e36;
 
     // closeFactorMantissa must be strictly greater than this value
@@ -1134,7 +1134,7 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
     }
 
     /**
-     * @notice Accrue COMP to the market by updating the supply index
+     * @notice Accrue VTX to the market by updating the supply index
      * @param cToken The market whose supply index to update
      */
     function updateVtxSupplyIndex(address cToken) internal {
@@ -1157,7 +1157,7 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
     }
 
     /**
-     * @notice Accrue COMP to the market by updating the borrow index
+     * @notice Accrue VTX to the market by updating the borrow index
      * @param cToken The market whose borrow index to update
      */
     function updateVtxBorrowIndex(address cToken, Exp memory marketBorrowIndex) internal {
@@ -1180,9 +1180,9 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
     }
 
     /**
-     * @notice Calculate COMP accrued by a supplier and possibly transfer it to them
+     * @notice Calculate VTX accrued by a supplier and possibly transfer it to them
      * @param cToken The market in which the supplier is interacting
-     * @param supplier The address of the supplier to distribute COMP to
+     * @param supplier The address of the supplier to distribute VTX to
      */
     function distributeSupplierVtx(address cToken, address supplier, bool distributeAll) internal {
         VtxMarketState storage supplyState = vtxSupplyState[cToken];
@@ -1203,10 +1203,10 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
     }
 
     /**
-     * @notice Calculate COMP accrued by a borrower and possibly transfer it to them
+     * @notice Calculate VTX accrued by a borrower and possibly transfer it to them
      * @dev Borrowers will not begin to accrue until after the first interaction with the protocol.
      * @param cToken The market in which the borrower is interacting
-     * @param borrower The address of the borrower to distribute COMP to
+     * @param borrower The address of the borrower to distribute VTX to
      */
     function distributeBorrowerVtx(address cToken, address borrower, Exp memory marketBorrowIndex, bool distributeAll) internal {
         VtxMarketState storage borrowState = vtxBorrowState[cToken];
@@ -1296,7 +1296,7 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
      * @param vtxRate_ The amount of VTX wei per block to distribute
      */
     function _setVtxRate(uint vtxRate_) public {
-        require(adminOrInitializing(), "only admin can change comp rate");
+        require(adminOrInitializing(), "only admin can change vtx rate");
 
         uint oldRate = vtxRate;
         vtxRate = vtxRate_;

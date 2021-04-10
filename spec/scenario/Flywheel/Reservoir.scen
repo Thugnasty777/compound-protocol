@@ -1,7 +1,7 @@
 
 Test "Reservoir is initialized correctly"
     Vtx Deploy Admin
-    Block 100 (Reservoir Deploy 5e18 Comp Bank)
+    Block 100 (Reservoir Deploy 5e18 Vtx Bank)
     Assert Equal (Reservoir Dripped) 0
     Assert Equal (Reservoir DripStart) 100
     Assert Equal (Reservoir DripRate) 5e18
@@ -10,7 +10,7 @@ Test "Reservoir is initialized correctly"
 
 Test "Reservoir properly drips first drip"
     Vtx Deploy Admin
-    Block 100 (Reservoir Deploy 5e18 Comp Bank)
+    Block 100 (Reservoir Deploy 5e18 Vtx Bank)
     Vtx Transfer Reservoir 5000e18
     SetBlockNumber 200
     Assert Equal (Reservoir Drip) 500e18
@@ -22,7 +22,7 @@ Test "Reservoir properly drips first drip"
 
 Test "Reservoir properly drips second drip"
     Vtx Deploy Admin
-    Block 100 (Reservoir Deploy 5e18 Comp Bank)
+    Block 100 (Reservoir Deploy 5e18 Vtx Bank)
     Vtx Transfer Reservoir 5000e18
     Block 200 (Reservoir Drip)
     Assert Equal (Reservoir Dripped) 500e18
@@ -35,7 +35,7 @@ Test "Reservoir properly drips second drip"
 
 Test "Reservoir properly drips zero sequentially"
     Vtx Deploy Admin
-    Block 100 (Reservoir Deploy 5e18 Comp Bank)
+    Block 100 (Reservoir Deploy 5e18 Vtx Bank)
     Vtx Transfer Reservoir 5000e18
     Block 100 (Reservoir Drip)
     Assert Equal (Reservoir Dripped) 0
@@ -46,7 +46,7 @@ Test "Reservoir properly drips zero sequentially"
 
 Test "Reservoir handles not having enough to drip"
     Vtx Deploy Admin
-    Block 100 (Reservoir Deploy 5e18 Comp Bank)
+    Block 100 (Reservoir Deploy 5e18 Vtx Bank)
     Vtx Transfer Reservoir 200e18
     Block 200 (Reservoir Drip)
     Assert Equal (Reservoir Dripped) 200e18
@@ -68,14 +68,14 @@ Test "Reservoir handles not having enough to drip"
 
 Test "Revert on dripTotal overflow"
     Vtx Deploy Admin
-    Block 100 (Reservoir Deploy UInt256Max Comp Bank)
+    Block 100 (Reservoir Deploy UInt256Max Vtx Bank)
     AllowFailures
     Block 200 (Reservoir Drip)
     Assert Revert "revert dripTotal overflow"
 
 Test "Revert on deltaDrip underflow - reverses block!"
     Vtx Deploy Admin
-    Block 100 (Reservoir Deploy 5e18 Comp Bank)
+    Block 100 (Reservoir Deploy 5e18 Vtx Bank)
     Vtx Transfer Reservoir 5000e18
     Assert Equal (Reservoir DripStart) 100
     Block 200 (Reservoir Drip)

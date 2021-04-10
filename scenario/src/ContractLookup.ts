@@ -6,7 +6,7 @@ import { Contract } from './Contract';
 import { mustString } from './Utils';
 
 import { CErc20Delegate } from './Contract/CErc20Delegate';
-import { Vtx } from './Contract/Comp';
+import { Vtx } from './Contract/Vtx';
 import { Comptroller } from './Contract/Comptroller';
 import { ComptrollerImpl } from './Contract/ComptrollerImpl';
 import { CToken } from './Contract/CToken';
@@ -121,21 +121,21 @@ export async function getPriceOracle(world: World): Promise<PriceOracle> {
   return getWorldContract(world, [['Contracts', 'PriceOracle']]);
 }
 
-export async function getComp(
+export async function getVtx(
   world: World,
-  compArg: Event
+  vtxArg: Event
 ): Promise<Vtx> {
-  return getWorldContract(world, [['Comp', 'address']]);
+  return getWorldContract(world, [['Vtx', 'address']]);
 }
 
-export async function getCompData(
+export async function getVtxData(
   world: World,
-  compArg: string
+  vtxArg: string
 ): Promise<[Vtx, string, Map<string, string>]> {
-  let contract = await getComp(world, <Event>(<any>compArg));
-  let data = getContractData(world, [['Comp', compArg]]);
+  let contract = await getVtx(world, <Event>(<any>vtxArg));
+  let data = getContractData(world, [['Vtx', vtxArg]]);
 
-  return [contract, compArg, <Map<string, string>>(<any>data)];
+  return [contract, vtxArg, <Map<string, string>>(<any>data)];
 }
 
 export async function getGovernorData(

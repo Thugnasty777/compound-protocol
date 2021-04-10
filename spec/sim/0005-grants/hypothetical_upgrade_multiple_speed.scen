@@ -16,9 +16,9 @@ ComptrollerImpl Deploy Standard ComptrollerG6
 
 -- Propose to apply the patch
 
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (0)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (0)
 
-From CompHolder (Comp Delegate CompHolder)
+From CompHolder (Vtx Delegate CompHolder)
 From CompHolder (Governor GovernorAlpha Propose "Grants Comptroller Patch" [(Address Unitroller) (Address ComptrollerG6) (Address Unitroller)] [0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_setContributorVtxSpeed(address,uint256)"] [[(Address ComptrollerG6)] [(Address Unitroller)] [(Address Tarun) 15]])
 
 -- Vote for, queue, and execute the proposal
@@ -57,7 +57,7 @@ From Tarun (Comptroller ClaimVtx Tarun)
 -- Extra blocks           5000   = 1000*5
 -- Extra proposal mining  85
 -- Total = 330080
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (320085)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (320085)
 
 -- Prepare final proposal
 From CompHolder (Governor GovernorAlpha Propose "Contributor speed elimination Patch" [(Address Unitroller)] [0] ["_setContributorVtxSpeed(address,uint256)"] [[(Address Tarun) 0]])
@@ -81,6 +81,6 @@ From Tarun (Comptroller ClaimVtx Tarun)
 -- Extra blocks           0 = 1000*0
 -- Extra proposal mining  40
 -- Total = 420125
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (420125)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (420125)
 
 Print "Upgrade OK!"

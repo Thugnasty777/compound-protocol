@@ -1,9 +1,9 @@
 pragma solidity ^0.5.16;
 
-import "../../../contracts/Governance/Comp.sol";
+import "../../../contracts/Governance/Vtx.sol";
 
-contract CompCertora is Comp {
-    constructor(address grantor) Comp(grantor) public {}
+contract CompCertora is Vtx {
+    constructor(address grantor) Vtx(grantor) public {}
 
     function certoraOrdered(address account) external view returns (bool) {
         uint32 nCheckpoints = numCheckpoints[account];

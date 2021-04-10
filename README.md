@@ -1,32 +1,32 @@
 [![CircleCI](https://circleci.com/gh/compound-finance/compound-protocol.svg?style=svg&circle-token=5ed19932325c559a06f71f87d69012aedd2cf3fb)](https://circleci.com/gh/compound-finance/compound-protocol) [![codecov](https://codecov.io/gh/compound-finance/compound-protocol/branch/master/graph/badge.svg?token=q4UvsvVzOX)](https://codecov.io/gh/compound-finance/compound-protocol)
 
-Compound Protocol
+Vortex Protocol
 =================
 
-The Compound Protocol is an Ethereum smart contract for supplying or borrowing assets. Through the cToken contracts, accounts on the blockchain *supply* capital (Ether or ERC-20 tokens) to receive cTokens or *borrow* assets from the protocol (holding other assets as collateral). The Compound cToken contracts track these balances and algorithmically set interest rates for borrowers.
+The Vortex Protocol is an Ethereum smart contract for supplying or borrowing assets. Through the cToken contracts, accounts on the blockchain *supply* capital (Ether or ERC-20 tokens) to receive cTokens or *borrow* assets from the protocol (holding other assets as collateral). The Vortex cToken contracts track these balances and algorithmically set interest rates for borrowers.
 
 Before getting started with this repo, please read:
 
-* The [Compound Whitepaper](https://compound.finance/documents/Compound.Whitepaper.pdf), describing how Compound works
-* The [Compound Protocol Specification](https://github.com/compound-finance/compound-protocol/tree/master/docs/CompoundProtocol.pdf), explaining in plain English how the protocol operates
+* The [Vortex Whitepaper](https://compound.finance/documents/Vortex.Whitepaper.pdf), describing how Vortex works
+* The [Vortex Protocol Specification](https://github.com/compound-finance/compound-protocol/tree/master/docs/CompoundProtocol.pdf), explaining in plain English how the protocol operates
 
-For questions about interacting with Compound, please visit [our Discord server](https://compound.finance/discord).
+For questions about interacting with Vortex, please visit [our Discord server](https://compound.finance/discord).
 
 For security concerns, please visit [https://compound.finance/security](https://compound.finance/security) or email [security@compound.finance](mailto:security@compound.finance).
 
 Contributing
 ============
 
-Contributing to the Compound protocol is a bit different than most open-source projects -- check out the [community guide on Contributing](https://www.comp.xyz/t/contributing-to-compound-protocol/48).
+Contributing to the Vortex protocol is a bit different than most open-source projects -- check out the [community guide on Contributing](https://www.comp.xyz/t/contributing-to-compound-protocol/48).
 
 Contracts
 =========
 
-We detail a few of the core contracts in the Compound protocol.
+We detail a few of the core contracts in the Vortex protocol.
 
 <dl>
   <dt>CToken, CErc20 and CEther</dt>
-  <dd>The Compound cTokens, which are self-contained borrowing and lending contracts. CToken contains the core logic and CErc20 and CEther add public interfaces for Erc20 tokens and ether, respectively. Each CToken is assigned an interest rate and risk model (see InterestRateModel and Comptroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each CToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
+  <dd>The Vortex cTokens, which are self-contained borrowing and lending contracts. CToken contains the core logic and CErc20 and CEther add public interfaces for Erc20 tokens and ether, respectively. Each CToken is assigned an interest rate and risk model (see InterestRateModel and Comptroller sections), and allows accounts to *mint* (supply capital), *redeem* (withdraw capital), *borrow* and *repay a borrow*. Each CToken is an ERC-20 compliant token where balances represent ownership of the market.</dd>
 </dl>
 
 <dl>
@@ -36,12 +36,12 @@ We detail a few of the core contracts in the Compound protocol.
 
 <dl>
   <dt>Comp</dt>
-  <dd>The Compound Governance Token (COMP). Holders of this token have the ability to govern the protocol via the governor contract.</dd>
+  <dd>The Vortex Governance Token (VTX). Holders of this token have the ability to govern the protocol via the governor contract.</dd>
 </dl>
 
 <dl>
   <dt>Governor Alpha</dt>
-  <dd>The administrator of the Compound timelock contract. Holders of Comp token may create and vote on proposals which will be queued into the Compound timelock and then have effects on Compound cToken and Comptroller contracts. This contract may be replaced in the future with a beta version.</dd>
+  <dd>The administrator of the Vortex timelock contract. Holders of Comp token may create and vote on proposals which will be queued into the Vortex timelock and then have effects on Vortex cToken and Comptroller contracts. This contract may be replaced in the future with a beta version.</dd>
 </dl>
 
 <dl>
@@ -85,7 +85,7 @@ To run compound, pull the repository from GitHub and install its dependencies. Y
 REPL
 ----
 
-The Compound Protocol has a simple scenario evaluation tool to test and evaluate scenarios which could occur on the blockchain. This is primarily used for constructing high-level integration tests. The tool also has a REPL to interact with local the Compound Protocol (similar to `truffle console`).
+The Vortex Protocol has a simple scenario evaluation tool to test and evaluate scenarios which could occur on the blockchain. This is primarily used for constructing high-level integration tests. The tool also has a REPL to interact with local the Vortex Protocol (similar to `truffle console`).
 
     yarn repl -n development
     yarn repl -n rinkeby
@@ -110,7 +110,7 @@ There are additional tests under the [spec/scenario](https://github.com/compound
 Formal Verification Specs
 -------------------------
 
-The Compound Protocol has a number of formal verification specifications, powered by [Certora](https://www.certora.com/). You can find details in the [spec/formal](https://github.com/compound-finance/compound-protocol/tree/master/spec/formal) folder. The Certora Verification Language (CVL) files included are specifications, which when with the Certora CLI tool, produce formal proofs (or counter-examples) that the code of a given contract exactly matches that specification.
+The Vortex Protocol has a number of formal verification specifications, powered by [Certora](https://www.certora.com/). You can find details in the [spec/formal](https://github.com/compound-finance/compound-protocol/tree/master/spec/formal) folder. The Certora Verification Language (CVL) files included are specifications, which when with the Certora CLI tool, produce formal proofs (or counter-examples) that the code of a given contract exactly matches that specification.
 
 Code Coverage
 -------------
@@ -195,7 +195,7 @@ npx saddle -n rinkeby script token:deploy '{
   "comptroller": "$Comptroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
-  "name": "Compound Kyber Network Crystal",
+  "name": "Vortex Kyber Network Crystal",
   "symbol": "cKNC",
   "decimals": "8",
   "admin": "$Timelock"
@@ -210,14 +210,14 @@ npx saddle -n rinkeby script token:verify 0x19B674715cD20626415C738400FDd0d32D68
   "comptroller": "$Comptroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
-  "name": "Compound Kyber Network Crystal",
+  "name": "Vortex Kyber Network Crystal",
   "symbol": "cKNC",
   "decimals": "8",
   "admin": "$Timelock"
 }'
 ```
 
-Finally, to see if a given deployment matches this version of the Compound Protocol, you can run `token:match` with a token address and token config:
+Finally, to see if a given deployment matches this version of the Vortex Protocol, you can run `token:match` with a token address and token config:
 
 ```bash
 npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D6809B6 '{
@@ -225,7 +225,7 @@ npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D680
   "comptroller": "$Comptroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
-  "name": "Compound Kyber Network Crystal",
+  "name": "Vortex Kyber Network Crystal",
   "symbol": "cKNC",
   "decimals": "8",
   "admin": "$Timelock"
@@ -235,7 +235,7 @@ npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D680
 ## Deploying a CToken from Docker Build
 ---------------------------------------
 
-To deploy a specific version of the Compound Protocol, you can use the `token:deploy` script through Docker:
+To deploy a specific version of the Vortex Protocol, you can use the `token:deploy` script through Docker:
 
 ```bash
 docker run --env ETHERSCAN_API_KEY --env VERIFY=true --env ACCOUNT=0x$(cat ~/.ethereum/rinkeby) compoundfinance/compound-protocol:latest npx saddle -n rinkeby script token:deploy '{
@@ -243,14 +243,14 @@ docker run --env ETHERSCAN_API_KEY --env VERIFY=true --env ACCOUNT=0x$(cat ~/.et
   "comptroller": "$Comptroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
-  "name": "Compound Kyber Network Crystal",
+  "name": "Vortex Kyber Network Crystal",
   "symbol": "cKNC",
   "decimals": "8",
   "admin": "$Timelock"
 }'
 ```
 
-To match a deployed contract against a given version of the Compound Protocol, you can run `token:match` through Docker, passing a token address and config:
+To match a deployed contract against a given version of the Vortex Protocol, you can run `token:match` through Docker, passing a token address and config:
 
 ```bash
 docker run --env ACCOUNT=0x$(cat ~/.ethereum/rinkeby) compoundfinance/compound-protocol:latest npx saddle -n rinkeby script token:match 0xF1BAd36CB247C82Cb4e9C2874374492Afb50d565 '{
@@ -258,7 +258,7 @@ docker run --env ACCOUNT=0x$(cat ~/.ethereum/rinkeby) compoundfinance/compound-p
   "comptroller": "$Comptroller",
   "interestRateModel": "$Base200bps_Slope3000bps",
   "initialExchangeRateMantissa": "2.0e18",
-  "name": "Compound Kyber Network Crystal",
+  "name": "Vortex Kyber Network Crystal",
   "symbol": "cKNC",
   "decimals": "8",
   "admin": "$Timelock"

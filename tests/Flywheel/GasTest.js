@@ -1,7 +1,7 @@
 const {
   makeComptroller,
   makeCToken
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 const {
   etherExp,
   etherDouble,

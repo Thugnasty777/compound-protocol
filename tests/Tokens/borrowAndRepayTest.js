@@ -13,7 +13,7 @@ const {
   setBalance,
   preApprove,
   pretendBorrow
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 const borrowAmount = etherUnsigned(10e3);
 const repayAmount = etherUnsigned(10e2);

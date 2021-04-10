@@ -15,9 +15,9 @@ ComptrollerImpl Deploy Standard ComptrollerG6
 
 -- Propose to apply the patch
 
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (0)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (0)
 
-From CompHolder (Comp Delegate CompHolder)
+From CompHolder (Vtx Delegate CompHolder)
 From CompHolder (Governor GovernorAlpha Propose "Grants Comptroller Patch and both types of grants issued" [(Address Unitroller) (Address ComptrollerG6) (Address Unitroller) (Address Unitroller)] [0 0 0 0] ["_setPendingImplementation(address)" "_become(address)" "_grantVtx(address,uint256)" "_setContributorVtxSpeed(address,uint256)"] [[(Address ComptrollerG6)] [(Address Unitroller)] [(Address Tarun) 10000000] [(Address Tarun) 15]])
 
 -- Vote for, queue, and execute the proposal
@@ -32,17 +32,17 @@ ComptrollerImpl ComptrollerG6 MergeABI
 
 -- Check initial grant amount was apportioned
 Assert Equal (Address (Unitroller Implementation)) (Address ComptrollerG6)
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (10e6)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (10e6)
 
 -- Check contributor claim does not work without update
 AdvanceBlocks 997
 From Tarun (Comptroller ClaimVtx Tarun)
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (10e6)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (10e6)
 
 -- Check contributor claim amount is added
 From Tarun (Comptroller UpdateContributorRewards Tarun)
 From Tarun (Comptroller ClaimVtx Tarun)
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (10015000)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (10015000)
 
 
 -- Prepare second proposal
@@ -69,7 +69,7 @@ From Tarun (Comptroller ClaimVtx Tarun)
 -- Extra blocks           5000   = 1000*5
 -- Extra proposal mining  130
 -- Total = 30330130
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (30320130)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (30320130)
 
 -- Prepare final proposal
 From CompHolder (Governor GovernorAlpha Propose "Contributor speed elimination Patch" [(Address Unitroller)] [0] ["_setContributorVtxSpeed(address,uint256)"] [[(Address Tarun) 0]])
@@ -85,7 +85,7 @@ Governor GovernorAlpha Proposal LastProposal Execute
 
 AdvanceBlocks 10000
 
--- Check no more COMP was allocated
+-- Check no more VTX was allocated
 From Tarun (Comptroller UpdateContributorRewards Tarun)
 From Tarun (Comptroller ClaimVtx Tarun)
 -- Initial value          30320130
@@ -93,6 +93,6 @@ From Tarun (Comptroller ClaimVtx Tarun)
 -- Extra blocks           0 = 1000*0
 -- Extra proposal mining  40
 -- Total = 30420170
-Assert Equal (Erc20 COMP TokenBalance (Address Tarun)) (30420170)
+Assert Equal (Erc20 VTX TokenBalance (Address Tarun)) (30420170)
 
 Print "Upgrade OK!"

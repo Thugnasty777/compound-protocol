@@ -2,7 +2,7 @@ const {
   makeCToken,
   getBalances,
   adjustBalances
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 const exchangeRate = 5;
 

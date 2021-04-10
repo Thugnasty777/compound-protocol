@@ -5,7 +5,7 @@ import "./InterestRateModel.sol";
 
 
 /**
-  * @title Compound's JumpRateModel Contract V2 for V2 cTokens
+  * @title Vortex's JumpRateModel Contract V2 for V2 cTokens
   * @author Arr00
   * @notice Supports only for V2 cTokens
   */

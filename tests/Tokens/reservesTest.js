@@ -4,7 +4,7 @@ const {
   both
 } = require('../Utils/Ethereum');
 
-const {fastForward, makeCToken} = require('../Utils/Compound');
+const {fastForward, makeCToken} = require('../Utils/Vortex');
 
 const factor = etherMantissa(.02);
 

@@ -25,7 +25,7 @@ import { maximillionCommands, processMaximillionEvent } from './Event/Maximillio
 import { invariantCommands, processInvariantEvent } from './Event/InvariantEvent';
 import { expectationCommands, processExpectationEvent } from './Event/ExpectationEvent';
 import { timelockCommands, processTimelockEvent } from './Event/TimelockEvent';
-import { compCommands, processCompEvent } from './Event/CompEvent';
+import { vtxCommands, processVtxEvent } from './Event/VtxEvent';
 import { governorCommands, processGovernorEvent } from './Event/GovernorEvent';
 import { processTrxEvent, trxCommands } from './Event/TrxEvent';
 import { getFetchers, getCoreValue } from './CoreValue';
@@ -39,7 +39,7 @@ import { loadContracts } from './Networks';
 import { fork } from './Hypothetical';
 import { buildContractEvent } from './EventBuilder';
 import { Counter } from './Contract/Counter';
-import { CompoundLens } from './Contract/CompoundLens';
+import { VortexLens } from './Contract/VortexLens';
 import { Reservoir } from './Contract/Reservoir';
 import Web3 from 'web3';
 
@@ -435,7 +435,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
       #### Block
 
       * "Block 10 (...event)" - Set block to block N and run event
-        * E.g. "Block 10 (Comp Deploy Admin)"
+        * E.g. "Block 10 (Vtx Deploy Admin)"
     `,
     'Block',
     [
@@ -789,9 +789,9 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
     'Vtx',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
-      return processCompEvent(world, event.val, from);
+      return processVtxEvent(world, event.val, from);
     },
-    { subExpressions: compCommands() }
+    { subExpressions: vtxCommands() }
   ),
 
   new Command<{ event: EventV }>(
@@ -810,7 +810,7 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
   ),
 
   buildContractEvent<Counter>("Counter", false),
-  buildContractEvent<CompoundLens>("CompoundLens", false),
+  buildContractEvent<VortexLens>("VortexLens", false),
   buildContractEvent<Reservoir>("Reservoir", true),
 
   new View<{ event: EventV }>(

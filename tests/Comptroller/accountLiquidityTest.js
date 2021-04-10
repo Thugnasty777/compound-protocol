@@ -3,7 +3,7 @@ const {
   makeCToken,
   enterMarkets,
   quickMint
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 describe('Comptroller', () => {
   let root, accounts;

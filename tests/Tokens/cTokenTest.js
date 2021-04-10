@@ -8,7 +8,7 @@ const {
   makeCToken,
   setBorrowRate,
   pretendBorrow
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 describe('CToken', function () {
   let root, admin, accounts;

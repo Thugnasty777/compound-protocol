@@ -82,7 +82,7 @@ async function makeComptroller(opts = {}) {
     const priceOracle = opts.priceOracle || await makePriceOracle(opts.priceOracleOpts);
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
-    const comp = opts.comp || await deploy('Vtx', [opts.compOwner || root]);
+    const vtx = opts.vtx || await deploy('Vtx', [opts.compOwner || root]);
     const vtxRate = etherUnsigned(dfn(opts.vtxRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
@@ -92,9 +92,9 @@ async function makeComptroller(opts = {}) {
     await send(unitroller, '_setCloseFactor', [closeFactor]);
     await send(unitroller, '_setPriceOracle', [priceOracle._address]);
     await send(unitroller, '_setVtxRate', [vtxRate]);
-    await send(unitroller, 'setVtxAddress', [comp._address]); // harness only
+    await send(unitroller, 'setVtxAddress', [vtx._address]); // harness only
 
-    return Object.assign(unitroller, { priceOracle, comp });
+    return Object.assign(unitroller, { priceOracle, vtx });
   }
 
   if (kind == 'unitroller') {
@@ -103,7 +103,7 @@ async function makeComptroller(opts = {}) {
     const priceOracle = opts.priceOracle || await makePriceOracle(opts.priceOracleOpts);
     const closeFactor = etherMantissa(dfn(opts.closeFactor, .051));
     const liquidationIncentive = etherMantissa(1);
-    const comp = opts.comp || await deploy('Vtx', [opts.compOwner || root]);
+    const vtx = opts.vtx || await deploy('Vtx', [opts.compOwner || root]);
     const vtxRate = etherUnsigned(dfn(opts.vtxRate, 1e18));
 
     await send(unitroller, '_setPendingImplementation', [comptroller._address]);
@@ -112,10 +112,10 @@ async function makeComptroller(opts = {}) {
     await send(unitroller, '_setLiquidationIncentive', [liquidationIncentive]);
     await send(unitroller, '_setCloseFactor', [closeFactor]);
     await send(unitroller, '_setPriceOracle', [priceOracle._address]);
-    await send(unitroller, 'setVtxAddress', [comp._address]); // harness only
+    await send(unitroller, 'setVtxAddress', [vtx._address]); // harness only
     await send(unitroller, 'harnessSetVtxRate', [vtxRate]);
 
-    return Object.assign(unitroller, { priceOracle, comp });
+    return Object.assign(unitroller, { priceOracle, vtx });
   }
 }
 
@@ -217,7 +217,7 @@ async function makeCToken(opts = {}) {
     await send(comptroller, '_supportMarket', [cToken._address]);
   }
 
-  if (opts.addCompMarket) {
+  if (opts.addVtxMarket) {
     await send(comptroller, '_addVtxMarket', [cToken._address]);
   }
 

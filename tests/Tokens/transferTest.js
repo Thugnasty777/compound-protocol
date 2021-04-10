@@ -1,4 +1,4 @@
-const {makeCToken} = require('../Utils/Compound');
+const {makeCToken} = require('../Utils/Vortex');
 
 describe('CToken', function () {
   let root, accounts;

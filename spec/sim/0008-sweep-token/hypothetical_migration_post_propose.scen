@@ -29,7 +29,7 @@ Governor GovernorAlpha Proposal LastProposal Execute
 Assert Equal (CToken cUNI Implementation) (Address NewcUNIImplementation)
 Assert Equal (Erc20 (Address cUNI) TokenBalance (Address Timelock)) (17987425872149)
 Assert Equal (Erc20 (Address cUNI) TokenBalance cUNISender) (161886832849341)
-Assert Equal (Erc20 (Address COMP) TokenBalance (Address Arr00)) (30040000000000000000)
+Assert Equal (Erc20 (Address Vtx) TokenBalance (Address Arr00)) (30040000000000000000)
 
 -- Ensure accrue interest works
 MineBlock

@@ -9,8 +9,8 @@ import "./ComptrollerStorage.sol";
 import "./Unitroller.sol";
 
 /**
- * @title Compound's Comptroller Contract
- * @author Compound
+ * @title Vortex's Comptroller Contract
+ * @author Vortex
  */
 contract ComptrollerG2 is ComptrollerV2Storage, ComptrollerInterface, ComptrollerErrorReporter, Exponential {
     /**

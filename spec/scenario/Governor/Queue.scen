@@ -2,7 +2,7 @@ Macro DeployGov
     Counter Deploy CNT1
     Timelock Deploy Jared 604800
     Vtx Deploy Bank
-    Governor Deploy Alpha LegitGov (Address Timelock) (Address Comp) Guardian
+    Governor Deploy Alpha LegitGov (Address Timelock) (Address Vtx) Guardian
     Timelock SetAdmin (Address LegitGov)
     Enfranchise Root 400001e18
     MineBlock
@@ -120,7 +120,7 @@ Test "Revert when queuing on invalid Timelock"
     Vtx Deploy Bank
     Enfranchise Root 600001e18
     Counter Deploy CNT1
-    Governor Deploy Alpha LegitGov (Address Zero) (Address Comp) Guardian
+    Governor Deploy Alpha LegitGov (Address Zero) (Address Vtx) Guardian
     Governor LegitGov Propose "Add 5" [(Address CNT1)] [1] ["increment(uint256)"] [["2"]]
     MineBlock
     Governor LegitGov Proposal LastProposal Vote For

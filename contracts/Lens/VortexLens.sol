@@ -17,7 +17,7 @@ interface ComptrollerLensInterface {
     function vtxAccrued(address) external view returns (uint);
 }
 
-contract CompoundLens {
+contract VortexLens {
     struct CTokenMetadata {
         address cToken;
         uint exchangeRateCurrent;

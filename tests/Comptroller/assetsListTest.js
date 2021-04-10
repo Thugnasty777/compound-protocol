@@ -2,7 +2,7 @@ const {both} = require('../Utils/Ethereum');
 const {
   makeComptroller,
   makeCToken
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 describe('assetListTest', () => {
   let root, customer, accounts;

@@ -10,10 +10,10 @@ const {
   preApprove,
   preSupply,
   quickRedeem,
-} = require('./Utils/Compound');
+} = require('./Utils/Vortex');
 
 async function compBalance(comptroller, user) {
-  return etherUnsigned(await call(comptroller.comp, 'balanceOf', [user]))
+  return etherUnsigned(await call(comptroller.vtx, 'balanceOf', [user]))
 }
 
 async function vtxAccrued(comptroller, user) {
@@ -177,7 +177,7 @@ describe('Gas report', () => {
   describe.each([
     ['unitroller-g6'],
     ['unitroller']
-  ])('Comp claims %s', (patch) => {
+  ])('Vtx claims %s', (patch) => {
     beforeEach(async () => {
       [root, minter, redeemer, ...accounts] = saddle.accounts;
       comptroller = await makeComptroller({ kind: patch });
@@ -189,33 +189,33 @@ describe('Gas report', () => {
         await send(comptroller, '_addVtxMarkets', [[cToken].map(c => c._address)]);
         await send(comptroller, 'setVtxSpeed', [cToken._address, etherExp(0.05)]);
       }
-      await send(comptroller.comp, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
+      await send(comptroller.vtx, 'transfer', [comptroller._address, etherUnsigned(50e18)], {from: root});
     });
 
-    it(`${patch} second mint with comp accrued`, async () => {
+    it(`${patch} second mint with vtx accrued`, async () => {
       await mint(cToken, minter, mintAmount, exchangeRate);
 
       await fastForwardPatch(patch, comptroller, 10);
 
-      console.log('Comp balance before mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued before mint', (await vtxAccrued(comptroller, minter)).toString());
+      console.log('Vtx balance before mint', (await compBalance(comptroller, minter)).toString());
+      console.log('Vtx accrued before mint', (await vtxAccrued(comptroller, minter)).toString());
       const mint2Receipt = await mint(cToken, minter, mintAmount, exchangeRate);
-      console.log('Comp balance after mint', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued after mint', (await vtxAccrued(comptroller, minter)).toString());
-      recordGasCost(mint2Receipt.gasUsed, `${patch} second mint with comp accrued`, filename);
+      console.log('Vtx balance after mint', (await compBalance(comptroller, minter)).toString());
+      console.log('Vtx accrued after mint', (await vtxAccrued(comptroller, minter)).toString());
+      recordGasCost(mint2Receipt.gasUsed, `${patch} second mint with vtx accrued`, filename);
     });
 
-    it(`${patch} claim comp`, async () => {
+    it(`${patch} claim vtx`, async () => {
       await mint(cToken, minter, mintAmount, exchangeRate);
 
       await fastForwardPatch(patch, comptroller, 10);
 
-      console.log('Comp balance before claim', (await compBalance(comptroller, minter)).toString());
-      console.log('Comp accrued before claim', (await vtxAccrued(comptroller, minter)).toString());
+      console.log('Vtx balance before claim', (await compBalance(comptroller, minter)).toString());
+      console.log('Vtx accrued before claim', (await vtxAccrued(comptroller, minter)).toString());
       const claimReceipt = await claimVtx(comptroller, minter);
-      console.log('Comp balance after claim', (await compBalance(comptroller, minter)).toString());
+      console.log('Vtx balance after claim', (await compBalance(comptroller, minter)).toString());
       console.log('Vtx accrued after claim', (await vtxAccrued(comptroller, minter)).toString());
-      recordGasCost(claimReceipt.gasUsed, `${patch} claim comp`, filename);
+      recordGasCost(claimReceipt.gasUsed, `${patch} claim vtx`, filename);
     });
   });
 });

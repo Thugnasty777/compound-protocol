@@ -1,5 +1,5 @@
 {
-  "name": "compound-protocol",
+  "name": "vortex-protocol",
   "version": "0.2.1",
   "description": "The Compound Money Market",
   "main": "index.js",
@@ -17,7 +17,7 @@
     "checksize": "npx run ./script/saddle/comptrollerSize.js"
   },
   "repository": "git@github.com:compound-finance/compound-protocol.git",
-  "author": "Compound Finance",
+  "author": "Vortex Finance",
   "license": "UNLICENSED",
   "devDependencies": {
     "bignumber.js": "9.0.0",

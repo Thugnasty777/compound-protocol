@@ -49,7 +49,7 @@ spec/certora/Governor/%.cvl:
 	 --solc_args "'--evm-version istanbul'" \
 	 --link \
 	 GovernorAlphaCertora:timelock=TimelockCertora \
-	 GovernorAlphaCertora:comp=CompCertora \
+	 GovernorAlphaCertora:vtx=CompCertora \
 	--verify \
 	 GovernorAlphaCertora:$@
 

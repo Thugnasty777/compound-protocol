@@ -1,11 +1,11 @@
 
 describe('CompScenario', () => {
   let root, accounts;
-  let comp;
+  let vtx;
 
   beforeEach(async () => {
     [root, ...accounts] = saddle.accounts;
-    comp = await deploy('CompScenario', [root]);
+    vtx = await deploy('VtxScenario', [root]);
   });
 
   describe('lookup curve', () => {
@@ -22,12 +22,12 @@ describe('CompScenario', () => {
         let offset = 0;
         while (remaining > 0) {
           let amt = remaining > 1000 ? 1000 : remaining;
-          await comp.methods.generateCheckpoints(amt, offset).send({from: root, gas: 200000000});
+          await vtx.methods.generateCheckpoints(amt, offset).send({from: root, gas: 200000000});
           remaining -= amt;
           offset += amt;
         }
 
-        let result = await comp.methods.getPriorVotes(root, 1).send();
+        let result = await vtx.methods.getPriorVotes(root, 1).send();
 
         await saddle.trace(result, {
           constants: {

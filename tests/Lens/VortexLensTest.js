@@ -5,7 +5,7 @@ const {
 const {
   makeComptroller,
   makeCToken,
-} = require('../Utils/Compound');
+} = require('../Utils/Vortex');
 
 function cullTuple(tuple) {
   return Object.keys(tuple).reduce((acc, key) => {
@@ -20,12 +20,12 @@ function cullTuple(tuple) {
   }, {});
 }
 
-describe('CompoundLens', () => {
-  let compoundLens;
+describe('VortexLens', () => {
+  let vortexLens;
   let acct;
 
   beforeEach(async () => {
-    compoundLens = await deploy('CompoundLens');
+    vortexLens = await deploy('VortexLens');
     acct = accounts[0];
   });
 
@@ -33,7 +33,7 @@ describe('CompoundLens', () => {
     it('is correct for a cErc20', async () => {
       let cErc20 = await makeCToken();
       expect(
-        cullTuple(await call(compoundLens, 'cTokenMetadata', [cErc20._address]))
+        cullTuple(await call(vortexLens, 'cTokenMetadata', [cErc20._address]))
       ).toEqual(
         {
           cToken: cErc20._address,
@@ -57,7 +57,7 @@ describe('CompoundLens', () => {
     it('is correct for cEth', async () => {
       let cEth = await makeCToken({kind: 'cether'});
       expect(
-        cullTuple(await call(compoundLens, 'cTokenMetadata', [cEth._address]))
+        cullTuple(await call(vortexLens, 'cTokenMetadata', [cEth._address]))
       ).toEqual({
         borrowRatePerBlock: "0",
         cToken: cEth._address,
@@ -82,7 +82,7 @@ describe('CompoundLens', () => {
       let cErc20 = await makeCToken();
       let cEth = await makeCToken({kind: 'cether'});
       expect(
-        (await call(compoundLens, 'cTokenMetadataAll', [[cErc20._address, cEth._address]])).map(cullTuple)
+        (await call(vortexLens, 'cTokenMetadataAll', [[cErc20._address, cEth._address]])).map(cullTuple)
       ).toEqual([
         {
           cToken: cErc20._address,
@@ -124,7 +124,7 @@ describe('CompoundLens', () => {
     it('is correct for cERC20', async () => {
       let cErc20 = await makeCToken();
       expect(
-        cullTuple(await call(compoundLens, 'cTokenBalances', [cErc20._address, acct]))
+        cullTuple(await call(vortexLens, 'cTokenBalances', [cErc20._address, acct]))
       ).toEqual(
         {
           balanceOf: "0",
@@ -141,7 +141,7 @@ describe('CompoundLens', () => {
       let cEth = await makeCToken({kind: 'cether'});
       let ethBalance = await web3.eth.getBalance(acct);
       expect(
-        cullTuple(await call(compoundLens, 'cTokenBalances', [cEth._address, acct], {gasPrice: '0'}))
+        cullTuple(await call(vortexLens, 'cTokenBalances', [cEth._address, acct], {gasPrice: '0'}))
       ).toEqual(
         {
           balanceOf: "0",
@@ -162,7 +162,7 @@ describe('CompoundLens', () => {
       let ethBalance = await web3.eth.getBalance(acct);
       
       expect(
-        (await call(compoundLens, 'cTokenBalancesAll', [[cErc20._address, cEth._address], acct], {gasPrice: '0'})).map(cullTuple)
+        (await call(vortexLens, 'cTokenBalancesAll', [[cErc20._address, cEth._address], acct], {gasPrice: '0'})).map(cullTuple)
       ).toEqual([
         {
           balanceOf: "0",
@@ -188,7 +188,7 @@ describe('CompoundLens', () => {
     it('gets correct price for cErc20', async () => {
       let cErc20 = await makeCToken();
       expect(
-        cullTuple(await call(compoundLens, 'cTokenUnderlyingPrice', [cErc20._address]))
+        cullTuple(await call(vortexLens, 'cTokenUnderlyingPrice', [cErc20._address]))
       ).toEqual(
         {
           cToken: cErc20._address,
@@ -200,7 +200,7 @@ describe('CompoundLens', () => {
     it('gets correct price for cEth', async () => {
       let cEth = await makeCToken({kind: 'cether'});
       expect(
-        cullTuple(await call(compoundLens, 'cTokenUnderlyingPrice', [cEth._address]))
+        cullTuple(await call(vortexLens, 'cTokenUnderlyingPrice', [cEth._address]))
       ).toEqual(
         {
           cToken: cEth._address,
@@ -215,7 +215,7 @@ describe('CompoundLens', () => {
       let cErc20 = await makeCToken();
       let cEth = await makeCToken({kind: 'cether'});
       expect(
-        (await call(compoundLens, 'cTokenUnderlyingPriceAll', [[cErc20._address, cEth._address]])).map(cullTuple)
+        (await call(vortexLens, 'cTokenUnderlyingPriceAll', [[cErc20._address, cEth._address]])).map(cullTuple)
       ).toEqual([
         {
           cToken: cErc20._address,
@@ -234,7 +234,7 @@ describe('CompoundLens', () => {
       let comptroller = await makeComptroller();
 
       expect(
-        cullTuple(await call(compoundLens, 'getAccountLimits', [comptroller._address, acct]))
+        cullTuple(await call(vortexLens, 'getAccountLimits', [comptroller._address, acct]))
       ).toEqual({
         liquidity: "0",
         markets: [],
@@ -244,18 +244,18 @@ describe('CompoundLens', () => {
   });
 
   describe('governance', () => {
-    let comp, gov;
+    let vtx, gov;
     let targets, values, signatures, callDatas;
     let proposalBlock, proposalId;
 
     beforeEach(async () => {
-      comp = await deploy('Vtx', [acct]);
-      gov = await deploy('GovernorAlpha', [address(0), comp._address, address(0)]);
+      vtx = await deploy('Vtx', [acct]);
+      gov = await deploy('GovernorAlpha', [address(0), vtx._address, address(0)]);
       targets = [acct];
       values = ["0"];
       signatures = ["getBalanceOf(address)"];
       callDatas = [encodeParameters(['address'], [acct])];
-      await send(comp, 'delegate', [acct]);
+      await send(vtx, 'delegate', [acct]);
       await send(gov, 'propose', [targets, values, signatures, callDatas, "do nothing"]);
       proposalBlock = +(await web3.eth.getBlockNumber());
       proposalId = await call(gov, 'latestProposalIds', [acct]);
@@ -264,7 +264,7 @@ describe('CompoundLens', () => {
     describe('getGovReceipts', () => {
       it('gets correct values', async () => {
         expect(
-          (await call(compoundLens, 'getGovReceipts', [gov._address, acct, [proposalId]])).map(cullTuple)
+          (await call(vortexLens, 'getGovReceipts', [gov._address, acct, [proposalId]])).map(cullTuple)
         ).toEqual([
           {
             hasVoted: false,
@@ -279,7 +279,7 @@ describe('CompoundLens', () => {
     describe('getGovProposals', () => {
       it('gets correct values', async () => {
         expect(
-          (await call(compoundLens, 'getGovProposals', [gov._address, [proposalId]])).map(cullTuple)
+          (await call(vortexLens, 'getGovProposals', [gov._address, [proposalId]])).map(cullTuple)
         ).toEqual([
           {
             againstVotes: "0",
@@ -300,18 +300,18 @@ describe('CompoundLens', () => {
     });
   });
 
-  describe('comp', () => {
-    let comp, currentBlock;
+  describe('vtx', () => {
+    let vtx, currentBlock;
 
     beforeEach(async () => {
       currentBlock = +(await web3.eth.getBlockNumber());
-      comp = await deploy('Vtx', [acct]);
+      vtx = await deploy('Vtx', [acct]);
     });
 
     describe('getVtxBalanceMetadata', () => {
       it('gets correct values', async () => {
         expect(
-          cullTuple(await call(compoundLens, 'getVtxBalanceMetadata', [comp._address, acct]))
+          cullTuple(await call(vortexLens, 'getVtxBalanceMetadata', [vtx._address, acct]))
         ).toEqual({
           balance: "10000000000000000000000000",
           delegate: "0x0000000000000000000000000000000000000000",
@@ -326,7 +326,7 @@ describe('CompoundLens', () => {
         await send(comptroller, 'setVtxAccrued', [acct, 5]); // harness only
 
         expect(
-          cullTuple(await call(compoundLens, 'getVtxBalanceMetadataExt', [comp._address, comptroller._address, acct]))
+          cullTuple(await call(vortexLens, 'getVtxBalanceMetadataExt', [vtx._address, comptroller._address, acct]))
         ).toEqual({
           balance: "10000000000000000000000000",
           delegate: "0x0000000000000000000000000000000000000000",
@@ -339,7 +339,7 @@ describe('CompoundLens', () => {
     describe('getVtxVotes', () => {
       it('gets correct values', async () => {
         expect(
-          (await call(compoundLens, 'getVtxVotes', [comp._address, acct, [currentBlock, currentBlock - 1]])).map(cullTuple)
+          (await call(vortexLens, 'getVtxVotes', [vtx._address, acct, [currentBlock, currentBlock - 1]])).map(cullTuple)
         ).toEqual([
           {
             blockNumber: currentBlock.toString(),
@@ -354,7 +354,7 @@ describe('CompoundLens', () => {
 
       it('reverts on future value', async () => {
         await expect(
-          call(compoundLens, 'getVtxVotes', [comp._address, acct, [currentBlock + 1]])
+          call(vortexLens, 'getVtxVotes', [vtx._address, acct, [currentBlock + 1]])
         ).rejects.toRevert('revert Vtx::getPriorVotes: not yet determined')
       });
     });

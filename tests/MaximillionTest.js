@@ -10,7 +10,7 @@ const {
   makePriceOracle,
   pretendBorrow,
   borrowSnapshot
-} = require('./Utils/Compound');
+} = require('./Utils/Vortex');
 
 describe('Maximillion', () => {
   let root, borrower;

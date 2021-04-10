@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 import "../../contracts/Governance/Vtx.sol";
 
-contract CompScenario is Vtx {
+contract VtxScenario is Vtx {
     constructor(address account) Vtx(account) public {}
 
     function transferScenario(address[] calldata destinations, uint256 amount) external returns (bool) {
