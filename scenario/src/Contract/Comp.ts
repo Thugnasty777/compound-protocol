@@ -7,7 +7,7 @@ interface Checkpoint {
   votes: number;
 }
 
-export interface CompMethods {
+export interface VtxMethods {
   name(): Callable<string>;
   symbol(): Callable<string>;
   decimals(): Callable<number>;
@@ -25,17 +25,17 @@ export interface CompMethods {
   setBlockNumber(blockNumber: encodedNumber): Sendable<void>;
 }
 
-export interface CompScenarioMethods extends CompMethods {
+export interface VtxScenarioMethods extends VtxMethods {
   transferScenario(destinations: string[], amount: encodedNumber): Sendable<boolean>;
   transferFromScenario(froms: string[], amount: encodedNumber): Sendable<boolean>;
 }
 
-export interface Comp extends Contract {
-  methods: CompMethods;
+export interface Vtx extends Contract {
+  methods: VtxMethods;
   name: string;
 }
 
-export interface CompScenario extends Contract {
-  methods: CompScenarioMethods;
+export interface VtxScenario extends Contract {
+  methods: VtxScenarioMethods;
   name: string;
 }

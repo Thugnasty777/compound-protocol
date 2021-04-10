@@ -2,7 +2,7 @@ Macro GivenGov
     Counter Deploy
     SetTime 10
     Timelock Deploy Jared 604800
-    Comp Deploy Bank
+    Vtx Deploy Bank
     Governor Deploy Alpha LegitGov (Address Timelock) (Address Comp) Guardian
     Timelock SetAdmin (Address LegitGov)
 
@@ -42,7 +42,7 @@ Test "Only guardian can abdicate"
 
 Test "Guardian can accept admin"
     Timelock Deploy Jared 604800
-    Comp Deploy Bank
+    Vtx Deploy Bank
     Governor Deploy Alpha LegitGov (Address Timelock) (Address Comp) Guardian
     From Jared (Timelock QueueTransaction (Timelock Address) 0 604900 "setPendingAdmin(address)" (Governor LegitGov Address))
     IncreaseTime 604901
@@ -56,7 +56,7 @@ Test "Guardian can accept admin"
 Test "Only guardian can accept admin"
     SetTime 10
     Timelock Deploy Jared 604800
-    Comp Deploy Bank
+    Vtx Deploy Bank
     Governor Deploy Alpha LegitGov (Address Timelock) (Address Comp) Guardian
     From Jared (Timelock QueueTransaction (Timelock Address) 0 604900 "setPendingAdmin(address)" (Governor LegitGov Address))
     IncreaseTime 604901

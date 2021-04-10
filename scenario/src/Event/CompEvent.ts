@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { addAction, World, describeUser } from '../World';
-import { Comp, CompScenario } from '../Contract/Comp';
+import { Vtx, VtxScenario } from '../Contract/Comp';
 import { buildComp } from '../Builder/CompBuilder';
 import { invoke } from '../Invokation';
 import {
@@ -34,7 +34,7 @@ async function genComp(world: World, from: string, params: Event): Promise<World
   return world;
 }
 
-async function verifyComp(world: World, comp: Comp, apiKey: string, modelName: string, contractName: string): Promise<World> {
+async function verifyComp(world: World, comp: Vtx, apiKey: string, modelName: string, contractName: string): Promise<World> {
   if (world.isLocalNetwork()) {
     world.printer.printLine(`Politely declining to verify on local network: ${world.network}.`);
   } else {
@@ -44,7 +44,7 @@ async function verifyComp(world: World, comp: Comp, apiKey: string, modelName: s
   return world;
 }
 
-async function approve(world: World, from: string, comp: Comp, address: string, amount: NumberV): Promise<World> {
+async function approve(world: World, from: string, comp: Vtx, address: string, amount: NumberV): Promise<World> {
   let invokation = await invoke(world, comp.methods.approve(address, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
@@ -56,7 +56,7 @@ async function approve(world: World, from: string, comp: Comp, address: string, 
   return world;
 }
 
-async function transfer(world: World, from: string, comp: Comp, address: string, amount: NumberV): Promise<World> {
+async function transfer(world: World, from: string, comp: Vtx, address: string, amount: NumberV): Promise<World> {
   let invokation = await invoke(world, comp.methods.transfer(address, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
@@ -68,7 +68,7 @@ async function transfer(world: World, from: string, comp: Comp, address: string,
   return world;
 }
 
-async function transferFrom(world: World, from: string, comp: Comp, owner: string, spender: string, amount: NumberV): Promise<World> {
+async function transferFrom(world: World, from: string, comp: Vtx, owner: string, spender: string, amount: NumberV): Promise<World> {
   let invokation = await invoke(world, comp.methods.transferFrom(owner, spender, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
@@ -80,7 +80,7 @@ async function transferFrom(world: World, from: string, comp: Comp, owner: strin
   return world;
 }
 
-async function transferScenario(world: World, from: string, comp: CompScenario, addresses: string[], amount: NumberV): Promise<World> {
+async function transferScenario(world: World, from: string, comp: VtxScenario, addresses: string[], amount: NumberV): Promise<World> {
   let invokation = await invoke(world, comp.methods.transferScenario(addresses, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
@@ -92,7 +92,7 @@ async function transferScenario(world: World, from: string, comp: CompScenario, 
   return world;
 }
 
-async function transferFromScenario(world: World, from: string, comp: CompScenario, addresses: string[], amount: NumberV): Promise<World> {
+async function transferFromScenario(world: World, from: string, comp: VtxScenario, addresses: string[], amount: NumberV): Promise<World> {
   let invokation = await invoke(world, comp.methods.transferFromScenario(addresses, amount.encode()), from, NoErrorReporter);
 
   world = addAction(
@@ -104,7 +104,7 @@ async function transferFromScenario(world: World, from: string, comp: CompScenar
   return world;
 }
 
-async function delegate(world: World, from: string, comp: Comp, account: string): Promise<World> {
+async function delegate(world: World, from: string, comp: Vtx, account: string): Promise<World> {
   let invokation = await invoke(world, comp.methods.delegate(account), from, NoErrorReporter);
 
   world = addAction(
@@ -119,7 +119,7 @@ async function delegate(world: World, from: string, comp: Comp, account: string)
 async function setBlockNumber(
   world: World,
   from: string,
-  comp: Comp,
+  comp: Vtx,
   blockNumber: NumberV
 ): Promise<World> {
   return addAction(
@@ -144,7 +144,7 @@ export function compCommands() {
       (world, from, { params }) => genComp(world, from, params.val)
     ),
 
-    new View<{ comp: Comp, apiKey: StringV, contractName: StringV }>(`
+    new View<{ comp: Vtx, apiKey: StringV, contractName: StringV }>(`
         #### Verify
 
         * "<Comp> Verify apiKey:<String> contractName:<String>=Comp" - Verifies Comp token in Etherscan
@@ -161,7 +161,7 @@ export function compCommands() {
       }
     ),
 
-    new Command<{ comp: Comp, spender: AddressV, amount: NumberV }>(`
+    new Command<{ comp: Vtx, spender: AddressV, amount: NumberV }>(`
         #### Approve
 
         * "Comp Approve spender:<Address> <Amount>" - Adds an allowance between user and address
@@ -178,7 +178,7 @@ export function compCommands() {
       }
     ),
 
-    new Command<{ comp: Comp, recipient: AddressV, amount: NumberV }>(`
+    new Command<{ comp: Vtx, recipient: AddressV, amount: NumberV }>(`
         #### Transfer
 
         * "Comp Transfer recipient:<User> <Amount>" - Transfers a number of tokens via "transfer" as given user to recipient (this does not depend on allowance)
@@ -193,7 +193,7 @@ export function compCommands() {
       (world, from, { comp, recipient, amount }) => transfer(world, from, comp, recipient.val, amount)
     ),
 
-    new Command<{ comp: Comp, owner: AddressV, spender: AddressV, amount: NumberV }>(`
+    new Command<{ comp: Vtx, owner: AddressV, spender: AddressV, amount: NumberV }>(`
         #### TransferFrom
 
         * "Comp TransferFrom owner:<User> spender:<User> <Amount>" - Transfers a number of tokens via "transfeFrom" to recipient (this depends on allowances)
@@ -209,7 +209,7 @@ export function compCommands() {
       (world, from, { comp, owner, spender, amount }) => transferFrom(world, from, comp, owner.val, spender.val, amount)
     ),
 
-    new Command<{ comp: CompScenario, recipients: AddressV[], amount: NumberV }>(`
+    new Command<{ comp: VtxScenario, recipients: AddressV[], amount: NumberV }>(`
         #### TransferScenario
 
         * "Comp TransferScenario recipients:<User[]> <Amount>" - Transfers a number of tokens via "transfer" to the given recipients (this does not depend on allowance)
@@ -224,7 +224,7 @@ export function compCommands() {
       (world, from, { comp, recipients, amount }) => transferScenario(world, from, comp, recipients.map(recipient => recipient.val), amount)
     ),
 
-    new Command<{ comp: CompScenario, froms: AddressV[], amount: NumberV }>(`
+    new Command<{ comp: VtxScenario, froms: AddressV[], amount: NumberV }>(`
         #### TransferFromScenario
 
         * "Comp TransferFromScenario froms:<User[]> <Amount>" - Transfers a number of tokens via "transferFrom" from the given users to msg.sender (this depends on allowance)
@@ -239,7 +239,7 @@ export function compCommands() {
       (world, from, { comp, froms, amount }) => transferFromScenario(world, from, comp, froms.map(_from => _from.val), amount)
     ),
 
-    new Command<{ comp: Comp, account: AddressV }>(`
+    new Command<{ comp: Vtx, account: AddressV }>(`
         #### Delegate
 
         * "Comp Delegate account:<Address>" - Delegates votes to a given account
@@ -252,7 +252,7 @@ export function compCommands() {
       ],
       (world, from, { comp, account }) => delegate(world, from, comp, account.val)
     ),
-    new Command<{ comp: Comp, blockNumber: NumberV }>(`
+    new Command<{ comp: Vtx, blockNumber: NumberV }>(`
       #### SetBlockNumber
 
       * "SetBlockNumber <Seconds>" - Sets the blockTimestamp of the Comp Harness

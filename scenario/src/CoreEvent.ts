@@ -781,12 +781,12 @@ export const commands: (View<any> | ((world: World) => Promise<View<any>>))[] = 
 
   new Command<{ event: EventV }>(
     `
-      #### Comp
+      #### Vtx
 
-      * "Comp ...event" - Runs given comp event
-      * E.g. "Comp Deploy"
+      * "Vtx ...event" - Runs given vtx event
+      * E.g. "Vtx Deploy"
     `,
-    'Comp',
+    'Vtx',
     [new Arg('event', getEventV, { variadic: true })],
     (world, from, { event }) => {
       return processCompEvent(world, event.val, from);

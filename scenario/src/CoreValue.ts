@@ -31,7 +31,7 @@ import { getPriceOracleProxyValue, priceOracleProxyFetchers } from './Value/Pric
 import { getAnchoredViewValue, anchoredViewFetchers } from './Value/AnchoredViewValue';
 import { getTimelockValue, timelockFetchers, getTimelockAddress } from './Value/TimelockValue';
 import { getMaximillionValue, maximillionFetchers } from './Value/MaximillionValue';
-import { getCompValue, compFetchers } from './Value/CompValue';
+import { getVtxValue, vtxFetchers } from './Value/CompValue';
 import { getGovernorValue, governorFetchers } from './Value/GovernorValue';
 import { getAddress } from './ContractLookup';
 import { getCurrentBlockNumber, getCurrentTimestamp, mustArray, sendRPC } from './Utils';
@@ -957,14 +957,14 @@ const fetchers = [
   ),
   new Fetcher<{ res: Value }, Value>(
     `
-      #### Comp
+      #### Vtx
 
-      * "Comp ...compArgs" - Returns Comp value
+      * "Vtx ...vtxArgs" - Returns Vtx value
     `,
-    'Comp',
-    [new Arg('res', getCompValue, { variadic: true })],
+    'Vtx',
+    [new Arg('res', getVtxValue, { variadic: true })],
     async (world, { res }) => res,
-    { subExpressions: compFetchers() }
+    { subExpressions: vtxFetchers() }
   ),
   new Fetcher<{ res: Value }, Value>(
     `

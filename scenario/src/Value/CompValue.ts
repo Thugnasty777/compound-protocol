@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { Comp } from '../Contract/Comp';
+import { Vtx } from '../Contract/Comp';
 import {
   getAddressV,
   getNumberV
@@ -15,22 +15,22 @@ import {
 import { Arg, Fetcher, getFetcherValue } from '../Command';
 import { getComp } from '../ContractLookup';
 
-export function compFetchers() {
+export function vtxFetchers() {
   return [
-    new Fetcher<{ comp: Comp }, AddressV>(`
+    new Fetcher<{ vtx: Vtx }, AddressV>(`
         #### Address
 
-        * "<Comp> Address" - Returns the address of Comp token
-          * E.g. "Comp Address"
+        * "<Vtx> Address" - Returns the address of Vtx token
+          * E.g. "Vtx Address"
       `,
       "Address",
       [
-        new Arg("comp", getComp, { implicit: true })
+        new Arg("vtx", getComp, { implicit: true })
       ],
-      async (world, { comp }) => new AddressV(comp._address)
+      async (world, { vtx }) => new AddressV(vtx._address)
     ),
 
-    new Fetcher<{ comp: Comp }, StringV>(`
+    new Fetcher<{ comp: Vtx }, StringV>(`
         #### Name
 
         * "<Comp> Name" - Returns the name of the Comp token
@@ -43,7 +43,7 @@ export function compFetchers() {
       async (world, { comp }) => new StringV(await comp.methods.name().call())
     ),
 
-    new Fetcher<{ comp: Comp }, StringV>(`
+    new Fetcher<{ comp: Vtx }, StringV>(`
         #### Symbol
 
         * "<Comp> Symbol" - Returns the symbol of the Comp token
@@ -56,7 +56,7 @@ export function compFetchers() {
       async (world, { comp }) => new StringV(await comp.methods.symbol().call())
     ),
 
-    new Fetcher<{ comp: Comp }, NumberV>(`
+    new Fetcher<{ comp: Vtx }, NumberV>(`
         #### Decimals
 
         * "<Comp> Decimals" - Returns the number of decimals of the Comp token
@@ -69,7 +69,7 @@ export function compFetchers() {
       async (world, { comp }) => new NumberV(await comp.methods.decimals().call())
     ),
 
-    new Fetcher<{ comp: Comp }, NumberV>(`
+    new Fetcher<{ comp: Vtx }, NumberV>(`
         #### TotalSupply
 
         * "Comp TotalSupply" - Returns Comp token's total supply
@@ -81,7 +81,7 @@ export function compFetchers() {
       async (world, { comp }) => new NumberV(await comp.methods.totalSupply().call())
     ),
 
-    new Fetcher<{ comp: Comp, address: AddressV }, NumberV>(`
+    new Fetcher<{ comp: Vtx, address: AddressV }, NumberV>(`
         #### TokenBalance
 
         * "Comp TokenBalance <Address>" - Returns the Comp token balance of a given address
@@ -95,7 +95,7 @@ export function compFetchers() {
       async (world, { comp, address }) => new NumberV(await comp.methods.balanceOf(address.val).call())
     ),
 
-    new Fetcher<{ comp: Comp, owner: AddressV, spender: AddressV }, NumberV>(`
+    new Fetcher<{ comp: Vtx, owner: AddressV, spender: AddressV }, NumberV>(`
         #### Allowance
 
         * "Comp Allowance owner:<Address> spender:<Address>" - Returns the Comp allowance from owner to spender
@@ -110,7 +110,7 @@ export function compFetchers() {
       async (world, { comp, owner, spender }) => new NumberV(await comp.methods.allowance(owner.val, spender.val).call())
     ),
 
-    new Fetcher<{ comp: Comp, account: AddressV }, NumberV>(`
+    new Fetcher<{ comp: Vtx, account: AddressV }, NumberV>(`
         #### GetCurrentVotes
 
         * "Comp GetCurrentVotes account:<Address>" - Returns the current Comp votes balance for an account
@@ -124,7 +124,7 @@ export function compFetchers() {
       async (world, { comp, account }) => new NumberV(await comp.methods.getCurrentVotes(account.val).call())
     ),
 
-    new Fetcher<{ comp: Comp, account: AddressV, blockNumber: NumberV }, NumberV>(`
+    new Fetcher<{ comp: Vtx, account: AddressV, blockNumber: NumberV }, NumberV>(`
         #### GetPriorVotes
 
         * "Comp GetPriorVotes account:<Address> blockBumber:<Number>" - Returns the current Comp votes balance at given block
@@ -139,7 +139,7 @@ export function compFetchers() {
       async (world, { comp, account, blockNumber }) => new NumberV(await comp.methods.getPriorVotes(account.val, blockNumber.encode()).call())
     ),
 
-    new Fetcher<{ comp: Comp, account: AddressV }, NumberV>(`
+    new Fetcher<{ comp: Vtx, account: AddressV }, NumberV>(`
         #### GetCurrentVotesBlock
 
         * "Comp GetCurrentVotesBlock account:<Address>" - Returns the current Comp votes checkpoint block for an account
@@ -158,7 +158,7 @@ export function compFetchers() {
       }
     ),
 
-    new Fetcher<{ comp: Comp, account: AddressV }, NumberV>(`
+    new Fetcher<{ comp: Vtx, account: AddressV }, NumberV>(`
         #### VotesLength
 
         * "Comp VotesLength account:<Address>" - Returns the Comp vote checkpoint array length
@@ -172,7 +172,7 @@ export function compFetchers() {
       async (world, { comp, account }) => new NumberV(await comp.methods.numCheckpoints(account.val).call())
     ),
 
-    new Fetcher<{ comp: Comp, account: AddressV }, ListV>(`
+    new Fetcher<{ comp: Vtx, account: AddressV }, ListV>(`
         #### AllVotes
 
         * "Comp AllVotes account:<Address>" - Returns information about all votes an account has had
@@ -197,6 +197,6 @@ export function compFetchers() {
   ];
 }
 
-export async function getCompValue(world: World, event: Event): Promise<Value> {
-  return await getFetcherValue<any, any>("Comp", compFetchers(), world, event);
+export async function getVtxValue(world: World, event: Event): Promise<Value> {
+  return await getFetcherValue<any, any>("Vtx", vtxFetchers(), world, event);
 }

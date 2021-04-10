@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World, addAction } from '../World';
-import { Comp, CompScenario } from '../Contract/Comp';
+import { Vtx, VtxScenario } from '../Contract/Comp';
 import { Invokation } from '../Invokation';
 import { getAddressV } from '../CoreValue';
 import { StringV, AddressV } from '../Value';
@@ -12,7 +12,7 @@ const CompContract = getContract('Comp');
 const CompScenarioContract = getContract('CompScenario');
 
 export interface TokenData {
-  invokation: Invokation<Comp>;
+  invokation: Invokation<Vtx>;
   contract: string;
   address?: string;
   symbol: string;
@@ -24,7 +24,7 @@ export async function buildComp(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; comp: Comp; tokenData: TokenData }> {
+): Promise<{ world: World; comp: Vtx; tokenData: TokenData }> {
   const fetchers = [
     new Fetcher<{ account: AddressV }, TokenData>(
       `
@@ -39,7 +39,7 @@ export async function buildComp(
       ],
       async (world, { account }) => {
         return {
-          invokation: await CompScenarioContract.deploy<CompScenario>(world, from, [account.val]),
+          invokation: await CompScenarioContract.deploy<VtxScenario>(world, from, [account.val]),
           contract: 'CompScenario',
           symbol: 'COMP',
           name: 'Compound Governance Token',
@@ -62,7 +62,7 @@ export async function buildComp(
       async (world, { account }) => {
         if (world.isLocalNetwork()) {
           return {
-            invokation: await CompScenarioContract.deploy<CompScenario>(world, from, [account.val]),
+            invokation: await CompScenarioContract.deploy<VtxScenario>(world, from, [account.val]),
             contract: 'CompScenario',
             symbol: 'COMP',
             name: 'Compound Governance Token',
@@ -70,7 +70,7 @@ export async function buildComp(
           };
         } else {
           return {
-            invokation: await CompContract.deploy<Comp>(world, from, [account.val]),
+            invokation: await CompContract.deploy<Vtx>(world, from, [account.val]),
             contract: 'Comp',
             symbol: 'COMP',
             name: 'Compound Governance Token',

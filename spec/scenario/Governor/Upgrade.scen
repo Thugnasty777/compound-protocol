@@ -3,7 +3,7 @@ Macro DeployGov
     SetBlockNumber 1
     SetTime 10
     Counter Deploy CNT1
-    Comp Deploy Bank
+    Vtx Deploy Bank
     Enfranchise Root 400001e18
     Timelock Deploy Jared 604800
     Governor Deploy Alpha Alpha (Address Timelock) (Address Comp) Guardian
@@ -24,8 +24,8 @@ Macro SucceedQueueExecuteLastProposal gov
     Assert Equal ("Executed") (Governor gov Proposal LastProposal State)
 
 Macro Enfranchise user amount
-    From Bank (Comp Transfer user amount)
-    From user (Comp Delegate user)
+    From Bank (Vtx Transfer user amount)
+    From user (Vtx Delegate user)
 
 Test "Governor can switch to a new governor"
     DeployGov
