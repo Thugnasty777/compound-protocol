@@ -17770,7 +17770,7 @@
             "type": "event"
         }
     ],
-    "cErc20Delegate": [
+    "vErc20Delegate": [
         {
             "inputs": [],
             "payable": false,

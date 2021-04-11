@@ -4191,7 +4191,7 @@
       "type": "function"
     }
   ],
-  "cErc20Delegate": [
+  "vErc20Delegate": [
     {
       "inputs": [],
       "payable": false,

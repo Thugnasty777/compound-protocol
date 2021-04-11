@@ -1,11 +1,11 @@
 pragma solidity ^0.5.16;
 
-import "../../../contracts/CErc20Delegate.sol";
+import "../../../contracts/VErc20Delegate.sol";
 import "../../../contracts/EIP20Interface.sol";
 
 import "./VTokenCollateral.sol";
 
-contract CErc20DelegateCertora is CErc20Delegate {
+contract VErc20DelegateCertora is VErc20Delegate {
     VTokenCollateral public otherToken;
 
     function mintFreshPub(address minter, uint mintAmount) public returns (uint) {

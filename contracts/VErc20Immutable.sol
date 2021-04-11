@@ -1,13 +1,13 @@
 pragma solidity ^0.5.16;
 
-import "./CErc20.sol";
+import "./VErc20.sol";
 
 /**
  * @title VortexErc20Immutable Contract
  * @notice VTokens which wrap an EIP-20 underlying and are immutable
  * @author Vortex
  */
-contract CErc20Immutable is CErc20 {
+contract VErc20Immutable is VErc20 {
     /**
      * @notice Construct a new money market
      * @param underlying_ The address of the underlying asset

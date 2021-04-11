@@ -95,7 +95,7 @@ Test "Accept unitroller admin from Timelock"
     Assert Equal (Unitroller PendingAdmin) (Address Zero)
 
 
-Test "Reduce reserves for CErc20 from Timelock and send reserves to external address"
+Test "Reduce reserves for VErc20 from Timelock and send reserves to external address"
     NewComptroller
     ListedVToken ZRX cZRX initialExchangeRate:1e9
     Prep Geoff 50e18 ZRX cZRX

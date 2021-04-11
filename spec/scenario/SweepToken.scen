@@ -8,9 +8,9 @@ Test "Attempt to sweep underlying token"
     Support cBAT collateralFactor:0.5
     AllowFailures
     vToken cBAT SweepToken BAT
-    Assert Revert "revert CErc20::sweepToken: can not sweep underlying token"
+    Assert Revert "revert VErc20::sweepToken: can not sweep underlying token"
 
-Test "Succesfully Sweep standard non-underlying token from CErc20"
+Test "Succesfully Sweep standard non-underlying token from VErc20"
     NewComptroller price:1.0
     Erc20 Deploy Standard ZRX "ZRX" 18
     NewVToken BAT cBAT
@@ -19,7 +19,7 @@ Test "Succesfully Sweep standard non-underlying token from CErc20"
     vToken cBAT SweepToken ZRX
     Assert Equal (Erc20 ZRX TokenBalance Admin) (10e18)
 
-Test "Succesfully Sweep non-standard non-underlying token from CErc20"
+Test "Succesfully Sweep non-standard non-underlying token from VErc20"
     NewComptroller price:1.0
     Erc20 Deploy NonStandard USDT "USDT" 18
     NewVToken BAT cBAT

@@ -50,17 +50,17 @@ Macro NewComptroller price=1.0 closeFactor=0.1 maxAssets=20
     Unitroller SetPendingImpl ComptrollerScen
     ComptrollerImpl ComptrollerScen Become
 
-Macro NewVToken erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=CErc20DelegatorScenario vTokenType=CErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
+Macro NewVToken erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=VErc20DelegatorScenario vTokenType=VErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
     Erc20 Deploy tokenType erc20 erc20
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
-    VTokenDelegate Deploy vTokenType cErc20Delegate
-    VToken Deploy delegatorType vToken vToken (Erc20 erc20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (VTokenDelegate cErc20Delegate Address) becomeImplementationData
+    VTokenDelegate Deploy vTokenType vErc20Delegate
+    VToken Deploy delegatorType vToken vToken (Erc20 erc20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (VTokenDelegate vErc20Delegate Address) becomeImplementationData
 
 -- Same as NewVToken but does not deploy an ERC20. Used for special ERC20s that are initialized differently
-Macro NewVTokenBringERC20 erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 delegatorType=CErc20DelegatorScenario vTokenType=CErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
+Macro NewVTokenBringERC20 erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 delegatorType=VErc20DelegatorScenario vTokenType=VErc20DelegateScenario admin=Admin becomeImplementationData="0x0"
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
-    VTokenDelegate Deploy vTokenType cErc20Delegate
-    VToken Deploy delegatorType vToken vToken (Erc20 erc20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (VTokenDelegate cErc20Delegate Address) becomeImplementationData
+    VTokenDelegate Deploy vTokenType vErc20Delegate
+    VToken Deploy delegatorType vToken vToken (Erc20 erc20 Address) (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin (VTokenDelegate vErc20Delegate Address) becomeImplementationData
 
 Macro NewVTokenImmutable erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard vTokenType=Scenario admin=Admin
     Erc20 Deploy tokenType erc20 erc20
@@ -71,7 +71,7 @@ Macro NewEtherToken vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=
     InterestRateModel Deploy Fixed StdInterest borrowRate -- Note: interest rate model probably shouldn't be global
     VToken Deploy VEtherScenario vToken vToken (Comptroller Address) (InterestRateModel StdInterest Address) initialExchangeRate decimals admin
 
-Macro ListedVToken erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=CErc20DelegatorScenario vTokenType=CErc20DelegateScenario admin=Admin
+Macro ListedVToken erc20 vToken borrowRate=0.000005 initialExchangeRate=2e9 decimals=8 tokenType=Standard delegatorType=VErc20DelegatorScenario vTokenType=VErc20DelegateScenario admin=Admin
     NewVToken erc20 vToken borrowRate initialExchangeRate decimals tokenType delegatorType vTokenType admin
     Comptroller SupportMarket vToken
 

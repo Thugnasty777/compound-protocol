@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { CErc20Delegate } from '../Contract/CErc20Delegate';
+import { VErc20Delegate } from '../Contract/VErc20Delegate';
 import {
   getCoreValue,
   mapValue
@@ -12,7 +12,7 @@ import {
 } from '../Value';
 import { getWorldContractByAddress, getVTokenDelegateAddress } from '../ContractLookup';
 
-export async function getVTokenDelegateV(world: World, event: Event): Promise<CErc20Delegate> {
+export async function getVTokenDelegateV(world: World, event: Event): Promise<VErc20Delegate> {
   const address = await mapValue<AddressV>(
     world,
     event,
@@ -21,16 +21,16 @@ export async function getVTokenDelegateV(world: World, event: Event): Promise<CE
     AddressV
   );
 
-  return getWorldContractByAddress<CErc20Delegate>(world, address.val);
+  return getWorldContractByAddress<VErc20Delegate>(world, address.val);
 }
 
-async function vTokenDelegateAddress(world: World, vTokenDelegate: CErc20Delegate): Promise<AddressV> {
+async function vTokenDelegateAddress(world: World, vTokenDelegate: VErc20Delegate): Promise<AddressV> {
   return new AddressV(vTokenDelegate._address);
 }
 
 export function vTokenDelegateFetchers() {
   return [
-    new Fetcher<{ vTokenDelegate: CErc20Delegate }, AddressV>(`
+    new Fetcher<{ vTokenDelegate: VErc20Delegate }, AddressV>(`
         #### Address
 
         * "VTokenDelegate <VTokenDelegate> Address" - Returns address of VTokenDelegate contract

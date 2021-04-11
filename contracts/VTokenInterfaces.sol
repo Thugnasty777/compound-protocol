@@ -241,14 +241,14 @@ contract VTokenInterface is VTokenStorage {
     function _setInterestRateModel(InterestRateModel newInterestRateModel) public returns (uint);
 }
 
-contract CErc20Storage {
+contract VErc20Storage {
     /**
      * @notice Underlying asset for this VToken
      */
     address public underlying;
 }
 
-contract CErc20Interface is CErc20Storage {
+contract VErc20Interface is VErc20Storage {
 
     /*** User Interface ***/
 
@@ -267,14 +267,14 @@ contract CErc20Interface is CErc20Storage {
     function _addReserves(uint addAmount) external returns (uint);
 }
 
-contract CDelegationStorage {
+contract VDelegationStorage {
     /**
      * @notice Implementation address for this contract
      */
     address public implementation;
 }
 
-contract CDelegatorInterface is CDelegationStorage {
+contract VDelegatorInterface is VDelegationStorage {
     /**
      * @notice Emitted when implementation is changed
      */
@@ -289,7 +289,7 @@ contract CDelegatorInterface is CDelegationStorage {
     function _setImplementation(address implementation_, bool allowResign, bytes memory becomeImplementationData) public;
 }
 
-contract CDelegateInterface is CDelegationStorage {
+contract VDelegateInterface is VDelegationStorage {
     /**
      * @notice Called by the delegator on a delegate to initialize it for duty
      * @dev Should revert if any issues arise which make it unfit for delegation

@@ -5,7 +5,7 @@ import { World } from './World';
 import { Contract } from './Contract';
 import { mustString } from './Utils';
 
-import { CErc20Delegate } from './Contract/CErc20Delegate';
+import { VErc20Delegate } from './Contract/VErc20Delegate';
 import { Vtx } from './Contract/Vtx';
 import { Comptroller } from './Contract/Comptroller';
 import { ComptrollerImpl } from './Contract/ComptrollerImpl';
@@ -188,8 +188,8 @@ export async function getVTokenData(
 export async function getVTokenDelegateData(
   world: World,
   vTokenDelegateArg: string
-): Promise<[CErc20Delegate, string, Map<string, string>]> {
-  let contract = getWorldContract<CErc20Delegate>(world, [['VTokenDelegate', vTokenDelegateArg, 'address']]);
+): Promise<[VErc20Delegate, string, Map<string, string>]> {
+  let contract = getWorldContract<VErc20Delegate>(world, [['VTokenDelegate', vTokenDelegateArg, 'address']]);
   let data = getContractData(world, [['VTokenDelegate', vTokenDelegateArg]]);
 
   return [contract, vTokenDelegateArg, <Map<string, string>>(<any>data)];

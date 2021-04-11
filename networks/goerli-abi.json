@@ -12774,7 +12774,7 @@
             "signature": "0x23b872dd"
         }
     ],
-    "cErc20Delegate": [
+    "vErc20Delegate": [
         {
             "inputs": [],
             "payable": false,

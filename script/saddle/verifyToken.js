@@ -42,7 +42,7 @@ npx saddle -n rinkeby script token:verify 0x19B674715cD20626415C738400FDd0d32D68
   let deployArgs = [conf.underlying, conf.comptroller, conf.interestRateModel, conf.initialExchangeRateMantissa.toString(), conf.name, conf.symbol, conf.decimals, conf.admin];
 
   // TODO: Make sure we match optimizations count, etc
-  await saddle.verify(etherscanApiKey, address, 'CErc20Immutable', deployArgs, 200, undefined);
+  await saddle.verify(etherscanApiKey, address, 'VErc20Immutable', deployArgs, 200, undefined);
 
   console.log(`Contract verified at https://${network}.etherscan.io/address/${address}`);
 

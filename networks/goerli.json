@@ -17,7 +17,7 @@
         "cBAT": "0xCCaF265E7492c0d9b7C2f0018bf6382Ba7f0148D",
         "Base0bps_Slope2000bps": "0xA4d7E82dA57339020cbB3cA2B59D173AcDCa3504",
         "BAT": "0x70cBa46d2e933030E2f274AE58c951C800548AeF",
-        "cErc20Delegate": "0xB40d042a65Dd413Ae0fd85bECF8D722e16bC46F1",
+        "vErc20Delegate": "0xB40d042a65Dd413Ae0fd85bECF8D722e16bC46F1",
         "Base200bps_Slope1000bps": "0x85d8896a088ad7fa6bd80272609bac982dc1f6b3",
         "StdComptrollerG1": "0x503506EfC05Bc2BAef7ad0dF052827Aca6DC2964",
         "cETH": "0x20572e4c090f15667cF7378e16FaD2eA0e2f3EfF",
@@ -50,7 +50,7 @@
         "cBAT": 1971988,
         "Base0bps_Slope2000bps": 1971941,
         "BAT": 1971945,
-        "cErc20Delegate": 1972007,
+        "vErc20Delegate": 1972007,
         "Base200bps_Slope1000bps": 2035625,
         "StdComptrollerG1": 1971926,
         "cETH": 1971992,
@@ -139,7 +139,7 @@
         "cBAT": "0x00000000000000000000000070cba46d2e933030e2f274ae58c951c800548aef000000000000000000000000627ea49279fd0de89186a58b8758ad02b6be28670000000000000000000000001e83fd76621da78266955c473cd8559d5fa1c34c000000000000000000000000000000000000000000a56fa5b99019a5c8000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000008000000000000000000000000513c1ff435eccedd0fda5edd2ad5e5461f0e87260000000000000000000000000000000000000000000000000000000000000023436f6d706f756e6420426173696320417474656e74696f6e20546f6b656e20f09f9388000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000046342415400000000000000000000000000000000000000000000000000000000",
         "Base0bps_Slope2000bps": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002c68af0bb140000",
         "BAT": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000015426173696320417474656e74696f6e20546f6b656e000000000000000000000000000000000000000000000000000000000000000000000000000000000000034241540000000000000000000000000000000000000000000000000000000000",
-        "cErc20Delegate": "0x",
+        "vErc20Delegate": "0x",
         "Base200bps_Slope1000bps": "0x00000000000000000000000000000000000000000000000000470de4df820000000000000000000000000000000000000000000000000000016345785d8a0000",
         "StdComptrollerG1": "0x",
         "cETH": "0x000000000000000000000000627ea49279fd0de89186a58b8758ad02b6be2867000000000000000000000000a4d7e82da57339020cbb3ca2b59d173acdca3504000000000000000000000000000000000000000000a56fa5b99019a5c800000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000008000000000000000000000000513c1ff435eccedd0fda5edd2ad5e5461f0e87260000000000000000000000000000000000000000000000000000000000000013436f6d706f756e6420457468657220f09f93880000000000000000000000000000000000000000000000000000000000000000000000000000000000000000046345544800000000000000000000000000000000000000000000000000000000",
@@ -169,7 +169,7 @@
             "symbol": "cUSDC",
             "decimals": 8,
             "underlying": "0xD87Ba7A50B2E7E660f678A895E4B72E7CB4CCd9C",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCEC4a43eBB02f9B80916F1c718338169d6d5C1F0"
@@ -179,7 +179,7 @@
             "symbol": "cDAI",
             "decimals": 8,
             "underlying": "0xdc31Ee1784292379Fbb2964b3B9C4124D8F89C60",
-            "contract": "CErc20Delegator",
+            "contract": "VErc20Delegator",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x822397d9a55d0fefd20F5c4bCaB33C5F65bd28Eb"
@@ -204,7 +204,7 @@
             "symbol": "cBAT",
             "decimals": 8,
             "underlying": "0x70cBa46d2e933030E2f274AE58c951C800548AeF",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCCaF265E7492c0d9b7C2f0018bf6382Ba7f0148D"
@@ -232,7 +232,7 @@
             "symbol": "cSAI",
             "decimals": 8,
             "underlying": "0x8e9192D6f9d903b1BEb3836F52a9f71E05846e42",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x5D4373F8C1AF21C391aD7eC755762D8dD3CCA809"
@@ -242,7 +242,7 @@
             "symbol": "cREP",
             "decimals": 8,
             "underlying": "0x183Faf58c4461972765f3F90c6272A4ecE66Bd96",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x1d70B01A2C3e3B2e56FcdcEfe50d5c5d70109a5D"
@@ -276,7 +276,7 @@
             "symbol": "cZRX",
             "decimals": 8,
             "underlying": "0xe4E81Fa6B16327D4B78CFEB83AAdE04bA7075165",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xA253295eC2157B8b69C44b2cb35360016DAa25b1"
@@ -286,7 +286,7 @@
             "symbol": "cWBTC",
             "decimals": 8,
             "underlying": "0xC04B0d3107736C32e19F1c62b2aF67BE61d63a05",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "20000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x6CE27497A64fFFb5517AA4aeE908b1E7EB63B9fF"
@@ -301,10 +301,10 @@
         }
     },
     "VTokenDelegate": {
-        "cErc20Delegate": {
+        "vErc20Delegate": {
             "address": "0xB40d042a65Dd413Ae0fd85bECF8D722e16bC46F1",
-            "contract": "CErc20Delegate",
-            "description": "Standard CErc20 Delegate"
+            "contract": "VErc20Delegate",
+            "description": "Standard VErc20 Delegate"
         }
     },
     "Counter": {
@@ -319,7 +319,7 @@
             "symbol": "cZRX",
             "decimals": 8,
             "underlying": "0xe4E81Fa6B16327D4B78CFEB83AAdE04bA7075165",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xA253295eC2157B8b69C44b2cb35360016DAa25b1"
@@ -329,7 +329,7 @@
             "symbol": "cBAT",
             "decimals": 8,
             "underlying": "0x70cBa46d2e933030E2f274AE58c951C800548AeF",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCCaF265E7492c0d9b7C2f0018bf6382Ba7f0148D"
@@ -339,7 +339,7 @@
             "symbol": "cSAI",
             "decimals": 8,
             "underlying": "0x8e9192D6f9d903b1BEb3836F52a9f71E05846e42",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x5D4373F8C1AF21C391aD7eC755762D8dD3CCA809"
@@ -349,7 +349,7 @@
             "symbol": "cREP",
             "decimals": 8,
             "underlying": "0x183Faf58c4461972765f3F90c6272A4ecE66Bd96",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x1d70B01A2C3e3B2e56FcdcEfe50d5c5d70109a5D"
@@ -369,7 +369,7 @@
             "symbol": "cUSDC",
             "decimals": 8,
             "underlying": "0xD87Ba7A50B2E7E660f678A895E4B72E7CB4CCd9C",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0xCEC4a43eBB02f9B80916F1c718338169d6d5C1F0"
@@ -379,7 +379,7 @@
             "symbol": "cWBTC",
             "decimals": 8,
             "underlying": "0xC04B0d3107736C32e19F1c62b2aF67BE61d63a05",
-            "contract": "CErc20",
+            "contract": "VErc20",
             "initial_exchange_rate_mantissa": "20000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x6CE27497A64fFFb5517AA4aeE908b1E7EB63B9fF"
@@ -389,7 +389,7 @@
             "symbol": "cDAI",
             "decimals": 8,
             "underlying": "0xdc31Ee1784292379Fbb2964b3B9C4124D8F89C60",
-            "contract": "CErc20Delegator",
+            "contract": "VErc20Delegator",
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0x513c1Ff435ECCEdD0fDA5edD2Ad5E5461F0E8726",
             "address": "0x822397d9a55d0fefd20F5c4bCaB33C5F65bd28Eb"

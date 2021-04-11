@@ -33,7 +33,7 @@
         "Pot": "0xEA190DBDC7adF265260ec4dA6e9675Fd4f5A78bb",
         "Pair_ETH_KNC": "0xEbdEA7AeEf046a366c0E5a83BCe5fAeA82194eea",
         "BAT": "0x482dC9bB08111CB875109B075A40881E48aE02Cd",
-        "cErc20Delegate": "0x04356935Dc49753aD1Afb8EeebD0ae473eF1D6AB",
+        "vErc20Delegate": "0x04356935Dc49753aD1Afb8EeebD0ae473eF1D6AB",
         "Base200bps_Slope1000bps": "0xC1B496A3a4Eee148AEefD86Af7E2AB1CeB53605C",
         "StdComptrollerG1": "0x670d9C026025Ce445D7517EBD9e3dE770527D44d",
         "cETH": "0x41B5844f4680a8C38fBb695b7F9CFd1F64474a72",
@@ -89,7 +89,7 @@
         "Pair_ETH_ZRX": 19887879,
         "Pair_ETH_KNC": 19887880,
         "BAT": 18751073,
-        "cErc20Delegate": 18751047,
+        "vErc20Delegate": 18751047,
         "Base200bps_Slope1000bps": 18751037,
         "StdComptrollerG1": 18958737,
         "cETH": 18751132,
@@ -196,7 +196,7 @@
         "Pair_ETH_ZRX": "0x00000000000000000000000000000000000000000000000ff38dd0a4544ec3950000000000000000000000000000000000000000000033daf50cee4b3c6eccf1000000000000000000000000000000000000000000000000000000005f20738c0000000000000000000000000000eedddd77043e301ffbba7dca3de347b26faf00000000000000000000000000000000251054442bd23a2dcb64fba28f34baae",
         "Pair_ETH_KNC": "0x000000000000000000000000000000000000000000000063f3fa7abd893eb0ac0000000000000000000000000000000000000000000053da3ee8c0ce62e814f7000000000000000000000000000000000000000000000000000000005f2077550000000000000000000000000000507d5be920c24135c2a5004b1ad7bf0b92f8000000000000000000000000000000007883c4e7eb136a60557af641e0ec10f9",
         "BAT": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a776184fd6f545dae5f51361dbcc9018549a974900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-        "cErc20Delegate": "0x",
+        "vErc20Delegate": "0x",
         "Base200bps_Slope1000bps": "0x00000000000000000000000000000000000000000000000000470de4df820000000000000000000000000000000000000000000000000000016345785d8a0000",
         "StdComptrollerG1": "0x",
         "cETH": "0x0000000000000000000000005eae89dc1c671724a672ff0630122ee834098657000000000000000000000000c1b496a3a4eee148aeefd86af7e2ab1ceb53605c000000000000000000000000000000000000000000a56fa5b99019a5c800000000000000000000000000000000000000000000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000001200000000000000000000000000000000000000000000000000000000000000008000000000000000000000000a776184fd6f545dae5f51361dbcc9018549a9749000000000000000000000000000000000000000000000000000000000000000c436f6d706f756e6420455448000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000046345544800000000000000000000000000000000000000000000000000000000",
@@ -238,7 +238,7 @@
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0xb7a4F3E9097C08dA09517b5aB877F7a917224ede",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "KNC": {
             "name": "Kyber Network Crystal",
@@ -255,7 +255,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa",
-            "contract": "CErc20Delegator"
+            "contract": "VErc20Delegator"
         },
         "DAI": {
             "name": "Dai Stablecoin",
@@ -285,7 +285,7 @@
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x07de306FF27a2B630B1141956844eB1552B956B5",
-            "contract": "CErc20Delegator"
+            "contract": "VErc20Delegator"
         },
         "cBAT": {
             "name": "Compound BAT",
@@ -295,7 +295,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x482dC9bB08111CB875109B075A40881E48aE02Cd",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "BAT": {
             "name": "Basic Attention Token",
@@ -322,7 +322,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0xD1308F63823221518Ec88EB209CBaa1ac182105f",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "ETH": {
             "name": "Ether",
@@ -338,7 +338,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x50DD65531676F718B018De3dc48F92B53D756996",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "WBTC": {
             "name": "Wrapped BTC",
@@ -376,7 +376,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x162c44e53097e7B5aaE939b297ffFD6Bf90D1EE3",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "cWBTC": {
             "name": "Compound WBTC",
@@ -386,7 +386,7 @@
             "initial_exchange_rate_mantissa": "20000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0xd3A691C852CDB01E281545A27064741F0B7f6825",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "USDC": {
             "name": "USD Coin",
@@ -399,8 +399,8 @@
     "VTokenDelegate": {
         "undefined": {
             "address": "0xC8016288dB9dFE5a1cA2503879dCDE8807377186",
-            "contract": "CErc20Delegate",
-            "description": "Delegate CErc20Delegate"
+            "contract": "VErc20Delegate",
+            "description": "Delegate VErc20Delegate"
         }
     },
     "vTokens": {
@@ -412,7 +412,7 @@
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0xb7a4F3E9097C08dA09517b5aB877F7a917224ede",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "cDAI": {
             "name": "Compound DAI",
@@ -422,7 +422,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa",
-            "contract": "CErc20Delegator"
+            "contract": "VErc20Delegator"
         },
         "cUSDT": {
             "name": "Compound USDT",
@@ -432,7 +432,7 @@
             "initial_exchange_rate_mantissa": "200000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x07de306FF27a2B630B1141956844eB1552B956B5",
-            "contract": "CErc20Delegator"
+            "contract": "VErc20Delegator"
         },
         "cBAT": {
             "name": "Compound BAT",
@@ -442,7 +442,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x482dC9bB08111CB875109B075A40881E48aE02Cd",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "cETH": {
             "name": "Compound ETH",
@@ -462,7 +462,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0xD1308F63823221518Ec88EB209CBaa1ac182105f",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "cREP": {
             "name": "Compound REP",
@@ -472,7 +472,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x50DD65531676F718B018De3dc48F92B53D756996",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "cZRX": {
             "name": "Compound ZRX",
@@ -482,7 +482,7 @@
             "initial_exchange_rate_mantissa": "200000000000000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0x162c44e53097e7B5aaE939b297ffFD6Bf90D1EE3",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         },
         "cWBTC": {
             "name": "Compound WBTC",
@@ -492,7 +492,7 @@
             "initial_exchange_rate_mantissa": "20000000000000000",
             "admin": "0xE3e07F4F3E2F5A5286a99b9b8DEed08B8e07550B",
             "underlying": "0xd3A691C852CDB01E281545A27064741F0B7f6825",
-            "contract": "CErc20Immutable"
+            "contract": "VErc20Immutable"
         }
     },
     "InterestRateModel": {

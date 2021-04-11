@@ -154,7 +154,7 @@ async function makeVToken(opts = {}) {
       cDaiMaker  = await deploy('CDaiDelegateMakerHarness');
       underlying = cDaiMaker;
       cDelegatee = await deploy('CDaiDelegateHarness');
-      cDelegator = await deploy('CErc20Delegator',
+      cDelegator = await deploy('VErc20Delegator',
         [
           underlying._address,
           comptroller._address,
@@ -174,7 +174,7 @@ async function makeVToken(opts = {}) {
     case 'ccomp':
       underlying = await deploy('Vtx', [opts.compHolder || root]);
       cDelegatee = await deploy('CCompLikeDelegate');
-      cDelegator = await deploy('CErc20Delegator',
+      cDelegator = await deploy('VErc20Delegator',
         [
           underlying._address,
           comptroller._address,
@@ -194,8 +194,8 @@ async function makeVToken(opts = {}) {
     case 'cerc20':
     default:
       underlying = opts.underlying || await makeToken(opts.underlyingOpts);
-      cDelegatee = await deploy('CErc20DelegateHarness');
-      cDelegator = await deploy('CErc20Delegator',
+      cDelegatee = await deploy('VErc20DelegateHarness');
+      cDelegator = await deploy('VErc20Delegator',
         [
           underlying._address,
           comptroller._address,
@@ -209,7 +209,7 @@ async function makeVToken(opts = {}) {
           "0x0"
         ]
       );
-      vToken = await saddle.getContractAt('CErc20DelegateHarness', cDelegator._address);
+      vToken = await saddle.getContractAt('VErc20DelegateHarness', cDelegator._address);
       break;
   }
 

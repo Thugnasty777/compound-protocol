@@ -2,8 +2,8 @@ import { Event } from '../Event';
 import { addAction, describeUser, World } from '../World';
 import { decodeCall, getPastEvents } from '../Contract';
 import { VToken, VTokenScenario } from '../Contract/VToken';
-import { CErc20Delegate } from '../Contract/CErc20Delegate'
-import { CErc20Delegator } from '../Contract/CErc20Delegator'
+import { VErc20Delegate } from '../Contract/VErc20Delegate'
+import { VErc20Delegator } from '../Contract/VErc20Delegator'
 import { invoke, Sendable } from '../Invokation';
 import {
   getAddressV,
@@ -30,7 +30,7 @@ import { buildVToken } from '../Builder/VTokenBuilder';
 import { verify } from '../Verify';
 import { getLiquidity } from '../Value/ComptrollerValue';
 import { encodedNumber } from '../Encoding';
-import { getVTokenV, getCErc20DelegatorV } from '../Value/VTokenValue';
+import { getVTokenV, getVErc20DelegatorV } from '../Value/VTokenValue';
 
 function showTrxValue(world: World): string {
   return new NumberV(world.trxInvokationOpts.get('value')).show();
@@ -308,12 +308,12 @@ async function becomeImplementation(
   becomeImplementationData: string
 ): Promise<World> {
 
-  const cErc20Delegate = getContract('CErc20Delegate');
-  const cErc20DelegateContract = await cErc20Delegate.at<CErc20Delegate>(world, vToken._address);
+  const vErc20Delegate = getContract('VErc20Delegate');
+  const vErc20DelegateContract = await vErc20Delegate.at<VErc20Delegate>(world, vToken._address);
 
   let invokation = await invoke(
     world,
-    cErc20DelegateContract.methods._becomeImplementation(becomeImplementationData),
+    vErc20DelegateContract.methods._becomeImplementation(becomeImplementationData),
     from,
     VTokenErrorReporter
   );
@@ -336,12 +336,12 @@ async function resignImplementation(
   vToken: VToken,
 ): Promise<World> {
 
-  const cErc20Delegate = getContract('CErc20Delegate');
-  const cErc20DelegateContract = await cErc20Delegate.at<CErc20Delegate>(world, vToken._address);
+  const vErc20Delegate = getContract('VErc20Delegate');
+  const vErc20DelegateContract = await vErc20Delegate.at<VErc20Delegate>(world, vToken._address);
 
   let invokation = await invoke(
     world,
-    cErc20DelegateContract.methods._resignImplementation(),
+    vErc20DelegateContract.methods._resignImplementation(),
     from,
     VTokenErrorReporter
   );
@@ -361,7 +361,7 @@ async function resignImplementation(
 async function setImplementation(
   world: World,
   from: string,
-  vToken: CErc20Delegator,
+  vToken: VErc20Delegator,
   implementation: string,
   allowResign: boolean,
   becomeImplementationData: string
@@ -818,7 +818,7 @@ export function vTokenCommands() {
       { namePos: 1 }
     ),
     new Command<{
-      vToken: CErc20Delegator;
+      vToken: VErc20Delegator;
       implementation: AddressV;
       allowResign: BoolV;
       becomeImplementationData: StringV;
@@ -831,7 +831,7 @@ export function vTokenCommands() {
       `,
       'SetImplementation',
       [
-        new Arg('vToken', getCErc20DelegatorV),
+        new Arg('vToken', getVErc20DelegatorV),
         new Arg('implementation', getAddressV),
         new Arg('allowResign', getBoolV),
         new Arg('becomeImplementationData', getStringV)

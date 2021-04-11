@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 
-import "../../contracts/CErc20.sol";
+import "../../contracts/VErc20.sol";
 import "../../contracts/VToken.sol";
 import "../../contracts/PriceOracle.sol";
 
@@ -95,7 +95,7 @@ contract PriceOracleProxy is PriceOracle {
         }
 
         // otherwise just read from v1 oracle
-        address underlying = CErc20(vTokenAddress).underlying();
+        address underlying = VErc20(vTokenAddress).underlying();
         return v1PriceOracle.assetPrices(underlying);
     }
 

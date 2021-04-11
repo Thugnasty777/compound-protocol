@@ -3,11 +3,11 @@ pragma solidity ^0.5.16;
 import "./VToken.sol";
 
 /**
- * @title Vortex's CErc20 Contract
+ * @title Vortex's VErc20 Contract
  * @notice VTokens which wrap an EIP-20 underlying
  * @author Vortex
  */
-contract CErc20 is VToken, CErc20Interface {
+contract VErc20 is VToken, VErc20Interface {
     /**
      * @notice Initialize the new money market
      * @param underlying_ The address of the underlying asset
@@ -114,7 +114,7 @@ contract CErc20 is VToken, CErc20Interface {
      * @param token The address of the ERC-20 token to sweep
      */
     function sweepToken(EIP20NonStandardInterface token) external {
-    	require(address(token) != underlying, "CErc20::sweepToken: can not sweep underlying token");
+    	require(address(token) != underlying, "VErc20::sweepToken: can not sweep underlying token");
     	uint256 balance = token.balanceOf(address(this));
     	token.transfer(admin, balance);
     }

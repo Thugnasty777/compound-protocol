@@ -1,7 +1,7 @@
 pragma solidity ^0.5.16;
 pragma experimental ABIEncoderV2;
 
-import "../CErc20.sol";
+import "../VErc20.sol";
 import "../VToken.sol";
 import "../PriceOracle.sol";
 import "../EIP20Interface.sol";
@@ -46,9 +46,9 @@ contract VortexLens {
             underlyingAssetAddress = address(0);
             underlyingDecimals = 18;
         } else {
-            CErc20 cErc20 = CErc20(address(vToken));
-            underlyingAssetAddress = cErc20.underlying();
-            underlyingDecimals = EIP20Interface(cErc20.underlying()).decimals();
+            VErc20 vErc20 = VErc20(address(vToken));
+            underlyingAssetAddress = vErc20.underlying();
+            underlyingDecimals = EIP20Interface(vErc20.underlying()).decimals();
         }
 
         return VTokenMetadata({
@@ -98,8 +98,8 @@ contract VortexLens {
             tokenBalance = account.balance;
             tokenAllowance = account.balance;
         } else {
-            CErc20 cErc20 = CErc20(address(vToken));
-            EIP20Interface underlying = EIP20Interface(cErc20.underlying());
+            VErc20 vErc20 = VErc20(address(vToken));
+            EIP20Interface underlying = EIP20Interface(vErc20.underlying());
             tokenBalance = underlying.balanceOf(account);
             tokenAllowance = underlying.allowance(account, address(vToken));
         }

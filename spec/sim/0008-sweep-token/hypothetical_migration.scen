@@ -10,7 +10,7 @@ UseConfigs mainnet
 
 
 -- Delegate and propose update
-VTokenDelegate Deploy CErc20Delegate newCUNIImpl
+VTokenDelegate Deploy VErc20Delegate newCUNIImpl
 
 From CompHolder (Vtx Delegate CompHolder)
 From CompHolder (Governor GovernorAlpha Propose "Update cUNI implementation" [(Address cUNI) (Address cUNI) (Address cUNI)] [0 0 0] ["_setImplementation(address,bool,bytes)" "sweepToken(address)" "transfer(address,uint256)"] [[(address newCUNIImpl) false "0x"] [(address cUNI)] [(address cUNISender) 1]])

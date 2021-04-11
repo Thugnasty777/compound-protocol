@@ -36,7 +36,7 @@ npx saddle -n rinkeby script token:match 0x19B674715cD20626415C738400FDd0d32D680
 
   let deployArgs = [conf.underlying, conf.comptroller, conf.interestRateModel, conf.initialExchangeRateMantissa.toString(), conf.name, conf.symbol, conf.decimals, conf.admin];
 
-  await saddle.match(address, 'CErc20Immutable', deployArgs);
+  await saddle.match(address, 'VErc20Immutable', deployArgs);
 
   return {
     ...conf,

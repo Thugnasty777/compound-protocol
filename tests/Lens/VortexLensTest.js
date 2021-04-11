@@ -30,13 +30,13 @@ describe('VortexLens', () => {
   });
 
   describe('vTokenMetadata', () => {
-    it('is correct for a cErc20', async () => {
-      let cErc20 = await makeVToken();
+    it('is correct for a vErc20', async () => {
+      let vErc20 = await makeVToken();
       expect(
-        cullTuple(await call(vortexLens, 'vTokenMetadata', [cErc20._address]))
+        cullTuple(await call(vortexLens, 'vTokenMetadata', [vErc20._address]))
       ).toEqual(
         {
-          vToken: cErc20._address,
+          vToken: vErc20._address,
           exchangeRateCurrent: "1000000000000000000",
           supplyRatePerBlock: "0",
           borrowRatePerBlock: "0",
@@ -47,7 +47,7 @@ describe('VortexLens', () => {
           totalCash: "0",
           isListed:false,
           collateralFactorMantissa: "0",
-          underlyingAssetAddress: await call(cErc20, 'underlying', []),
+          underlyingAssetAddress: await call(vErc20, 'underlying', []),
           vTokenDecimals: "8",
           underlyingDecimals: "18"
         }
@@ -78,14 +78,14 @@ describe('VortexLens', () => {
   });
 
   describe('vTokenMetadataAll', () => {
-    it('is correct for a cErc20 and vEther', async () => {
-      let cErc20 = await makeVToken();
+    it('is correct for a vErc20 and vEther', async () => {
+      let vErc20 = await makeVToken();
       let cEth = await makeVToken({kind: 'cether'});
       expect(
-        (await call(vortexLens, 'vTokenMetadataAll', [[cErc20._address, cEth._address]])).map(cullTuple)
+        (await call(vortexLens, 'vTokenMetadataAll', [[vErc20._address, cEth._address]])).map(cullTuple)
       ).toEqual([
         {
-          vToken: cErc20._address,
+          vToken: vErc20._address,
           exchangeRateCurrent: "1000000000000000000",
           supplyRatePerBlock: "0",
           borrowRatePerBlock: "0",
@@ -96,7 +96,7 @@ describe('VortexLens', () => {
           totalCash: "0",
           isListed:false,
           collateralFactorMantissa: "0",
-          underlyingAssetAddress: await call(cErc20, 'underlying', []),
+          underlyingAssetAddress: await call(vErc20, 'underlying', []),
           vTokenDecimals: "8",
           underlyingDecimals: "18"
         },
@@ -122,15 +122,15 @@ describe('VortexLens', () => {
 
   describe('vTokenBalances', () => {
     it('is correct for cERC20', async () => {
-      let cErc20 = await makeVToken();
+      let vErc20 = await makeVToken();
       expect(
-        cullTuple(await call(vortexLens, 'vTokenBalances', [cErc20._address, acct]))
+        cullTuple(await call(vortexLens, 'vTokenBalances', [vErc20._address, acct]))
       ).toEqual(
         {
           balanceOf: "0",
           balanceOfUnderlying: "0",
           borrowBalanceCurrent: "0",
-          vToken: cErc20._address,
+          vToken: vErc20._address,
           tokenAllowance: "0",
           tokenBalance: "10000000000000000000000000",
         }
@@ -156,19 +156,19 @@ describe('VortexLens', () => {
   });
 
   describe('vTokenBalancesAll', () => {
-    it('is correct for cEth and cErc20', async () => {
-      let cErc20 = await makeVToken();
+    it('is correct for cEth and vErc20', async () => {
+      let vErc20 = await makeVToken();
       let cEth = await makeVToken({kind: 'cether'});
       let ethBalance = await web3.eth.getBalance(acct);
       
       expect(
-        (await call(vortexLens, 'vTokenBalancesAll', [[cErc20._address, cEth._address], acct], {gasPrice: '0'})).map(cullTuple)
+        (await call(vortexLens, 'vTokenBalancesAll', [[vErc20._address, cEth._address], acct], {gasPrice: '0'})).map(cullTuple)
       ).toEqual([
         {
           balanceOf: "0",
           balanceOfUnderlying: "0",
           borrowBalanceCurrent: "0",
-          vToken: cErc20._address,
+          vToken: vErc20._address,
           tokenAllowance: "0",
           tokenBalance: "10000000000000000000000000",
         },
@@ -185,13 +185,13 @@ describe('VortexLens', () => {
   });
 
   describe('vTokenUnderlyingPrice', () => {
-    it('gets correct price for cErc20', async () => {
-      let cErc20 = await makeVToken();
+    it('gets correct price for vErc20', async () => {
+      let vErc20 = await makeVToken();
       expect(
-        cullTuple(await call(vortexLens, 'vTokenUnderlyingPrice', [cErc20._address]))
+        cullTuple(await call(vortexLens, 'vTokenUnderlyingPrice', [vErc20._address]))
       ).toEqual(
         {
-          vToken: cErc20._address,
+          vToken: vErc20._address,
           underlyingPrice: "0",
         }
       );
@@ -212,13 +212,13 @@ describe('VortexLens', () => {
 
   describe('vTokenUnderlyingPriceAll', () => {
     it('gets correct price for both', async () => {
-      let cErc20 = await makeVToken();
+      let vErc20 = await makeVToken();
       let cEth = await makeVToken({kind: 'cether'});
       expect(
-        (await call(vortexLens, 'vTokenUnderlyingPriceAll', [[cErc20._address, cEth._address]])).map(cullTuple)
+        (await call(vortexLens, 'vTokenUnderlyingPriceAll', [[vErc20._address, cEth._address]])).map(cullTuple)
       ).toEqual([
         {
-          vToken: cErc20._address,
+          vToken: vErc20._address,
           underlyingPrice: "0",
         },
         {

@@ -28,15 +28,15 @@ Macro DeployCDAIWithDSR
     NewComptroller
     InterestRateModel Deploy Fixed StdInterest 0.000005
     VTokenDelegate Deploy CDaiDelegate cDaiDelegate
-    From VTokenAdmin (VToken Deploy CErc20Delegator cDAI cDAI (Erc20 DAI Address) (Comptroller Address) (InterestRateModel StdInterest Address) 1e9 8 VTokenAdmin (VTokenDelegate cDaiDelegate Address) (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
+    From VTokenAdmin (VToken Deploy VErc20Delegator cDAI cDAI (Erc20 DAI Address) (Comptroller Address) (InterestRateModel StdInterest Address) 1e9 8 VTokenAdmin (VTokenDelegate cDaiDelegate Address) (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
     Comptroller SupportMarket cDAI
 
 Macro DeployCDAI
     ForkMCD
     NewComptroller
     InterestRateModel Deploy Fixed StdInterest 0.000005
-    VTokenDelegate Deploy CErc20Delegate cErc20Delegate
-    From VTokenAdmin (VToken Deploy CErc20Delegator cDAI cDAI (Erc20 DAI Address) (Comptroller Address) (InterestRateModel StdInterest Address) 1e9 8 VTokenAdmin (VTokenDelegate cErc20Delegate Address) "0x0")
+    VTokenDelegate Deploy VErc20Delegate vErc20Delegate
+    From VTokenAdmin (VToken Deploy VErc20Delegator cDAI cDAI (Erc20 DAI Address) (Comptroller Address) (InterestRateModel StdInterest Address) 1e9 8 VTokenAdmin (VTokenDelegate vErc20Delegate Address) "0x0")
     Comptroller SupportMarket cDAI
 
 Macro UpgradeToDSR
@@ -131,7 +131,7 @@ Pending "Mint, upgrade to DSR and then downgrade to vanilla delegate"
     Assert Approx (VToken cDAI Cash) 1e18
     Assert Approx (MCD PotAt PotAddress "pie" (VToken cDAI Address)) 1e18
     -- Downgrade
-    From VTokenAdmin (VToken cDAI SetImplementation (VTokenDelegate cErc20Delegate Address) True "0x0")
+    From VTokenAdmin (VToken cDAI SetImplementation (VTokenDelegate vErc20Delegate Address) True "0x0")
     Assert Approx (Erc20 DAI TokenBalance cDAI) 1e18
     Assert Approx (VToken cDAI Cash) 1e18
 

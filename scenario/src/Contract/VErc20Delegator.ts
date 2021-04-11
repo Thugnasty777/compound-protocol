@@ -3,7 +3,7 @@ import { Callable, Sendable } from '../Invokation';
 import { VTokenMethods } from './VToken';
 import { encodedNumber } from '../Encoding';
 
-interface CErc20DelegatorMethods extends VTokenMethods {
+interface VErc20DelegatorMethods extends VTokenMethods {
   implementation(): Callable<string>;
   _setImplementation(
     implementation_: string,
@@ -12,17 +12,17 @@ interface CErc20DelegatorMethods extends VTokenMethods {
   ): Sendable<void>;
 }
 
-interface CErc20DelegatorScenarioMethods extends CErc20DelegatorMethods {
+interface VErc20DelegatorScenarioMethods extends VErc20DelegatorMethods {
   setTotalBorrows(amount: encodedNumber): Sendable<void>;
   setTotalReserves(amount: encodedNumber): Sendable<void>;
 }
 
-export interface CErc20Delegator extends Contract {
-  methods: CErc20DelegatorMethods;
+export interface VErc20Delegator extends Contract {
+  methods: VErc20DelegatorMethods;
   name: string;
 }
 
-export interface CErc20DelegatorScenario extends Contract {
-  methods: CErc20DelegatorMethods;
+export interface VErc20DelegatorScenario extends Contract {
+  methods: VErc20DelegatorMethods;
   name: string;
 }

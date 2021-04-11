@@ -1,11 +1,11 @@
 pragma solidity ^0.5.16;
 
-import "../../../contracts/CErc20Immutable.sol";
+import "../../../contracts/VErc20Immutable.sol";
 import "../../../contracts/EIP20Interface.sol";
 
 import "./VTokenCollateral.sol";
 
-contract CErc20ImmutableCertora is CErc20Immutable {
+contract VErc20ImmutableCertora is VErc20Immutable {
     VTokenCollateral public otherToken;
 
     constructor(address underlying_,
@@ -15,7 +15,7 @@ contract CErc20ImmutableCertora is CErc20Immutable {
                 string memory name_,
                 string memory symbol_,
                 uint8 decimals_,
-                address payable admin_) public CErc20Immutable(underlying_, comptroller_, interestRateModel_, initialExchangeRateMantissa_, name_, symbol_, decimals_, admin_) {
+                address payable admin_) public VErc20Immutable(underlying_, comptroller_, interestRateModel_, initialExchangeRateMantissa_, name_, symbol_, decimals_, admin_) {
     }
 
     function balanceOfInOther(address account) public view returns (uint) {

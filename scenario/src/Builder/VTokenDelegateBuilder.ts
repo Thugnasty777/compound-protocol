@@ -1,6 +1,6 @@
 import { Event } from '../Event';
 import { World } from '../World';
-import { CErc20Delegate, CErc20DelegateScenario } from '../Contract/CErc20Delegate';
+import { VErc20Delegate, VErc20DelegateScenario } from '../Contract/VErc20Delegate';
 import { VToken } from '../Contract/VToken';
 import { Invokation } from '../Invokation';
 import { getStringV } from '../CoreValue';
@@ -11,12 +11,12 @@ import { getContract, getTestContract } from '../Contract';
 
 const CDaiDelegateContract = getContract('CDaiDelegate');
 const CDaiDelegateScenarioContract = getTestContract('CDaiDelegateScenario');
-const CErc20DelegateContract = getContract('CErc20Delegate');
-const CErc20DelegateScenarioContract = getTestContract('CErc20DelegateScenario');
+const VErc20DelegateContract = getContract('VErc20Delegate');
+const VErc20DelegateScenarioContract = getTestContract('VErc20DelegateScenario');
 
 
 export interface VTokenDelegateData {
-  invokation: Invokation<CErc20Delegate>;
+  invokation: Invokation<VErc20Delegate>;
   name: string;
   contract: string;
   description?: string;
@@ -26,7 +26,7 @@ export async function buildVTokenDelegate(
   world: World,
   from: string,
   params: Event
-): Promise<{ world: World; vTokenDelegate: CErc20Delegate; delegateData: VTokenDelegateData }> {
+): Promise<{ world: World; vTokenDelegate: VErc20Delegate; delegateData: VTokenDelegateData }> {
   const fetchers = [
     new Fetcher<{ name: StringV; }, VTokenDelegateData>(
       `
@@ -44,7 +44,7 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CDaiDelegateContract.deploy<CErc20Delegate>(world, from, []),
+          invokation: await CDaiDelegateContract.deploy<VErc20Delegate>(world, from, []),
           name: name.val,
           contract: 'CDaiDelegate',
           description: 'Standard CDai Delegate'
@@ -68,7 +68,7 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CDaiDelegateScenarioContract.deploy<CErc20DelegateScenario>(world, from, []),
+          invokation: await CDaiDelegateScenarioContract.deploy<VErc20DelegateScenario>(world, from, []),
           name: name.val,
           contract: 'CDaiDelegateScenario',
           description: 'Scenario CDai Delegate'
@@ -78,12 +78,12 @@ export async function buildVTokenDelegate(
 
     new Fetcher<{ name: StringV; }, VTokenDelegateData>(
       `
-        #### CErc20Delegate
+        #### VErc20Delegate
 
-        * "CErc20Delegate name:<String>"
-          * E.g. "VTokenDelegate Deploy CErc20Delegate cDAIDelegate"
+        * "VErc20Delegate name:<String>"
+          * E.g. "VTokenDelegate Deploy VErc20Delegate cDAIDelegate"
       `,
-      'CErc20Delegate',
+      'VErc20Delegate',
       [
         new Arg('name', getStringV)
       ],
@@ -92,22 +92,22 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CErc20DelegateContract.deploy<CErc20Delegate>(world, from, []),
+          invokation: await VErc20DelegateContract.deploy<VErc20Delegate>(world, from, []),
           name: name.val,
-          contract: 'CErc20Delegate',
-          description: 'Standard CErc20 Delegate'
+          contract: 'VErc20Delegate',
+          description: 'Standard VErc20 Delegate'
         };
       }
     ),
 
     new Fetcher<{ name: StringV; }, VTokenDelegateData>(
       `
-        #### CErc20DelegateScenario
+        #### VErc20DelegateScenario
 
-        * "CErc20DelegateScenario name:<String>" - A CErc20Delegate Scenario for local testing
-          * E.g. "VTokenDelegate Deploy CErc20DelegateScenario cDAIDelegate"
+        * "VErc20DelegateScenario name:<String>" - A VErc20Delegate Scenario for local testing
+          * E.g. "VTokenDelegate Deploy VErc20DelegateScenario cDAIDelegate"
       `,
-      'CErc20DelegateScenario',
+      'VErc20DelegateScenario',
       [
         new Arg('name', getStringV),
       ],
@@ -116,10 +116,10 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CErc20DelegateScenarioContract.deploy<CErc20DelegateScenario>(world, from, []),
+          invokation: await VErc20DelegateScenarioContract.deploy<VErc20DelegateScenario>(world, from, []),
           name: name.val,
-          contract: 'CErc20DelegateScenario',
-          description: 'Scenario CErc20 Delegate'
+          contract: 'VErc20DelegateScenario',
+          description: 'Scenario VErc20 Delegate'
         };
       }
     )

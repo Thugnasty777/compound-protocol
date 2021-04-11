@@ -1,7 +1,7 @@
 import { Event } from '../Event';
 import { World } from '../World';
 import { VToken } from '../Contract/VToken';
-import { CErc20Delegator } from '../Contract/CErc20Delegator';
+import { VErc20Delegator } from '../Contract/VErc20Delegator';
 import { Erc20 } from '../Contract/Erc20';
 import {
   getAddressV,
@@ -30,7 +30,7 @@ export async function getVTokenV(world: World, event: Event): Promise<VToken> {
   return getWorldContractByAddress<VToken>(world, address.val);
 }
 
-export async function getCErc20DelegatorV(world: World, event: Event): Promise<CErc20Delegator> {
+export async function getVErc20DelegatorV(world: World, event: Event): Promise<VErc20Delegator> {
   const address = await mapValue<AddressV>(
     world,
     event,
@@ -39,7 +39,7 @@ export async function getCErc20DelegatorV(world: World, event: Event): Promise<C
     AddressV
   );
 
-  return getWorldContractByAddress<CErc20Delegator>(world, address.val);
+  return getWorldContractByAddress<VErc20Delegator>(world, address.val);
 }
 
 async function getInterestRateModel(world: World, vToken: VToken): Promise<AddressV> {
@@ -107,7 +107,7 @@ async function getInterestRate(world: World, vToken: VToken): Promise<NumberV> {
 }
 
 async function getImplementation(world: World, vToken: VToken): Promise<AddressV> {
-  return new AddressV(await (vToken as CErc20Delegator).methods.implementation().call());
+  return new AddressV(await (vToken as VErc20Delegator).methods.implementation().call());
 }
 
 export function vTokenFetchers() {

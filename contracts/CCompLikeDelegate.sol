@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 
-import "./CErc20Delegate.sol";
+import "./VErc20Delegate.sol";
 
 interface CompLike {
   function delegate(address delegatee) external;
@@ -11,11 +11,11 @@ interface CompLike {
  * @notice VTokens which can 'delegate votes' of their underlying ERC-20
  * @author Vortex
  */
-contract CCompLikeDelegate is CErc20Delegate {
+contract CCompLikeDelegate is VErc20Delegate {
   /**
    * @notice Construct an empty delegate
    */
-  constructor() public CErc20Delegate() {}
+  constructor() public VErc20Delegate() {}
 
   /**
    * @notice Admin call to delegate the votes of the VTX-like underlying

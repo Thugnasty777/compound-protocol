@@ -1,13 +1,13 @@
 pragma solidity ^0.5.16;
 
-import "./CErc20.sol";
+import "./VErc20.sol";
 
 /**
- * @title Vortex's CErc20Delegate Contract
+ * @title Vortex's VErc20Delegate Contract
  * @notice VTokens which wrap an EIP-20 underlying and are delegated to
  * @author Vortex
  */
-contract CErc20Delegate is CErc20, CDelegateInterface {
+contract VErc20Delegate is VErc20, VDelegateInterface {
     /**
      * @notice Construct an empty delegate
      */
