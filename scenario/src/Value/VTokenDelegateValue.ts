@@ -34,7 +34,7 @@ export function vTokenDelegateFetchers() {
         #### Address
 
         * "VTokenDelegate <VTokenDelegate> Address" - Returns address of VTokenDelegate contract
-          * E.g. "VTokenDelegate cDaiDelegate Address" - Returns cDaiDelegate's address
+          * E.g. "VTokenDelegate vDaiDelegate Address" - Returns vDaiDelegate's address
       `,
       "Address",
       [

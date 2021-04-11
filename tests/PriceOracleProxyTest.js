@@ -12,7 +12,7 @@ const {
 
 describe('PriceOracleProxy', () => {
   let root, accounts;
-  let oracle, backingOracle, cEth, cUsdc, cSai, cDai, cUsdt, cOther;
+  let oracle, backingOracle, cEth, cUsdc, cSai, vDai, cUsdt, cOther;
   let daiOracleKey = address(2);
 
   beforeEach(async () => {
@@ -20,7 +20,7 @@ describe('PriceOracleProxy', () => {
     cEth = await makeVToken({kind: "cether", comptrollerOpts: {kind: "v1-no-proxy"}, supportMarket: true});
     cUsdc = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
     cSai = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
-    cDai = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
+    vDai = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
     cUsdt = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
     cOther = await makeVToken({comptroller: cEth.comptroller, supportMarket: true});
 
@@ -32,7 +32,7 @@ describe('PriceOracleProxy', () => {
         cEth._address,
         cUsdc._address,
         cSai._address,
-        cDai._address,
+        vDai._address,
         cUsdt._address
       ]
      );
@@ -65,8 +65,8 @@ describe('PriceOracleProxy', () => {
     });
 
     it("sets address of cDAI", async () => {
-      let configuredCDAI = await call(oracle, "cDaiAddress");
-      expect(configuredCDAI).toEqual(cDai._address);
+      let configuredCDAI = await call(oracle, "vDaiAddress");
+      expect(configuredCDAI).toEqual(vDai._address);
     });
 
     it("sets address of cUSDT", async () => {
@@ -102,7 +102,7 @@ describe('PriceOracleProxy', () => {
     it("uses address(1) for USDC and address(2) for cdai", async () => {
       await send(backingOracle, "setDirectPrice", [address(1), etherMantissa(5e12)]);
       await send(backingOracle, "setDirectPrice", [address(2), etherMantissa(8)]);
-      await readAndVerifyProxyPrice(cDai, 8);
+      await readAndVerifyProxyPrice(vDai, 8);
       await readAndVerifyProxyPrice(cUsdc, 5e12);
       await readAndVerifyProxyPrice(cUsdt, 5e12);
     });
@@ -124,12 +124,12 @@ describe('PriceOracleProxy', () => {
     it("correctly handle setting SAI price", async () => {
       await send(backingOracle, "setDirectPrice", [daiOracleKey, etherMantissa(0.01)]);
 
-      await readAndVerifyProxyPrice(cDai, 0.01);
+      await readAndVerifyProxyPrice(vDai, 0.01);
       await readAndVerifyProxyPrice(cSai, 0.01);
 
       await send(oracle, "setSaiPrice", [etherMantissa(0.05)]);
 
-      await readAndVerifyProxyPrice(cDai, 0.01);
+      await readAndVerifyProxyPrice(vDai, 0.01);
       await readAndVerifyProxyPrice(cSai, 0.05);
 
       await expect(send(oracle, "setSaiPrice", [1])).rejects.toRevert("revert SAI price may only be set once");

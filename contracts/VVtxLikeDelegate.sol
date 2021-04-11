@@ -2,16 +2,16 @@ pragma solidity ^0.5.16;
 
 import "./VErc20Delegate.sol";
 
-interface CompLike {
+interface VtxLike {
   function delegate(address delegatee) external;
 }
 
 /**
- * @title Vortex's CCompLikeDelegate Contract
+ * @title Vortex's VVtxLikeDelegate Contract
  * @notice VTokens which can 'delegate votes' of their underlying ERC-20
  * @author Vortex
  */
-contract CCompLikeDelegate is VErc20Delegate {
+contract VVtxLikeDelegate is VErc20Delegate {
   /**
    * @notice Construct an empty delegate
    */
@@ -19,10 +19,10 @@ contract CCompLikeDelegate is VErc20Delegate {
 
   /**
    * @notice Admin call to delegate the votes of the VTX-like underlying
-   * @param compLikeDelegatee The address to delegate votes to
+   * @param vtxLikeDelegatee The address to delegate votes to
    */
-  function _delegateCompLikeTo(address compLikeDelegatee) external {
+  function _delegateVtxLikeTo(address vtxLikeDelegatee) external {
     require(msg.sender == admin, "only the admin may set the vtx-like delegate");
-    CompLike(underlying).delegate(compLikeDelegatee);
+    VtxLike(underlying).delegate(vtxLikeDelegatee);
   }
 }

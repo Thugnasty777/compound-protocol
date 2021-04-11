@@ -134,7 +134,7 @@ async function makeVToken(opts = {}) {
   const admin = opts.admin || root;
 
   let vToken, underlying;
-  let cDelegator, cDelegatee, cDaiMaker;
+  let cDelegator, cDelegatee, vDaiMaker;
 
   switch (kind) {
     case 'cether':
@@ -151,9 +151,9 @@ async function makeVToken(opts = {}) {
       break;
 
     case 'cdai':
-      cDaiMaker  = await deploy('CDaiDelegateMakerHarness');
-      underlying = cDaiMaker;
-      cDelegatee = await deploy('CDaiDelegateHarness');
+      vDaiMaker  = await deploy('VDaiDelegateMakerHarness');
+      underlying = vDaiMaker;
+      cDelegatee = await deploy('VDaiDelegateHarness');
       cDelegator = await deploy('VErc20Delegator',
         [
           underlying._address,
@@ -165,15 +165,15 @@ async function makeVToken(opts = {}) {
           decimals,
           admin,
           cDelegatee._address,
-          encodeParameters(['address', 'address'], [cDaiMaker._address, cDaiMaker._address])
+          encodeParameters(['address', 'address'], [vDaiMaker._address, vDaiMaker._address])
         ]
       );
-      vToken = await saddle.getContractAt('CDaiDelegateHarness', cDelegator._address);
+      vToken = await saddle.getContractAt('VDaiDelegateHarness', cDelegator._address);
       break;
 
-    case 'ccomp':
+    case 'vvtx':
       underlying = await deploy('Vtx', [opts.compHolder || root]);
-      cDelegatee = await deploy('CCompLikeDelegate');
+      cDelegatee = await deploy('VVtxLikeDelegate');
       cDelegator = await deploy('VErc20Delegator',
         [
           underlying._address,
@@ -188,7 +188,7 @@ async function makeVToken(opts = {}) {
           "0x0"
         ]
       );
-      vToken = await saddle.getContractAt('CCompLikeDelegate', cDelegator._address);
+      vToken = await saddle.getContractAt('VVtxLikeDelegate', cDelegator._address);
       break;
 
     case 'cerc20':

@@ -9,8 +9,8 @@ import { Arg, Fetcher, getFetcherValue } from '../Command';
 import { storeAndSaveContract } from '../Networks';
 import { getContract, getTestContract } from '../Contract';
 
-const CDaiDelegateContract = getContract('CDaiDelegate');
-const CDaiDelegateScenarioContract = getTestContract('CDaiDelegateScenario');
+const VDaiDelegateContract = getContract('VDaiDelegate');
+const VDaiDelegateScenarioContract = getTestContract('VDaiDelegateScenario');
 const VErc20DelegateContract = getContract('VErc20Delegate');
 const VErc20DelegateScenarioContract = getTestContract('VErc20DelegateScenario');
 
@@ -30,12 +30,12 @@ export async function buildVTokenDelegate(
   const fetchers = [
     new Fetcher<{ name: StringV; }, VTokenDelegateData>(
       `
-        #### CDaiDelegate
+        #### VDaiDelegate
 
-        * "CDaiDelegate name:<String>"
-          * E.g. "VTokenDelegate Deploy CDaiDelegate cDAIDelegate"
+        * "VDaiDelegate name:<String>"
+          * E.g. "VTokenDelegate Deploy VDaiDelegate cDAIDelegate"
       `,
-      'CDaiDelegate',
+      'VDaiDelegate',
       [
         new Arg('name', getStringV)
       ],
@@ -44,22 +44,22 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CDaiDelegateContract.deploy<VErc20Delegate>(world, from, []),
+          invokation: await VDaiDelegateContract.deploy<VErc20Delegate>(world, from, []),
           name: name.val,
-          contract: 'CDaiDelegate',
-          description: 'Standard CDai Delegate'
+          contract: 'VDaiDelegate',
+          description: 'Standard VDai Delegate'
         };
       }
     ),
 
     new Fetcher<{ name: StringV; }, VTokenDelegateData>(
       `
-        #### CDaiDelegateScenario
+        #### VDaiDelegateScenario
 
-        * "CDaiDelegateScenario name:<String>" - A CDaiDelegate Scenario for local testing
-          * E.g. "VTokenDelegate Deploy CDaiDelegateScenario cDAIDelegate"
+        * "VDaiDelegateScenario name:<String>" - A VDaiDelegate Scenario for local testing
+          * E.g. "VTokenDelegate Deploy VDaiDelegateScenario cDAIDelegate"
       `,
-      'CDaiDelegateScenario',
+      'VDaiDelegateScenario',
       [
         new Arg('name', getStringV)
       ],
@@ -68,10 +68,10 @@ export async function buildVTokenDelegate(
         { name }
       ) => {
         return {
-          invokation: await CDaiDelegateScenarioContract.deploy<VErc20DelegateScenario>(world, from, []),
+          invokation: await VDaiDelegateScenarioContract.deploy<VErc20DelegateScenario>(world, from, []),
           name: name.val,
-          contract: 'CDaiDelegateScenario',
-          description: 'Scenario CDai Delegate'
+          contract: 'VDaiDelegateScenario',
+          description: 'Scenario VDai Delegate'
         };
       }
     ),

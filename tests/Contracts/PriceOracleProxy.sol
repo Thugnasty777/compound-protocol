@@ -31,7 +31,7 @@ contract PriceOracleProxy is PriceOracle {
     address public cSaiAddress;
 
     /// @notice Address of the cDAI contract, which we hand pick a key for
-    address public cDaiAddress;
+    address public vDaiAddress;
 
     /// @notice Handpicked key for USDC
     address public constant usdcOracleKey = address(1);
@@ -48,7 +48,7 @@ contract PriceOracleProxy is PriceOracle {
      * @param cEthAddress_ The address of cETH, which will return a constant 1e18, since all prices relative to ether
      * @param cUsdcAddress_ The address of cUSDC, which will be read from a special oracle key
      * @param cSaiAddress_ The address of cSAI, which may be read directly from storage
-     * @param cDaiAddress_ The address of cDAI, which will be read from a special oracle key
+     * @param vDaiAddress_ The address of cDAI, which will be read from a special oracle key
      * @param cUsdtAddress_ The address of cUSDT, which uses the cUSDC price
      */
     constructor(address guardian_,
@@ -56,7 +56,7 @@ contract PriceOracleProxy is PriceOracle {
                 address cEthAddress_,
                 address cUsdcAddress_,
                 address cSaiAddress_,
-                address cDaiAddress_,
+                address vDaiAddress_,
                 address cUsdtAddress_) public {
         guardian = guardian_;
         v1PriceOracle = V1PriceOracleInterface(v1PriceOracle_);
@@ -64,7 +64,7 @@ contract PriceOracleProxy is PriceOracle {
         cEthAddress = cEthAddress_;
         cUsdcAddress = cUsdcAddress_;
         cSaiAddress = cSaiAddress_;
-        cDaiAddress = cDaiAddress_;
+        vDaiAddress = vDaiAddress_;
         cUsdtAddress = cUsdtAddress_;
     }
 
@@ -85,7 +85,7 @@ contract PriceOracleProxy is PriceOracle {
             return v1PriceOracle.assetPrices(usdcOracleKey);
         }
 
-        if (vTokenAddress == cDaiAddress) {
+        if (vTokenAddress == vDaiAddress) {
             return v1PriceOracle.assetPrices(daiOracleKey);
         }
 

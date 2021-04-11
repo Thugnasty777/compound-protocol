@@ -54,7 +54,7 @@ export async function buildVToken(
       #### VErc20Delegator
 
       * "VErc20Delegator symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - The real deal VToken
-        * E.g. "VToken Deploy VErc20Delegator cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+        * E.g. "VToken Deploy VErc20Delegator cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken VDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
       'VErc20Delegator',
       [
@@ -127,7 +127,7 @@ export async function buildVToken(
       #### VErc20DelegatorScenario
 
       * "VErc20DelegatorScenario symbol:<String> name:<String> underlying:<Address> comptroller:<Address> interestRateModel:<Address> initialExchangeRate:<Number> decimals:<Number> admin: <Address> implementation:<Address> becomeImplementationData:<String>" - A VToken Scenario for local testing
-        * E.g. "VToken Deploy VErc20DelegatorScenario cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken CDaiDelegate Address) "0x0123434anyByTes314535q" "
+        * E.g. "VToken Deploy VErc20DelegatorScenario cDAI \"Vortex DAI\" (Erc20 DAI Address) (Comptroller Address) (InterestRateModel Address) 1.0 8 Geoff (VToken VDaiDelegate Address) "0x0123434anyByTes314535q" "
     `,
       'VErc20DelegatorScenario',
       [

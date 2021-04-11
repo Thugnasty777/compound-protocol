@@ -3326,7 +3326,7 @@
                 },
                 {
                     "internalType": "address",
-                    "name": "cDaiAddress_",
+                    "name": "vDaiAddress_",
                     "type": "address"
                 },
                 {
@@ -3343,7 +3343,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "cDaiAddress",
+            "name": "vDaiAddress",
             "outputs": [
                 {
                     "internalType": "address",

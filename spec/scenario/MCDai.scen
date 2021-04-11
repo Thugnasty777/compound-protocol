@@ -27,8 +27,8 @@ Macro DeployCDAIWithDSR
     ForkMCD
     NewComptroller
     InterestRateModel Deploy Fixed StdInterest 0.000005
-    VTokenDelegate Deploy CDaiDelegate cDaiDelegate
-    From VTokenAdmin (VToken Deploy VErc20Delegator cDAI cDAI (Erc20 DAI Address) (Comptroller Address) (InterestRateModel StdInterest Address) 1e9 8 VTokenAdmin (VTokenDelegate cDaiDelegate Address) (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
+    VTokenDelegate Deploy VDaiDelegate vDaiDelegate
+    From VTokenAdmin (VToken Deploy VErc20Delegator cDAI cDAI (Erc20 DAI Address) (Comptroller Address) (InterestRateModel StdInterest Address) 1e9 8 VTokenAdmin (VTokenDelegate vDaiDelegate Address) (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
     Comptroller SupportMarket cDAI
 
 Macro DeployCDAI
@@ -40,8 +40,8 @@ Macro DeployCDAI
     Comptroller SupportMarket cDAI
 
 Macro UpgradeToDSR
-    VTokenDelegate Deploy CDaiDelegate cDaiDelegate
-    From VTokenAdmin (VToken cDAI SetImplementation (VTokenDelegate cDaiDelegate Address) True (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
+    VTokenDelegate Deploy VDaiDelegate vDaiDelegate
+    From VTokenAdmin (VToken cDAI SetImplementation (VTokenDelegate vDaiDelegate Address) True (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
 
 Macro CheckBasicMintRedeem
     From DaiHolder (Erc20 DAI Transfer Jared 2e18)
@@ -147,9 +147,9 @@ Pending "Mint, upgrade to DSR, mint, and then reupgrade to a new cdai delegate"
     Assert Equal (Erc20 DAI TokenBalance cDAI) 0
     Assert Approx (VToken cDAI Cash) 2e18
     Assert Approx (MCD PotAt PotAddress "pie" (VToken cDAI Address)) 2e18
-    -- Reupgrade to a new cDaiDelegate
-    VTokenDelegate Deploy CDaiDelegate cDaiDelegate2
-    From VTokenAdmin (VToken cDAI SetImplementation (VTokenDelegate cDaiDelegate2 Address) True (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
+    -- Reupgrade to a new vDaiDelegate
+    VTokenDelegate Deploy VDaiDelegate vDaiDelegate2
+    From VTokenAdmin (VToken cDAI SetImplementation (VTokenDelegate vDaiDelegate2 Address) True (EncodeParameters ("address" "address") (DaiJoinAddress PotAddress)))
     Assert Equal (Erc20 DAI TokenBalance cDAI) 0
     Assert Approx (VToken cDAI Cash) 2e18
     Assert Approx (MCD PotAt PotAddress "pie" (VToken cDAI Address)) 2e18

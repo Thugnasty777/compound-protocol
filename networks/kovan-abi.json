@@ -8063,7 +8063,7 @@
             "type": "function"
         }
     ],
-    "cDaiDelegate": [
+    "vDaiDelegate": [
         {
             "inputs": [],
             "payable": false,

@@ -3,11 +3,11 @@ pragma solidity ^0.5.16;
 import "./VErc20Delegate.sol";
 
 /**
- * @title Vortex's CDai Contract
+ * @title Vortex's VDai Contract
  * @notice VToken which wraps Multi-Collateral DAI
  * @author Vortex
  */
-contract CDaiDelegate is VErc20Delegate {
+contract VDaiDelegate is VErc20Delegate {
     /**
      * @notice DAI adapter address
      */

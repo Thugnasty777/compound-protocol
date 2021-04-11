@@ -54,7 +54,7 @@ export function vTokenDelegateCommands() {
         #### Deploy
 
         * "VTokenDelegate Deploy ...vTokenDelegateParams" - Generates a new VTokenDelegate
-          * E.g. "VTokenDelegate Deploy CDaiDelegate cDAIDelegate"
+          * E.g. "VTokenDelegate Deploy VDaiDelegate cDAIDelegate"
       `,
       "Deploy",
       [new Arg("vTokenDelegateParams", getEventV, { variadic: true })],
@@ -64,7 +64,7 @@ export function vTokenDelegateCommands() {
         #### Verify
 
         * "VTokenDelegate <vTokenDelegate> Verify apiKey:<String>" - Verifies VTokenDelegate in Etherscan
-          * E.g. "VTokenDelegate cDaiDelegate Verify "myApiKey"
+          * E.g. "VTokenDelegate vDaiDelegate Verify "myApiKey"
       `,
       "Verify",
       [

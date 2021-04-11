@@ -2771,7 +2771,7 @@
                 },
                 {
                     "internalType": "address",
-                    "name": "cDaiAddress_",
+                    "name": "vDaiAddress_",
                     "type": "address"
                 },
                 {
@@ -2788,7 +2788,7 @@
         {
             "constant": true,
             "inputs": [],
-            "name": "cDaiAddress",
+            "name": "vDaiAddress",
             "outputs": [
                 {
                     "internalType": "address",
@@ -9565,7 +9565,7 @@
             "signature": "0x45b96fe442630264581b197e84bbada861235052c5a1aadfff9ea4e40a969aa0"
         }
     ],
-    "cDaiDelegate": [
+    "vDaiDelegate": [
         {
             "anonymous": false,
             "inputs": [
