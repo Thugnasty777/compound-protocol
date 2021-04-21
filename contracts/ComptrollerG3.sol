@@ -246,8 +246,8 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
         }
 
         // Keep the flywheel moving
-        updateVtxSupplyIndex(vToken);
-        distributeSupplierVtx(vToken, minter, false);
+        // updateVtxSupplyIndex(vToken);
+        // distributeSupplierVtx(vToken, minter, false);
 
         return uint(Error.NO_ERROR);
     }
@@ -286,8 +286,8 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
         }
 
         // Keep the flywheel moving
-        updateVtxSupplyIndex(vToken);
-        distributeSupplierVtx(vToken, redeemer, false);
+        // updateVtxSupplyIndex(vToken);
+        // distributeSupplierVtx(vToken, redeemer, false);
 
         return uint(Error.NO_ERROR);
     }
@@ -374,9 +374,9 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
         }
 
         // Keep the flywheel moving
-        Exp memory borrowIndex = Exp({mantissa: VToken(vToken).borrowIndex()});
-        updateVtxBorrowIndex(vToken, borrowIndex);
-        distributeBorrowerVtx(vToken, borrower, borrowIndex, false);
+        // Exp memory borrowIndex = Exp({mantissa: VToken(vToken).borrowIndex()});
+        // updateVtxBorrowIndex(vToken, borrowIndex);
+        // distributeBorrowerVtx(vToken, borrower, borrowIndex, false);
 
         return uint(Error.NO_ERROR);
     }
@@ -422,9 +422,9 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
         }
 
         // Keep the flywheel moving
-        Exp memory borrowIndex = Exp({mantissa: VToken(vToken).borrowIndex()});
-        updateVtxBorrowIndex(vToken, borrowIndex);
-        distributeBorrowerVtx(vToken, borrower, borrowIndex, false);
+        // Exp memory borrowIndex = Exp({mantissa: VToken(vToken).borrowIndex()});
+        // updateVtxBorrowIndex(vToken, borrowIndex);
+        // distributeBorrowerVtx(vToken, borrower, borrowIndex, false);
 
         return uint(Error.NO_ERROR);
     }
@@ -556,9 +556,9 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
         }
 
         // Keep the flywheel moving
-        updateVtxSupplyIndex(vTokenCollateral);
-        distributeSupplierVtx(vTokenCollateral, borrower, false);
-        distributeSupplierVtx(vTokenCollateral, liquidator, false);
+        // updateVtxSupplyIndex(vTokenCollateral);
+        // distributeSupplierVtx(vTokenCollateral, borrower, false);
+        // distributeSupplierVtx(vTokenCollateral, liquidator, false);
 
         return uint(Error.NO_ERROR);
     }
@@ -610,9 +610,9 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
         }
 
         // Keep the flywheel moving
-        updateVtxSupplyIndex(vToken);
-        distributeSupplierVtx(vToken, src, false);
-        distributeSupplierVtx(vToken, dst, false);
+        // updateVtxSupplyIndex(vToken);
+        // distributeSupplierVtx(vToken, src, false);
+        // distributeSupplierVtx(vToken, dst, false);
 
         return uint(Error.NO_ERROR);
     }
@@ -1099,8 +1099,8 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
             _addMarketInternal(address(otherMarketsToAdd[i]));
         }
 
-        _setVtxRate(vtxRate_);
-        _addVtxMarkets(compMarketsToAdd);
+        // _setVtxRate(vtxRate_);
+        // _addVtxMarkets(compMarketsToAdd);
     }
 
     /**
@@ -1108,276 +1108,6 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
      */
     function adminOrInitializing() internal view returns (bool) {
         return msg.sender == admin || msg.sender == comptrollerImplementation;
-    }
-
-    /*** Vtx Distribution ***/
-
-    /**
-     * @notice Recalculate and update VTX speeds for all VTX markets
-     */
-    function refreshVtxSpeeds() public {
-        VToken[] memory allMarkets_ = allMarkets;
-
-        for (uint i = 0; i < allMarkets_.length; i++) {
-            VToken vToken = allMarkets_[i];
-            Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
-            updateVtxSupplyIndex(address(vToken));
-            updateVtxBorrowIndex(address(vToken), borrowIndex);
-        }
-
-        Exp memory totalUtility = Exp({mantissa: 0});
-        Exp[] memory utilities = new Exp[](allMarkets_.length);
-        for (uint i = 0; i < allMarkets_.length; i++) {
-            VToken vToken = allMarkets_[i];
-            if (markets[address(vToken)].isVtxed) {
-                Exp memory assetPrice = Exp({mantissa: oracle.getUnderlyingPrice(vToken)});
-                Exp memory interestPerBlock = mul_(Exp({mantissa: vToken.borrowRatePerBlock()}), vToken.totalBorrows());
-                Exp memory utility = mul_(interestPerBlock, assetPrice);
-                utilities[i] = utility;
-                totalUtility = add_(totalUtility, utility);
-            }
-        }
-
-        for (uint i = 0; i < allMarkets_.length; i++) {
-            VToken vToken = allMarkets[i];
-            uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
-            vtxSpeeds[address(vToken)] = newSpeed;
-            emit VtxSpeedUpdated(vToken, newSpeed);
-        }
-    }
-
-    /**
-     * @notice Accrue VTX to the market by updating the supply index
-     * @param vToken The market whose supply index to update
-     */
-    function updateVtxSupplyIndex(address vToken) internal {
-        VtxMarketState storage supplyState = vtxSupplyState[vToken];
-        uint supplySpeed = vtxSpeeds[vToken];
-        uint blockNumber = getBlockNumber();
-        uint deltaBlocks = sub_(blockNumber, uint(supplyState.block));
-        if (deltaBlocks > 0 && supplySpeed > 0) {
-            uint supplyTokens = VToken(vToken).totalSupply();
-            uint vtxAccrued = mul_(deltaBlocks, supplySpeed);
-            Double memory ratio = supplyTokens > 0 ? fraction(vtxAccrued, supplyTokens) : Double({mantissa: 0});
-            Double memory index = add_(Double({mantissa: supplyState.index}), ratio);
-            vtxSupplyState[vToken] = VtxMarketState({
-                index: safe224(index.mantissa, "new index exceeds 224 bits"),
-                block: safe32(blockNumber, "block number exceeds 32 bits")
-            });
-        } else if (deltaBlocks > 0) {
-            supplyState.block = safe32(blockNumber, "block number exceeds 32 bits");
-        }
-    }
-
-    /**
-     * @notice Accrue VTX to the market by updating the borrow index
-     * @param vToken The market whose borrow index to update
-     */
-    function updateVtxBorrowIndex(address vToken, Exp memory marketBorrowIndex) internal {
-        VtxMarketState storage borrowState = vtxBorrowState[vToken];
-        uint borrowSpeed = vtxSpeeds[vToken];
-        uint blockNumber = getBlockNumber();
-        uint deltaBlocks = sub_(blockNumber, uint(borrowState.block));
-        if (deltaBlocks > 0 && borrowSpeed > 0) {
-            uint borrowAmount = div_(VToken(vToken).totalBorrows(), marketBorrowIndex);
-            uint vtxAccrued = mul_(deltaBlocks, borrowSpeed);
-            Double memory ratio = borrowAmount > 0 ? fraction(vtxAccrued, borrowAmount) : Double({mantissa: 0});
-            Double memory index = add_(Double({mantissa: borrowState.index}), ratio);
-            vtxBorrowState[vToken] = VtxMarketState({
-                index: safe224(index.mantissa, "new index exceeds 224 bits"),
-                block: safe32(blockNumber, "block number exceeds 32 bits")
-            });
-        } else if (deltaBlocks > 0) {
-            borrowState.block = safe32(blockNumber, "block number exceeds 32 bits");
-        }
-    }
-
-    /**
-     * @notice Calculate VTX accrued by a supplier and possibly transfer it to them
-     * @param vToken The market in which the supplier is interacting
-     * @param supplier The address of the supplier to distribute VTX to
-     */
-    function distributeSupplierVtx(address vToken, address supplier, bool distributeAll) internal {
-        VtxMarketState storage supplyState = vtxSupplyState[vToken];
-        Double memory supplyIndex = Double({mantissa: supplyState.index});
-        Double memory supplierIndex = Double({mantissa: vtxSupplierIndex[vToken][supplier]});
-        vtxSupplierIndex[vToken][supplier] = supplyIndex.mantissa;
-
-        if (supplierIndex.mantissa == 0 && supplyIndex.mantissa > 0) {
-            supplierIndex.mantissa = compInitialIndex;
-        }
-
-        Double memory deltaIndex = sub_(supplyIndex, supplierIndex);
-        uint supplierTokens = VToken(vToken).balanceOf(supplier);
-        uint supplierDelta = mul_(supplierTokens, deltaIndex);
-        uint supplierAccrued = add_(vtxAccrued[supplier], supplierDelta);
-        vtxAccrued[supplier] = transferVtx(supplier, supplierAccrued, distributeAll ? 0 : compClaimThreshold);
-        emit DistributedSupplierVtx(VToken(vToken), supplier, supplierDelta, supplyIndex.mantissa);
-    }
-
-    /**
-     * @notice Calculate VTX accrued by a borrower and possibly transfer it to them
-     * @dev Borrowers will not begin to accrue until after the first interaction with the protocol.
-     * @param vToken The market in which the borrower is interacting
-     * @param borrower The address of the borrower to distribute VTX to
-     */
-    function distributeBorrowerVtx(address vToken, address borrower, Exp memory marketBorrowIndex, bool distributeAll) internal {
-        VtxMarketState storage borrowState = vtxBorrowState[vToken];
-        Double memory borrowIndex = Double({mantissa: borrowState.index});
-        Double memory borrowerIndex = Double({mantissa: vtxBorrowerIndex[vToken][borrower]});
-        vtxBorrowerIndex[vToken][borrower] = borrowIndex.mantissa;
-
-        if (borrowerIndex.mantissa > 0) {
-            Double memory deltaIndex = sub_(borrowIndex, borrowerIndex);
-            uint borrowerAmount = div_(VToken(vToken).borrowBalanceStored(borrower), marketBorrowIndex);
-            uint borrowerDelta = mul_(borrowerAmount, deltaIndex);
-            uint borrowerAccrued = add_(vtxAccrued[borrower], borrowerDelta);
-            vtxAccrued[borrower] = transferVtx(borrower, borrowerAccrued, distributeAll ? 0 : compClaimThreshold);
-            emit DistributedBorrowerVtx(VToken(vToken), borrower, borrowerDelta, borrowIndex.mantissa);
-        }
-    }
-
-    /**
-     * @notice Transfer VTX to the user, if they are above the threshold
-     * @dev Note: If there is not enough VTX, we do not perform the transfer all.
-     * @param user The address of the user to transfer VTX to
-     * @param userAccrued The amount of VTX to (possibly) transfer
-     * @return The amount of VTX which was NOT transferred to the user
-     */
-    function transferVtx(address user, uint userAccrued, uint threshold) internal returns (uint) {
-        if (userAccrued >= threshold && userAccrued > 0) {
-            Vtx vtx = Vtx(getVtxAddress());
-            uint compRemaining = vtx.balanceOf(address(this));
-            if (userAccrued <= compRemaining) {
-                vtx.transfer(user, userAccrued);
-                return 0;
-            }
-        }
-        return userAccrued;
-    }
-
-    /**
-     * @notice Claim all the vtx accrued by holder in all markets
-     * @param holder The address to claim VTX for
-     */
-    function claimVtx(address holder) public {
-        return claimVtx(holder, allMarkets);
-    }
-
-    /**
-     * @notice Claim all the vtx accrued by holder in the specified markets
-     * @param holder The address to claim VTX for
-     * @param vTokens The list of markets to claim VTX in
-     */
-    function claimVtx(address holder, VToken[] memory vTokens) public {
-        address[] memory holders = new address[](1);
-        holders[0] = holder;
-        claimVtx(holders, vTokens, true, true);
-    }
-
-    /**
-     * @notice Claim all vtx accrued by the holders
-     * @param holders The addresses to claim VTX for
-     * @param vTokens The list of markets to claim VTX in
-     * @param borrowers Whether or not to claim VTX earned by borrowing
-     * @param suppliers Whether or not to claim VTX earned by supplying
-     */
-    function claimVtx(address[] memory holders, VToken[] memory vTokens, bool borrowers, bool suppliers) public {
-        for (uint i = 0; i < vTokens.length; i++) {
-            VToken vToken = vTokens[i];
-            require(markets[address(vToken)].isListed, "market must be listed");
-            if (borrowers == true) {
-                Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
-                updateVtxBorrowIndex(address(vToken), borrowIndex);
-                for (uint j = 0; j < holders.length; j++) {
-                    distributeBorrowerVtx(address(vToken), holders[j], borrowIndex, true);
-                }
-            }
-            if (suppliers == true) {
-                updateVtxSupplyIndex(address(vToken));
-                for (uint j = 0; j < holders.length; j++) {
-                    distributeSupplierVtx(address(vToken), holders[j], true);
-                }
-            }
-        }
-    }
-
-    /*** Vtx Distribution Admin ***/
-
-    /**
-     * @notice Set the amount of VTX distributed per block
-     * @param vtxRate_ The amount of VTX wei per block to distribute
-     */
-    function _setVtxRate(uint vtxRate_) public {
-        require(adminOrInitializing(), "only admin can change vtx rate");
-
-        uint oldRate = vtxRate;
-        vtxRate = vtxRate_;
-        emit NewVtxRate(oldRate, vtxRate_);
-
-        refreshVtxSpeeds();
-    }
-
-    /**
-     * @notice Add markets to vtxMarkets, allowing them to earn VTX in the flywheel
-     * @param vTokens The addresses of the markets to add
-     */
-    function _addVtxMarkets(address[] memory vTokens) public {
-        require(adminOrInitializing(), "only admin can add vtx market");
-
-        for (uint i = 0; i < vTokens.length; i++) {
-            _addVtxMarketInternal(vTokens[i]);
-        }
-
-        refreshVtxSpeeds();
-    }
-
-    function _addVtxMarketInternal(address vToken) internal {
-        Market storage market = markets[vToken];
-        require(market.isListed == true, "vtx market is not listed");
-        require(market.isVtxed == false, "vtx market already added");
-
-        market.isVtxed = true;
-        emit MarketComped(VToken(vToken), true);
-
-        if (vtxSupplyState[vToken].index == 0 && vtxSupplyState[vToken].block == 0) {
-            vtxSupplyState[vToken] = VtxMarketState({
-                index: compInitialIndex,
-                block: safe32(getBlockNumber(), "block number exceeds 32 bits")
-            });
-        }
-
-        if (vtxBorrowState[vToken].index == 0 && vtxBorrowState[vToken].block == 0) {
-            vtxBorrowState[vToken] = VtxMarketState({
-                index: compInitialIndex,
-                block: safe32(getBlockNumber(), "block number exceeds 32 bits")
-            });
-        }
-    }
-
-    /**
-     * @notice Remove a market from vtxMarkets, preventing it from earning VTX in the flywheel
-     * @param vToken The address of the market to drop
-     */
-    function _dropVtxMarket(address vToken) public {
-        require(msg.sender == admin, "only admin can drop vtx market");
-
-        Market storage market = markets[vToken];
-        require(market.isVtxed == true, "market is not a vtx market");
-
-        market.isVtxed = false;
-        emit MarketComped(VToken(vToken), false);
-
-        refreshVtxSpeeds();
-    }
-
-    /**
-     * @notice Return all of the markets
-     * @dev The automatic getter may be used to access an individual market.
-     * @return The list of market addresses
-     */
-    function getAllMarkets() public view returns (VToken[] memory) {
-        return allMarkets;
     }
 
     function getBlockNumber() public view returns (uint) {
@@ -1388,7 +1118,7 @@ contract ComptrollerG3 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
      * @notice Return the address of the VTX token
      * @return The address of VTX
      */
-    function getVtxAddress() public view returns (address) {
-        return 0xc00e94Cb662C3520282E6f5717214004A7f26888;
+    function getVtxAddress() public pure returns (address) {
+        return 0x4298aB3F4a74cdFB902a140a560CE73698F938fa;
     }
 }
