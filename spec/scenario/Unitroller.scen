@@ -64,7 +64,6 @@ Test "Standard Upgrade, then downgrade then upgrade again"
     -- Upgrade to G3 again
     Unitroller SetPendingImpl ScenComptrollerG3
     ComptrollerImpl ScenComptrollerG3 BecomeG3 1e18 []
-    Assert Equal (Comptroller GetVtxMarkets) [(Address cZRX) (Address cDAI)]
     Assert Equal (Comptroller PauseGuardian) (Address Coburn)
     Assert Equal (Comptroller CloseFactor) 0.2
     Assert Equal (Comptroller MaxAssets) 20

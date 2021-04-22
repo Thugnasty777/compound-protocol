@@ -1101,7 +1101,7 @@ contract ComptrollerG4 is ComptrollerV3Storage, ComptrollerInterface, Comptrolle
      * @notice Return the address of the VTX token
      * @return The address of VTX
      */
-    function getVtxAddress() public pure returns (address) {
+    function getVtxAddress() public view returns (address) {
         return 0x4298aB3F4a74cdFB902a140a560CE73698F938fa;
     }
 }

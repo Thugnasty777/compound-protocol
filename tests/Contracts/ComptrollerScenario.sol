@@ -46,8 +46,6 @@ contract ComptrollerScenario is Comptroller {
         for (uint i = 0; i < allMarkets_.length; i++) {
             VToken vToken = allMarkets_[i];
             Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
-            updateVtxSupplyIndex(address(vToken));
-            updateVtxBorrowIndex(address(vToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
@@ -65,7 +63,6 @@ contract ComptrollerScenario is Comptroller {
         for (uint i = 0; i < allMarkets_.length; i++) {
             VToken vToken = allMarkets[i];
             uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
-            setVtxSpeedInternal(vToken, newSpeed);
         }
     }
 }

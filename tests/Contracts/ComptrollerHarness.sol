@@ -64,8 +64,6 @@ contract ComptrollerHarness is Comptroller {
         for (uint i = 0; i < allMarkets_.length; i++) {
             VToken vToken = allMarkets_[i];
             Exp memory borrowIndex = Exp({mantissa: vToken.borrowIndex()});
-            updateVtxSupplyIndex(address(vToken));
-            updateVtxBorrowIndex(address(vToken), borrowIndex);
         }
 
         Exp memory totalUtility = Exp({mantissa: 0});
@@ -83,7 +81,6 @@ contract ComptrollerHarness is Comptroller {
         for (uint i = 0; i < allMarkets_.length; i++) {
             VToken vToken = allMarkets[i];
             uint newSpeed = totalUtility.mantissa > 0 ? mul_(vtxRate, div_(utilities[i], totalUtility)) : 0;
-            setVtxSpeedInternal(vToken, newSpeed);
         }
     }
 
@@ -96,34 +93,31 @@ contract ComptrollerHarness is Comptroller {
     }
 
     function harnessDistributeAllBorrowerComp(address vToken, address borrower, uint marketBorrowIndexMantissa) public {
-        distributeBorrowerVtx(vToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
-        vtxAccrued[borrower] = grantVtxInternal(borrower, vtxAccrued[borrower]);
+
     }
 
     function harnessDistributeAllSupplierComp(address vToken, address supplier) public {
-        distributeSupplierVtx(vToken, supplier);
-        vtxAccrued[supplier] = grantVtxInternal(supplier, vtxAccrued[supplier]);
+
     }
 
     function harnessUpdateVtxBorrowIndex(address vToken, uint marketBorrowIndexMantissa) public {
-        updateVtxBorrowIndex(vToken, Exp({mantissa: marketBorrowIndexMantissa}));
+
     }
 
     function harnessUpdateVtxSupplyIndex(address vToken) public {
-        updateVtxSupplyIndex(vToken);
+        
     }
 
     function harnessDistributeBorrowerVtx(address vToken, address borrower, uint marketBorrowIndexMantissa) public {
-        distributeBorrowerVtx(vToken, borrower, Exp({mantissa: marketBorrowIndexMantissa}));
+        
     }
 
     function harnessDistributeSupplierVtx(address vToken, address supplier) public {
-        distributeSupplierVtx(vToken, supplier);
+        
     }
 
     function harnessTransferVtx(address user, uint userAccrued, uint threshold) public returns (uint) {
         if (userAccrued > 0 && userAccrued >= threshold) {
-            return grantVtxInternal(user, userAccrued);
         }
         return userAccrued;
     }
@@ -131,7 +125,6 @@ contract ComptrollerHarness is Comptroller {
     function harnessAddVtxMarkets(address[] memory vTokens) public {
         for (uint i = 0; i < vTokens.length; i++) {
             // temporarily set compSpeed to 1 (will be fixed by `harnessRefreshVtxSpeeds`)
-            setVtxSpeedInternal(VToken(vTokens[i]), 1);
         }
     }
 

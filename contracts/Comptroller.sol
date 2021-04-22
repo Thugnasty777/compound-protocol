@@ -1059,7 +1059,7 @@ contract Comptroller is ComptrollerV5Storage, ComptrollerInterface, ComptrollerE
      * @notice Return the address of the VTX token
      * @return The address of VTX
      */
-    function getVtxAddress() public pure returns (address) {
+    function getVtxAddress() public view returns (address) {
         return 0x6B6BCAB3CCdfD73AFe585F3e20e573D1D3538fb5;
     }
 }
