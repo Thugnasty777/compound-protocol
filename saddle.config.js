@@ -241,6 +241,15 @@ module.exports = {
     'token:deploy': "script/saddle/deployToken.js",
     'token:verify': "script/saddle/verifyToken.js",
     'token:match': "script/saddle/matchToken.js",
-    'flywheel:init': "script/saddle/flywheelInit.js"
+    'flywheel:init': "script/saddle/flywheelInit.js",
+    'comptroller:deploy': "script/saddle/deployComptroller.js",
+    'unitroller:deploy': "script/saddle/deployUnitroller.js",
+    'chainlinkProxy:deploy': "script/saddle/deployChainlinkProxy.js",
+    'timelock:deploy': "script/saddle/deployTimelock.js",
+    'vtx:deploy': "script/saddle/deployVtx.js",
+    'jumpRateModelV2:deploy': "script/saddle/deployJumpRateModelV2.js",
+    'vErc20Delegator:deploy': "script/saddle/deployVErc20Delegator.js",
+    'vErc20Delegate:deploy': "script/saddle/deployVErc20Delegate.js"
+
   }
 }

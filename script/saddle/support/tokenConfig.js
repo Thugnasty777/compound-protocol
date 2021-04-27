@@ -106,5 +106,6 @@ module.exports = {
   loadConf,
   getNumber,
   getArray,
-  getBoolean
+  getBoolean,
+  getString
 };
